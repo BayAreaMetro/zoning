@@ -39,3 +39,41 @@ CREATE TABLE zoning.parcels_not_in_places AS
 SELECT n.name, n.name_1, p.joinnuma, p.geom 
 FROM parcels_mpg_min as p, administrative.places as n 
 WHERE NOT ST_Intersects(n.geom, p.geom);
+
+CREATE TABLE zoning.parcels_not_in_places AS
+SELECT p1.joinnuma, p1.geom
+FROM parcels_mpg p1
+    LEFT JOIN zoning.parcels_in_places p2 ON p1.joinnuma = p2.joinnuma
+WHERE p2.joinnuma IS NULL
+
+--create table of parcels without zoning that were in legacy data, by year, with the geographic area they are in
+CREATE TABLE zoning.nozoning_parcels_with_place_2012 AS
+SELECT p1.joinnuma, p2.name, p2.name_1 p1.id
+FROM zoning.nozoning_zoning_ids12 p1
+    LEFT JOIN zoning.parcels_in_places p2 ON p1.joinnuma = p2.joinnuma;
+
+--count total parcels in counties
+SELECT name_1, count(*) from zoning.parcels_in_places group by name_1;
+
+
+--count total parcels in places
+CREATE VIEW countallparcels AS 
+SELECT name, count(*) as ParcelCount from zoning.parcels_in_places group by name;
+
+--count parcels with no zoning (in original file) within places 
+--NEED TO DOUBLE CHECK ON THIS QUERY
+CREATE VIEW notinfile AS 
+SELECT name, count(*) as NoZoningCount from zoning.nozoning_parcels_with_place_2008 group by name;
+
+--count parcels with no zoning within places (in original file) within places, which werent' covered by a 2008 zoning id either
+CREATE VIEW notinfile_notin2008 AS 
+SELECT name, count(*) as NotIn2008Count from zoning.nozoning_parcels_with_place_2008 WHERE ID IS NULL group by name;
+
+CREATE VIEW notinfile_notin2012 AS 
+SELECT name, count(*) as NotIn2012Count from zoning.nozoning_parcels_with_place_2012 WHERE ID IS NULL group by name;
+
+SELECT name, a.ParcelCount, b.NoZoningCount, c.NotIn2008Count, d.NotIn2012Count
+FROM countallparcels as a
+NATURAL JOIN notinfile as b 
+NATURAL JOIN notinfile_notin2008 as c 
+NATURAL JOIN notinfile_notin2012 as d; 
