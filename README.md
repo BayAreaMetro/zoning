@@ -29,7 +29,7 @@ These data were received as 2 Personal GeoDatabases. In both cases, each jurisdi
 
 We converted the personal Geodatabases to File GeoDatabases using ArcMap with an Editor License. In short, to do this you export the Personal Geodatabase to XML by right clicking on it (in ArcCatalog) and selecting "Export to XML." Then you create a new File geodatabase and then right click and "Import from XML." [read more here](http://help.arcgis.com/en/arcgisdesktop/10.0/help/index.html#//003n00000032000000)
 
-After that, we used OGR2OGR to convert to load everything into PostGIS. Example scripts are in this repository [here](https://github.com/MetropolitanTransportationCommission/land-use-zoning-checks/blob/master/copy_legacy_zoning_geodatabase_to_postgis). 
+After that, we used OGR2OGR to load the data into PostGIS. Example scripts are in this repository [here](https://github.com/MetropolitanTransportationCommission/land-use-zoning-checks/blob/master/copy_legacy_zoning_geodatabase_to_postgis). 
 
 Since the 2012 Data included more than 100 tables, we adapted a script to merge the geometries into 1 lookup table as seen in this [script](https://github.com/MetropolitanTransportationCommission/land-use-zoning-checks/blob/master/merge_tables_for_lookup_plpgsql.sql)
 
