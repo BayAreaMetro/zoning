@@ -1,4 +1,10 @@
-﻿insert into lookup  
+CREATE TABLE public.lookup
+(
+  ogc_fid integer,
+  table_name character varying,
+  wkb_geometry geometry(MultiPolygon,26910)
+);
+insert into lookup  
 select ogc_fid, 'albanyzoningdesignations', ST_Force2D(wkb_geometry) from albanyzoningdesignations;
 insert into lookup  
 select ogc_fid, 'antiochgeneralplan', ST_Force2D(wkb_geometry) from antiochgeneralplan;
