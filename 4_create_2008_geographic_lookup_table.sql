@@ -22,3 +22,12 @@ insert into zoning.bayarea_2008
 select ogc_fid, 'lgcy_znng_solano', ST_Force2D(wkb_geometry) from lgcy_znng_solano;
 insert into zoning.bayarea_2008  
 select ogc_fid, 'lgcy_znng_sonoma', ST_Force2D(wkb_geometry) from lgcy_znng_sonoma;
+--
+ALTER TABLE zoning.bayarea_2008 ADD COLUMN id INTEGER;
+CREATE SEQUENCE zoning_bayarea_2008_id_seq;
+UPDATE zoning.bayarea_2008  SET id = nextval('zoning_bayarea_2008_id_seq');
+ALTER TABLE zoning.bayarea_2008 ALTER COLUMN id SET DEFAULT nextval('zoning_bayarea_2008_id_seq');
+ALTER TABLE zoning.bayarea_2008 ALTER COLUMN id SET NOT NULL;
+ALTER TABLE zoning.bayarea_2008 ADD PRIMARY KEY (id);
+--
+CREATE INDEX bayarea_2008_gix ON zoning.bayarea_2008 USING GIST (wkb_geometry);
