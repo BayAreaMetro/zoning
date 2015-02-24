@@ -23,7 +23,7 @@ In short, we:
 4. Summarize Sourcing Process
 
 ## Results:
-A summary table for (1) is available in `qa-summary.csv`
+A summary table for (1) is available in `data/qa-summary.csv`
 
 An updated parcel file is forthcoming. 
 
