@@ -34,32 +34,26 @@ see `7_create_nozoning_parcels.py`
 ####parcels-and-zoning
 parcel_id, zoning_id (data/parcels_to_zoning_2012.csv)
 
-Loaded usinq SQL. See `1_load_legacy_zoning_table.sql`
-
 ####zoning-and-use
 zoning_id -> columns about allowed use (data/zoning_codes_base2012_sheet1.csv)
 
 ####parcels
 parcel_id, geometry (ParcelsBuildings.gdb.zip - Feature Class ba8)
 
-Loaded Using [QGIS Database Manager to Input Layer to PostGIS](http://docs.qgis.org/2.0/en/docs/training_manual/databases/db_manager.html#importing-data-into-a-database-with-db-manager) 
+Note: Loaded Using QGIS
 
 ####zoning-2008
 geometry -> zoning type (collected in 2008) - available for entire Bay Area. Mostly Homogeneous Schema [^2] 
 (data/PLANNEDLANDUSE_2008.gdb)
--Loaded Using OGR2OGR. see `4_load_2008_zoning.sh`
--Combined using SQL. see `4_create_2008_geographic_lookup_table.sql`
 
 ####zoning-2012
 geometry -> zoning type (collected in 2012) - fewer jurisdictions than 2008. Heterogeneous Schema 
 (data/zoning_2012.gdb)
--Loaded Using OGR2OGR. see `5_load_2012_zoning.sh`
--Combined using SQL. see `5_create_2012_geographic_lookup_table.sql`[^3]
 
 ####place-names
 The ADMINISTRATIVE.Places feature class from the MTC GIS Database (conversations with staff indicate that this may be from TomTom, although that would need to be confirmed.) (exported here to data/places.shp)
 
-Loaded from MTC GIS SQL Server to PostGIS using ArcMap
+Note: Loaded from MTC GIS SQL Server to PostGIS using ArcMap
 
 ###New Data
 
