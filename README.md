@@ -15,11 +15,13 @@ Then, we create [re-built-parcel-data](#re-built-parcel-data), assigning zoning 
 
 Also, we summarize [re-built-parcel-data](#re-built-parcel-data) by [place-names](#place-names).
 
-###Data Summaries, Transformation, Re-building:
+##SQL Used to Do This:
 
-`7_create_nozoning_parcels.py`
+#### A. Enumerate Parcels Missing Zoning Data
+see `7_create_nozoning_parcels.py`
 
 #### B. Summarize Potential Sources of Missing Zoning Data
+
 
 #### C. Source Missing Zoning Data
 
