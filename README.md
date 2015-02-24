@@ -9,11 +9,11 @@ We need to know how each parcel is zoned in order to estimate how and where deve
 
 ## Method
 
-First we ask, are any of the [parcels-without-zoning](#parcels-without-zoning) covered by geometry in [zoning-2008-and-geometry](#zoning-2008-and-geometry) or [zoning-2012-and-geometry](#zoning-2012-and-geometry)? If so, in which [place-names-and-geometry](#place-names-and-geometry)? 
+First we ask, are any of the [parcels-without-zoning](#parcels-without-zoning) covered by geometry in [zoning-2008](#zoning-2008) or [zoning-2012](#zoning-2012)? If so, in which [place-names](#place-names)? 
 
-Then, we create [re-built-parcel-data](#re-built-parcel-data), assigning zoning from [parcels-and-zoning](#parcels-and-zoning), if existing, then [zoning-2012-and-geometry](#zoning-2012-and-geometry), if existing, or [zoning-2012-and-geometry](#zoning-2008-and-geometry) if not. If not any zoning, report Null. 
+Then, we create [re-built-parcel-data](#re-built-parcel-data), assigning zoning from [parcels-and-zoning](#parcels-and-zoning), if existing, then [zoning-2012](#zoning-2012), if existing, or [zoning-2012](#zoning-2008) if not. If not any zoning, report Null. 
 
-Also, we summarize [re-built-parcel-data](#re-built-parcel-data) by [place-names-and-geometry](#place-names-and-geometry).
+Also, we summarize [re-built-parcel-data](#re-built-parcel-data) by [place-names](#place-names).
 
 ###Data Summaries, Transformation, Re-building:
 
@@ -37,24 +37,24 @@ Loaded usinq SQL. See `1_load_legacy_zoning_table.sql`
 ####zoning-and-use
 zoning_id -> columns about allowed use (data/zoning_codes_base2012_sheet1.csv)
 
-####parcels-and-geometry
+####parcels
 parcel_id, geometry (ParcelsBuildings.gdb.zip - Feature Class ba8)
 
 Loaded Using [QGIS Database Manager to Input Layer to PostGIS](http://docs.qgis.org/2.0/en/docs/training_manual/databases/db_manager.html#importing-data-into-a-database-with-db-manager) 
 
-####zoning-2008-and-geometry
+####zoning-2008
 geometry -> zoning type (collected in 2008) - available for entire Bay Area. Mostly Homogeneous Schema [^2] 
 (data/PLANNEDLANDUSE_2008.gdb)
 -Loaded Using OGR2OGR. see `4_load_2008_zoning.sh`
 -Combined using SQL. see `4_create_2008_geographic_lookup_table.sql`
 
-####zoning-2012-and-geometry
+####zoning-2012
 geometry -> zoning type (collected in 2012) - fewer jurisdictions than 2008. Heterogeneous Schema 
 (data/zoning_2012.gdb)
 -Loaded Using OGR2OGR. see `5_load_2012_zoning.sh`
 -Combined using SQL. see `5_create_2012_geographic_lookup_table.sql`[^3]
 
-####place-names-and-geometry
+####place-names
 The ADMINISTRATIVE.Places feature class from the MTC GIS Database (conversations with staff indicate that this may be from TomTom, although that would need to be confirmed.) (exported here to data/places.shp)
 
 Loaded from MTC GIS SQL Server to PostGIS using ArcMap
