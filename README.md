@@ -32,23 +32,31 @@ An updated parcel file is forthcoming.
 ###Legacy Data
 
 ####parcels-and-zoning
-parcel_id, zoning_id (data/parcels_to_zoning_2012.csv)
+parcel_id, zoning_id 
+
+in data/parcels_to_zoning_2012.csv
 
 ####zoning-and-use
-zoning_id -> columns about allowed use (data/zoning_codes_base2012_sheet1.csv)
+zoning_id -> columns about allowed use 
+
+in data/zoning_codes_base2012_sheet1.csv
 
 ####parcels
-parcel_id, geometry (ParcelsBuildings.gdb.zip - Feature Class ba8)
+parcel_id, geometry 
+
+in ParcelsBuildings.gdb.zip - Feature Class ba8
 
 Note: Loaded Using QGIS
 
 ####zoning-2008
 geometry -> zoning type (collected in 2008) - available for entire Bay Area. Mostly Homogeneous Schema [^2] 
-(data/PLANNEDLANDUSE_2008.gdb)
+
+in data/PLANNEDLANDUSE_2008.gdb
 
 ####zoning-2012
 geometry -> zoning type (collected in 2012) - fewer jurisdictions than 2008. Heterogeneous Schema 
-(data/zoning_2012.gdb)
+
+in data/zoning_2012.gdb
 
 ####place-names
 The ADMINISTRATIVE.Places feature class from the MTC GIS Database (conversations with staff indicate that this may be from TomTom, although that would need to be confirmed.) (exported here to data/places.shp)
