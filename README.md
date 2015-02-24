@@ -7,6 +7,24 @@ Requirements to use these scripts include PostgreSQL, PostGIS, Python (psycopg2)
 
 We need to know how each parcel is zoned in order to estimate how and where development on parcels could change. 
 
+## Method
+
+First we ask, are any of the [parcels-without-zoning](#parcels-without-zoning) covered by geometry in [zoning-2008-and-geometry](#zoning-2008-and-geometry) or [zoning-2012-and-geometry](#zoning-2012-and-geometry)? If so, in which [place-names-and-geometry](#place-names-and-geometry)? 
+
+Then, we create [re-built-parcel-data](#re-built-parcel-data), assigning zoning from [parcels-and-zoning](#parcels-and-zoning), if existing, then [zoning-2012-and-geometry](#zoning-2012-and-geometry), if existing, or [zoning-2012-and-geometry](#zoning-2008-and-geometry) if not. If not any zoning, report Null. 
+
+Also, we summarize [re-built-parcel-data](#re-built-parcel-data) by [place-names-and-geometry](#place-names-and-geometry).
+
+###Data Summaries, Transformation, Re-building:
+
+`7_create_nozoning_parcels.py`
+
+#### B. Summarize Potential Sources of Missing Zoning Data
+
+#### C. Source Missing Zoning Data
+
+#### D. Summarize Sourcing Process
+
 ## Data 
 
 ###Legacy Data
@@ -48,24 +66,6 @@ Loaded from MTC GIS SQL Server to PostGIS using ArcMap
 
 ####re-built-parcel-data:
 (8). id, geometry, source table
-
-## Method
-
-Are any of the [parcels-without-zoning](#parcels-without-zoning) covered by geometry in [zoning-2008-and-geometry](#zoning-2008-and-geometry) or [zoning-2012-and-geometry](#zoning-2012-and-geometry)? If so, in which [place-names-and-geometry](#place-names-and-geometry)? 
-
-Then, we create [re-built-parcel-data](#re-built-parcel-data), assigning zoning from [parcels-and-zoning](#parcels-and-zoning), if existing, then [zoning-2012-and-geometry](#zoning-2012-and-geometry), if existing, or [zoning-2012-and-geometry](#zoning-2008-and-geometry) if not. If not any zoning, report Null. 
-
-Also, we summarize [re-built-parcel-data](#re-built-parcel-data) by [place-names-and-geometry](#place-names-and-geometry).
-
-###Data Summaries, Transformation, Re-building:
-
-`7_create_nozoning_parcels.py`
-
-#### B. Summarize Potential Sources of Missing Zoning Data
-
-#### C. Source Missing Zoning Data
-
-#### D. Summarize Sourcing Process
 
 [1] Please note that file naming conventions are copied from the source data naming conventions to avoid confusion. Ideally in the future, a consistent naming convention should be applied.
 
