@@ -18,10 +18,8 @@ Also, we summarize [re-built-parcel-data](#re-built-parcel-data) by [place-names
 ##SQL Used to Do This:
 
 #### A. Enumerate Parcels Missing Zoning Data
-see `7_create_nozoning_parcels.py`
 
 #### B. Summarize Potential Sources of Missing Zoning Data
-
 
 #### C. Source Missing Zoning Data
 
