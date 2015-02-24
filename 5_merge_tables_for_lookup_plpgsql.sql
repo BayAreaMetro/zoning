@@ -1,4 +1,4 @@
-﻿#the structure from this is from some nice person on stackoverflow, but i closed that tab and can't find it right now
+﻿--the structure from this is from some nice person on stackoverflow, but i closed that tab and can't find it right now
 CREATE OR REPLACE FUNCTION mergetables(sql_string text) RETURNS TEXT AS $$
 DECLARE
     	tables CURSOR FOR SELECT * 

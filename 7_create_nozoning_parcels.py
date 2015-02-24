@@ -34,7 +34,9 @@ parcels_without_zoning_ids = [not x for x in prcl_has_zoning_id]
 query_ids= list(prcl_ids[parcels_without_zoning_ids])
 
 #create new table from missing values
-prcls_mssng_znng_frm_db = cur.execute("CREATE TABLE nozoning AS SELECT * FROM parcels_mpg WHERE joinnuma = ANY(%s)",[query_ids])
+prcls_mssng_znng_frm_db = cur.execute("CREATE TABLE zoning.nozoning AS SELECT * FROM parcels_mpg WHERE joinnuma = ANY(%s)",[query_ids])
+
+prcls_mssng_znng_frm_db = cur.execute("CREATE INDEX nozoning_gix ON zoning.nozoning USING GIST (geom);")
 
 conn.commit()
 

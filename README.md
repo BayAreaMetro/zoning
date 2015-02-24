@@ -14,22 +14,32 @@ We need to know how each parcel is zoned in order to estimate how and where deve
 ####parcels-and-zoning
 parcel_id, zoning_id (data/parcels_to_zoning_2012.csv)
 
+Loaded usinq SQL. See `1_load_legacy_zoning_table.sql`
+
 ####zoning-and-use
 zoning_id -> columns about allowed use (data/zoning_codes_base2012_sheet1.csv)
 
 ####parcels-and-geometry
 parcel_id, geometry (ParcelsBuildings.gdb.zip - Feature Class ba8)
 
+Loaded Using [QGIS Database Manager to Input Layer to PostGIS](http://docs.qgis.org/2.0/en/docs/training_manual/databases/db_manager.html#importing-data-into-a-database-with-db-manager) 
+
 ####zoning-2008-and-geometry
 geometry -> zoning type (collected in 2008) - available for entire Bay Area. Mostly Homogeneous Schema [^2] 
 (data/PLANNEDLANDUSE_2008.gdb)
+-Loaded Using OGR2OGR. see `4_load_2008_zoning.sh`
+-Combined using SQL. see `4_create_2008_geographic_lookup_table.sql`
 
 ####zoning-2012-and-geometry
 geometry -> zoning type (collected in 2012) - fewer jurisdictions than 2008. Heterogeneous Schema 
 (data/zoning_2012.gdb)
+-Loaded Using OGR2OGR. see `5_load_2012_zoning.sh`
+-Combined using SQL. see `5_create_2012_geographic_lookup_table.sql`[^3]
 
 ####place-names-and-geometry
 The ADMINISTRATIVE.Places feature class from the MTC GIS Database (conversations with staff indicate that this may be from TomTom, although that would need to be confirmed.) (exported here to data/places.shp)
+
+Loaded from MTC GIS SQL Server to PostGIS using ArcMap
 
 ###New Data
 
@@ -41,49 +51,21 @@ The ADMINISTRATIVE.Places feature class from the MTC GIS Database (conversations
 
 ## Method
 
-### Overview:
+Are any of the [parcels-without-zoning](#parcels-without-zoning) covered by geometry in [zoning-2008-and-geometry](#zoning-2008-and-geometry) or [zoning-2012-and-geometry](#zoning-2012-and-geometry)? If so, in which [place-names-and-geometry](#place-names-and-geometry)? 
 
-A. Create [parcels-without-zoning](#parcels-without-zoning) of the parcels for which we do not have zoning information. 
+Then, we create [re-built-parcel-data](#re-built-parcel-data), assigning zoning from [parcels-and-zoning](#parcels-and-zoning), if existing, then [zoning-2012-and-geometry](#zoning-2012-and-geometry), if existing, or [zoning-2012-and-geometry](#zoning-2008-and-geometry) if not. If not any zoning, report Null. 
 
-B. Are any of the [parcels-without-zoning](#parcels-without-zoning) covered by geometry in [zoning-2008-and-geometry](#zoning-2008-and-geometry) or [zoning-2012-and-geometry](#zoning-2012-and-geometry)? If so, in which [place-names-and-geometry](#place-names-and-geometry)? 
-
-C. Then, we create [re-built-parcel-data](#re-built-parcel-data), assigning zoning from [parcels-and-zoning](#parcels-and-zoning), if existing, then [zoning-2012-and-geometry](#zoning-2012-and-geometry), if existing, or [zoning-2012-and-geometry](#zoning-2008-and-geometry) if not. If not any zoning, report Null. 
-
-D. Also, we summarize [re-built-parcel-data](#re-built-parcel-data) by [place-names-and-geometry](#place-names-and-geometry).
+Also, we summarize [re-built-parcel-data](#re-built-parcel-data) by [place-names-and-geometry](#place-names-and-geometry).
 
 ###Data Summaries, Transformation, Re-building:
 
-#### A. Parcels without Zoning (7) 
-See `7_create_nozoning_parcels.py` in this repository.
+`7_create_nozoning_parcels.py`
 
 #### B. Summarize Potential Sources of Missing Zoning Data
 
 #### C. Source Missing Zoning Data
 
 #### D. Summarize Sourcing Process
-
-#### Technical Appendix:
-
-##### Loading Data (and pre-processing):
-Where efficient, tables were loaded into PostGIS. The process for loading is listed below by source table number
-
-(1)
--Loaded usinq SQL. See `1_load_legacy_zoning_table.sql`
-
-(3) 
--Loaded Using [QGIS Database Manager to Input Layer to PostGIS](http://docs.qgis.org/2.0/en/docs/training_manual/databases/db_manager.html#importing-data-into-a-database-with-db-manager) 
-
-(4) 
--Loaded Using OGR2OGR. see `4_load_2008_zoning.sh`
--Combined using SQL. see `4_create_2008_geographic_lookup_table.sql`
-
-(5) 
--Loaded Using OGR2OGR. see `5_load_2012_zoning.sh`
--Combined using SQL. see `5_create_2012_geographic_lookup_table.sql`[^3]
-
-(6) Imported directly from MTC GIS SQL Server to PostGIS using ArcMap
-
-(7) Imported directly from MTC GIS SQL Server to PostGIS using [QGIS Database Manager](http://docs.qgis.org/2.0/en/docs/training_manual/databases/db_manager.html#importing-data-into-a-database-with-db-manager)
 
 [1] Please note that file naming conventions are copied from the source data naming conventions to avoid confusion. Ideally in the future, a consistent naming convention should be applied.
 
