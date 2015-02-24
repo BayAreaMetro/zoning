@@ -9,21 +9,23 @@ We need to know how each parcel is zoned in order to estimate how and where deve
 
 ## Method
 
-First we ask, are any of the [parcels-without-zoning](#parcels-without-zoning) covered by geometry in [zoning-2008](#zoning-2008) or [zoning-2012](#zoning-2012)? If so, in which [place-names](#place-names)? 
+First we ask, are any of the [parcels-without-zoning](#parcels-without-zoning) covered by geometry in [zoning-2008](#zoning-2008) or [zoning-2012](#zoning-2012)? If so, in which [place-names](#place-names)? The SQL for these steps is in `qa-summary.sql`.
 
 Then, we create [re-built-parcel-data](#re-built-parcel-data), assigning zoning from [parcels-and-zoning](#parcels-and-zoning), if existing, then [zoning-2012](#zoning-2012), if existing, or [zoning-2012](#zoning-2008) if not. If not any zoning, report Null. 
 
 Also, we summarize [re-built-parcel-data](#re-built-parcel-data) by [place-names](#place-names).
 
-##SQL Used to Do This:
+In short, we: 
 
-#### A. Enumerate Parcels Missing Zoning Data
+-Enumerate Parcels Missing Zoning Data
+-Summarize Potential Sources of Missing Zoning Data
+-Source Missing Zoning Data
+-Summarize Sourcing Process
 
-#### B. Summarize Potential Sources of Missing Zoning Data
+## Results:
+A summary table for the qa-summary is available in `qa-summary.csv`
 
-#### C. Source Missing Zoning Data
-
-#### D. Summarize Sourcing Process
+An updated parcel file is forthcoming. 
 
 ## Data 
 
@@ -57,6 +59,7 @@ Note: Loaded from MTC GIS SQL Server to PostGIS using ArcMap
 
 ####parcels-without-zoning:
 (7). id, geometry
+see `parcels-without-zoning-create.py`
 
 ####re-built-parcel-data:
 (8). id, geometry, source table

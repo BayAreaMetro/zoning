@@ -55,7 +55,6 @@ FROM zoning.nozoning_zoning_ids12 p1
 --count total parcels in counties
 SELECT name_1, count(*) from zoning.parcels_in_places group by name_1;
 
-
 --count total parcels in places
 CREATE VIEW countallparcels AS 
 SELECT name, count(*) as ParcelCount from zoning.parcels_in_places group by name;
