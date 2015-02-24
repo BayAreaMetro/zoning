@@ -9,23 +9,18 @@ We need to know how each parcel is zoned in order to estimate how and where deve
 
 ## Method
 
-First we ask, are any of the [parcels-without-zoning](#parcels-without-zoning) covered by geometry in [zoning-2008](#zoning-2008) or [zoning-2012](#zoning-2012)? If so, in which [place-names](#place-names)? The SQL for these steps is in `qa-summary.sql`.
+First we ask, are any of the [parcels-without-zoning](#parcels-without-zoning) covered by geometry in [zoning-2008](#zoning-2008) or [zoning-2012](#zoning-2012)? If so, in which [place-names](#place-names)? 
 
 Then, we create [re-built-parcel-data](#re-built-parcel-data), assigning zoning from [parcels-and-zoning](#parcels-and-zoning), if existing, then [zoning-2012](#zoning-2012), if existing, or [zoning-2008](#zoning-2008) if not. If not any zoning, report Null. 
 
 Also, we summarize [re-built-parcel-data](#re-built-parcel-data) by [place-names](#place-names).
 
-In short, we: 
-
-1. Enumerate Parcels Missing Zoning Data
-2. Summarize Potential Sources of Missing Zoning Data
-3. Source Missing Zoning Data
-4. Summarize Sourcing Process
-
 ## Results:
-A summary table for (1) is available in `data/qa-summary.csv`
 
-An updated parcel file is forthcoming. 
+1. Enumerate Parcels Missing Zoning Data (`parcels-without-zoning-create.py`)
+2. Summarize Potential Sources of Missing Zoning Data (`data/qa-summary.csv`)
+3. Source Missing Zoning Data (in progress)
+4. Summarize Sourcing Process (in progress)
 
 ## Data 
 
