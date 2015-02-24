@@ -11,7 +11,7 @@ We need to know how each parcel is zoned in order to estimate how and where deve
 
 First we ask, are any of the [parcels-without-zoning](#parcels-without-zoning) covered by geometry in [zoning-2008](#zoning-2008) or [zoning-2012](#zoning-2012)? If so, in which [place-names](#place-names)? The SQL for these steps is in `qa-summary.sql`.
 
-Then, we create [re-built-parcel-data](#re-built-parcel-data), assigning zoning from [parcels-and-zoning](#parcels-and-zoning), if existing, then [zoning-2012](#zoning-2012), if existing, or [zoning-2012](#zoning-2008) if not. If not any zoning, report Null. 
+Then, we create [re-built-parcel-data](#re-built-parcel-data), assigning zoning from [parcels-and-zoning](#parcels-and-zoning), if existing, then [zoning-2012](#zoning-2012), if existing, or [zoning-2008](#zoning-2008) if not. If not any zoning, report Null. 
 
 Also, we summarize [re-built-parcel-data](#re-built-parcel-data) by [place-names](#place-names).
 
