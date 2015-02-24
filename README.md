@@ -3,38 +3,90 @@ QA and cleaning of zoning data
 
 Requirements to use these scripts include PostgreSQL, PostGIS, Python (psycopg2), and GDAL. 
 
-## Combining Legacy Zoning Data
+## Problem Statement
 
-Our starting point is:
+We need to know how each parcel is zoned in order to estimate how and where development on parcels could change. 
 
-1. a legacy set of standardized zoning assignments according to parcel with the columns: parcel_id, zoning_id
-2. a standardized zoning lookup table with the columns: zoning_id, allowed_use
-3. a legacy set of parcel data with an ID and a geometry: parcel_id, geom
+## Data 
 
-Because the accuracy and consistency of this data is critical to understanding regional growth, we started by studying the consistency with source data from regional and local jurisdications. Parcel data and zoning data are inconsistent at best, but we hope to at least understand how errors in it may affect our final analysis. 
+###Legacy Data
 
-Legacy zoning data also included regional zoning information:
+####parcels-and-zoning
+parcel_id, zoning_id (data/parcels_to_zoning_2012.csv)
 
-1. A file compiled in 2008 that covers most of the region
-2. A file compiled in 2012 that covers jurisdictions in more geographic detail.
+####zoning-and-use
+zoning_id -> columns about allowed use (data/zoning_codes_base2012_sheet1.csv)
 
+####parcels-and-geometry
+parcel_id, geometry (ParcelsBuildings.gdb.zip - Feature Class ba8)
 
+####zoning-2008-and-geometry
+geometry -> zoning type (collected in 2008) - available for entire Bay Area. Mostly Homogeneous Schema [^2] 
+(data/PLANNEDLANDUSE_2008.gdb)
 
-Our first task was to construct a table of the parcels for which we did not have zoning information, and to understand whether these parcels were covered geographically by the zoning data compiled in 2008 and/or 2012. 
+####zoning-2012-and-geometry
+geometry -> zoning type (collected in 2012) - fewer jurisdictions than 2008. Heterogeneous Schema 
+(data/zoning_2012.gdb)
 
-In order to accomplish this task, at a high level, we created tables with collections of all of the geometries for zoning in 2008 and then in 2012, and then cross-referenced them with our existing parcel geometries. 
+####place-names-and-geometry
+The ADMINISTRATIVE.Places feature class from the MTC GIS Database (conversations with staff indicate that this may be from TomTom, although that would need to be confirmed.) (exported here to data/places.shp)
 
-At a technical level, 
-These data were received as 2 Personal GeoDatabases. In both cases, each jurisdiction or geographic area has its own feature class. In the 2012 dataset, each feature class contained different columns. In the 2008 data set tables were consistent, with the exception of a Priority Development Areas feature class. 
+###New Data
 
-We converted the personal Geodatabases to File GeoDatabases using ArcMap with an Editor License. In short, to do this you export the Personal Geodatabase to XML by right clicking on it (in ArcCatalog) and selecting "Export to XML." Then you create a new File geodatabase and then right click and "Import from XML." [read more here](http://help.arcgis.com/en/arcgisdesktop/10.0/help/index.html#//003n00000032000000)
+####parcels-without-zoning:
+(7). id, geometry
 
-After that, we used OGR2OGR to load the data into PostGIS. Example scripts are in this repository [here](https://github.com/MetropolitanTransportationCommission/land-use-zoning-checks/blob/master/copy_legacy_zoning_geodatabase_to_postgis). 
+####re-built-parcel-data:
+(8). id, geometry, source table
 
-Since the 2012 Data included more than 100 tables, we adapted a script to merge the geometries into 1 lookup table as seen in this [script](https://github.com/MetropolitanTransportationCommission/land-use-zoning-checks/blob/master/merge_tables_for_lookup_plpgsql.sql)
+## Method
 
-Finally, we wanted to know which data was missing by administrative jurisdiction. 
+### Overview:
 
-For this final goal, we used a version of the Census Edges file for places that has been clipped for water features and city boundaries and several sql queries included in this repository. 
+A. Create [parcels-without-zoning](#parcels-without-zoning) of the parcels for which we do not have zoning information. 
 
+B. Are any of the [parcels-without-zoning](#parcels-without-zoning) covered by geometry in [zoning-2008-and-geometry](#zoning-2008-and-geometry) or [zoning-2012-and-geometry](#zoning-2012-and-geometry)? If so, in which [place-names-and-geometry](#place-names-and-geometry)? 
 
+C. Then, we create [re-built-parcel-data](#re-built-parcel-data), assigning zoning from [parcels-and-zoning](#parcels-and-zoning), if existing, then [zoning-2012-and-geometry](#zoning-2012-and-geometry), if existing, or [zoning-2012-and-geometry](#zoning-2008-and-geometry) if not. If not any zoning, report Null. 
+
+D. Also, we summarize [re-built-parcel-data](#re-built-parcel-data) by [place-names-and-geometry](#place-names-and-geometry).
+
+###Data Summaries, Transformation, Re-building:
+
+#### A. Parcels without Zoning (7) 
+See `7_create_nozoning_parcels.py` in this repository.
+
+#### B. Summarize Potential Sources of Missing Zoning Data
+
+#### C. Source Missing Zoning Data
+
+#### D. Summarize Sourcing Process
+
+#### Technical Appendix:
+
+##### Loading Data (and pre-processing):
+Where efficient, tables were loaded into PostGIS. The process for loading is listed below by source table number
+
+(1)
+-Loaded usinq SQL. See `1_load_legacy_zoning_table.sql`
+
+(3) 
+-Loaded Using [QGIS Database Manager to Input Layer to PostGIS](http://docs.qgis.org/2.0/en/docs/training_manual/databases/db_manager.html#importing-data-into-a-database-with-db-manager) 
+
+(4) 
+-Loaded Using OGR2OGR. see `4_load_2008_zoning.sh`
+-Combined using SQL. see `4_create_2008_geographic_lookup_table.sql`
+
+(5) 
+-Loaded Using OGR2OGR. see `5_load_2012_zoning.sh`
+-Combined using SQL. see `5_create_2012_geographic_lookup_table.sql`[^3]
+
+(6) Imported directly from MTC GIS SQL Server to PostGIS using ArcMap
+
+(7) Imported directly from MTC GIS SQL Server to PostGIS using [QGIS Database Manager](http://docs.qgis.org/2.0/en/docs/training_manual/databases/db_manager.html#importing-data-into-a-database-with-db-manager)
+
+[1] Please note that file naming conventions are copied from the source data naming conventions to avoid confusion. Ideally in the future, a consistent naming convention should be applied.
+
+[2] These data were received as 2 Personal GeoDatabases. In both cases, each jurisdiction or geographic area has its own feature class. In the 2012 dataset, each feature class contained different columns. In the 2008 data set tables were consistent, with the exception of a Priority Development Areas feature class. We converted the personal Geodatabases to File GeoDatabases using ArcMap with an Editor License. In short, to do this you export the Personal Geodatabase to XML by right clicking on it (in ArcCatalog) and selecting "Export to XML." Then you create a new File geodatabase and then right click and "Import from XML." [read more here](http://help.arcgis.com/en/arcgisdesktop/10.0/help/index.html#//003n00000032000000). These File Geodabases are in the data directory. 
+
+[3] Since the 2012 Data included more than 100 tables, we created the sql to merge the tables using `5_merge_tables_for_lookup_plpgsql.sql`
