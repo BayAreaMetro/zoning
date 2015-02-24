@@ -17,10 +17,10 @@ Also, we summarize [re-built-parcel-data](#re-built-parcel-data) by [place-names
 
 In short, we: 
 
--Enumerate Parcels Missing Zoning Data
--Summarize Potential Sources of Missing Zoning Data
--Source Missing Zoning Data
--Summarize Sourcing Process
+1. Enumerate Parcels Missing Zoning Data
+2. Summarize Potential Sources of Missing Zoning Data
+3. Source Missing Zoning Data
+4. Summarize Sourcing Process
 
 ## Results:
 A summary table for the qa-summary is available in `qa-summary.csv`
