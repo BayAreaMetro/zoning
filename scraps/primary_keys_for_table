@@ -1,0 +1,13 @@
+ALTER TABLE zoning.nozoning_zoning_ids08 ADD COLUMN pid INTEGER;
+CREATE SEQUENCE zoning_nozoning_zoning_ids08_id_seq;
+UPDATE zoning.nozoning_zoning_ids08  SET pid = nextval('zoning_nozoning_zoning_ids08_id_seq');
+ALTER TABLE zoning.nozoning_zoning_ids08 ALTER COLUMN pid SET DEFAULT nextval('zoning_nozoning_zoning_ids08_id_seq');
+ALTER TABLE zoning.nozoning_zoning_ids08 ALTER COLUMN pid SET NOT NULL;
+ALTER TABLE zoning.nozoning_zoning_ids08 ADD PRIMARY KEY (pid);
+
+ALTER TABLE zoning.nozoning_zoning_ids12 ADD COLUMN pid INTEGER;
+CREATE SEQUENCE zoning_nozoning_zoning_ids12_id_seq;
+UPDATE zoning.nozoning_zoning_ids12  SET pid = nextval('zoning_nozoning_zoning_ids12_id_seq');
+ALTER TABLE zoning.nozoning_zoning_ids12 ALTER COLUMN pid SET DEFAULT nextval('zoning_nozoning_zoning_ids12_id_seq');
+ALTER TABLE zoning.nozoning_zoning_ids12 ALTER COLUMN pid SET NOT NULL;
+ALTER TABLE zoning.nozoning_zoning_ids12 ADD PRIMARY KEY (pid);
