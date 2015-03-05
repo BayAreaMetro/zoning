@@ -13,8 +13,8 @@ BEGIN
 			' as t WHERE ogc_fid=' || 
 			z.ogc_fid || ') s) g '
 	FROM
-	zoning_legacy_2012.lookup as z,
-	zoning.parcels_generic_types as p
+	zoning_legacy_2012.lookup as z
+--	zoning.parcels_generic_types as p
 	WHERE ST_Intersects(z.geom, pgeom)
 	LIMIT 1);
 	RAISE NOTICE '(%)', sql_string;
