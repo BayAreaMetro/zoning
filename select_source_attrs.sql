@@ -23,6 +23,3 @@ BEGIN
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
-  COST 100;
-ALTER FUNCTION public.zn_ori()
-  OWNER TO williamalonso;
