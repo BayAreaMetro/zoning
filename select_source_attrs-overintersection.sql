@@ -4,6 +4,7 @@ $BODY$
 DECLARE 
 result text;
 sql_string text := '';
+intersections integer;
 BEGIN
 	IF EXISTS(
 			SELECT * FROM
@@ -30,7 +31,11 @@ BEGIN
 			RAISE NOTICE '(%)', sql_string;
 			EXECUTE sql_string INTO result;
 		ELSE
-			result := '>1 intersection';
+			SELECT count(*) FROM
+			zoning_legacy_2012.lookup as z
+			WHERE ST_Intersects(z.geom, pgeom) INTO intersections;
+			RAISE NOTICE '(%)', intersections;
+			result := hstore(ARRAY[['novalue',CAST( intersections AS text )]]);
 			--WHATS BELOW DOESN'T QUITE WORK FOR RETURNING PARCELS WITH MULTIPLE INTERSECTING ZONING GEOMS
 			--THE PROBLEM IS THAT z.tablename returns multiple values, when just need first
 			--tried "first" function from postgres wiki
@@ -50,7 +55,7 @@ BEGIN
 		END IF;
 	ELSE
 	RAISE NOTICE 'no intersection';
-	result := 'no intersecting source';	
+	result := hstore(ARRAY[['novalue','0']]);
 	END IF;
 RETURN result;
 END;
