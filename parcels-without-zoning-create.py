@@ -2,6 +2,7 @@ import os
 USERNAME = os.environ['LANDUSE_USERNAME']
 PASSWORD = os.environ['LANDUSE_PASSWORD']
 HOST = os.environ['LANDUSE_HOST']
+HOST = os.environ['LANDUSE_PORT']
 
 import pandas as pd
 import numpy as np
@@ -9,14 +10,8 @@ import psycopg2
 import numpy 
 psycopg2.extensions.register_adapter(numpy.int64, psycopg2._psycopg.AsIs)
 
-file = "data/prcls2znng.csv"
-
-prcls2znng = pd.read_csv(file)
-
-znng_id_arry = prcls2znng['joinnumA']
-
 try:
-    conn=psycopg2.connect("dbname=landuse user=%s password=%s host=%s" % (USERNAME, PASSWORD, HOST))
+    conn=psycopg2.connect("dbname=landuse user=%s password=%s host=%s port=%s" % (USERNAME, PASSWORD, HOST, PORT))
 except:
     print "I am unable to connect to the database."
 
