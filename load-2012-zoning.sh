@@ -1,10 +1,15 @@
+#This script can be used to re-generate a postgres database dump of 
+#the 2012 zoning data in the source geodatabases
+#it is unlikely that this would need to occur
+#as long as legacy2012.dump already exists
+
 DBUSERNAME=$1
 DBPASSWORD=$2
 DBHOST=$3
 DBPORT=$4
 DBNAME=$5
 
-# RUN THESE COMMENTED COMMANDS IN THE VM, OR ELSE DO THEM IN PGADMIN
+# RUN COMMENTED COMMANDS IN THE VM, OR ELSE DO THEM IN PGADMIN
 # #drop if db exists
 # sudo -u postgres psql legacy_2012_zoning -c "create extension postgis;"
 # sudo -u postgres psql legacy_2012_zoning -c "create extension postgis_topology;"
@@ -39,6 +44,11 @@ data/PlannedLandUsePhase6.gdb
 # sudo -u postgres legacy_2012_zoning -skipfailures -f scraps/alter_table_multiple_schema.sql
 
 # rm legacy2012.dump
+
+# sudo -u postgres psql -f lookup-table-merge-2012-zoning.sql
 # sudo -u postgres pg_dump legacy_2012_zoning > legacy2012.dump
+
 # sudo -u postgres psql landuse < legacy2012.dump
+
+
 
