@@ -1,3 +1,4 @@
+create extension hstore;
 CREATE OR REPLACE FUNCTION select_source_att(pgeom geometry)
   RETURNS text AS
 $BODY$
