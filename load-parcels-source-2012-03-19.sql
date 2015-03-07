@@ -48,3 +48,4 @@ SELECT p2.joinnuma, p1.zoning_id, p2.geom
 FROM zoning.parcels_auth as p1
     RIGHT JOIN public.parcels_mpg as p2 ON p1.joinnuma = p2.joinnuma;
 
+CREATE INDEX parcel_auth_geo_idx ON zoning.parcel_auth_geo USING GIST (geom);
