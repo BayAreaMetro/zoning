@@ -49,3 +49,10 @@ FROM zoning.parcels_auth as p1
     RIGHT JOIN public.parcels_mpg as p2 ON p1.joinnuma = p2.joinnuma;
 
 CREATE INDEX parcel_auth_geo_idx ON zoning.parcel_auth_geo USING GIST (geom);
+
+ALTER TABLE zoning.auth_geo ADD COLUMN id INTEGER;
+CREATE SEQUENCE zoning_auth_geo_id_seq;
+UPDATE zoning.auth_geo  SET id = nextval('zoning_auth_geo_id_seq');
+ALTER TABLE zoning.auth_geo ALTER COLUMN id SET DEFAULT nextval('zoning_auth_geo_id_seq');
+ALTER TABLE zoning.auth_geo ALTER COLUMN id SET NOT NULL;
+ALTER TABLE zoning.auth_geo ADD PRIMARY KEY (id);
