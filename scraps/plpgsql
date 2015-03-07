@@ -1,0 +1,21 @@
+CREATE OR REPLACE FUNCTION public.zn_ori()
+  RETURNS text AS
+$BODY$
+DECLARE 
+result text;
+sql_string text := '';
+BEGIN	
+	sql_string := (SELECT 'SELECT tablename FROM zoning_legacy_2012.' || quote_ident(z.tablename) || 'as tablename WHERE ogc_fid=' || z.ogc_fid || ' '
+	FROM
+	zoning_legacy_2012.lookup as z,
+	zoning.parcels_generic_types as p
+	WHERE ST_Intersects(z.geom, p.geom)
+	LIMIT 1);
+	RAISE NOTICE '(%)', sql_string;
+	EXECUTE sql_string INTO result;
+	RETURN result;
+	--executing the string presents problems with postgis tables-raster, etc. clean them manually from exception raised message.
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
