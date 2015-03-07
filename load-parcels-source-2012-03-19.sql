@@ -48,10 +48,3 @@ SELECT p2.joinnuma, p1.zoning_id, p2.geom
 FROM zoning.parcels_auth as p1
     RIGHT JOIN public.parcels_mpg as p2 ON p1.joinnuma = p2.joinnuma;
 
-/*THIS SHOULDN'T BE NECESSARY NOW
-CREATE TABLE zoning.parcels03_19_geo AS
-SELECT p2.joinnuma, p1.joinnuma, p1.zoning, p2.geom
-FROM zoning.parcels319 as p1
-    INNER JOIN public.parcels_mpg as p2 ON p1.joinnuma = p2.joinnuma;
-
-CREATE INDEX parcels319_geo_idx ON zoning.parcels319_geo USING GIST (geom);*/
