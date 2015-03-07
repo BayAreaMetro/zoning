@@ -1,10 +1,3 @@
-CREATE TABLE zoning.parcels_auth 
-AS SELECT a.parcel_id,a.zoning_id 
-FROM (SELECT parcel_id, zoning 
-	as zoning_id 
-	FROM zoning.parcels03_19_2012) 
-	as a;
-
 create view auth_double_parcels 
 as select a.parcel_id, a.countOf, b.zoning_id 
 FROM (
@@ -16,11 +9,6 @@ FROM (
 	WHERE a.countOf>1;
 
 select * from auth_double_parcels;
-
-CREATE TABLE zoning.auth_geo AS
-SELECT p2.joinnuma, p1.zoning_id, p2.geom
-FROM zoning.parcels_auth as p1
-    RIGHT JOIN public.parcels_mpg as p2 ON p1.parcel_id = p2.joinnuma;
 
 create view auth_geo_double_parcels 
 	as select a.joinnuma, a.countOf 
