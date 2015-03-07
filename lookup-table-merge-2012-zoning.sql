@@ -1,3 +1,9 @@
+CREATE TABLE zoning_legacy_2012.lookup (
+	ogc_fid integer,
+	tablename text, 
+	geom geometry 
+);
+
 --the structure from this is from some nice person on stackoverflow, but i closed that tab and can't find it right now
 CREATE OR REPLACE FUNCTION mergetables(sql_string text) RETURNS TEXT AS $$
 DECLARE
@@ -17,8 +23,7 @@ BEGIN
 	 END LOOP;
 	 RAISE NOTICE 'Table_record:(%)', sql_string;
 	 RETURN sql_string;
-	 --EXECUTE sql_string;
-	 --executing the string presents problems with postgis tables-raster, etc. clean them manually from exception raised message.
+	 EXECUTE sql_string;
 END;
 $$ LANGUAGE plpgsql;
 SELECT mergetables('');
