@@ -10,11 +10,6 @@ FROM (
 
 select * from auth_double_parcels;
 
-CREATE TABLE zoning.auth_geo AS
-SELECT p2.joinnuma, p1.zoning_id, p2.geom
-FROM zoning.parcels_auth as p1
-    RIGHT JOIN public.parcels_mpg as p2 ON p1.parcel_id = p2.joinnuma;
-
 create view auth_geo_double_parcels 
 	as select a.joinnuma, a.countOf 
 	FROM (select joinnuma, count(*) 
