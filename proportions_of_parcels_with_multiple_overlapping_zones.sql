@@ -9,10 +9,8 @@ FROM (SELECT p.joinnuma, z.ogc_fid, ST_Area(p.geom) parcelarea, ST_Intersection(
 		FROM
 		zoning_legacy_2012.lookup z, 
 		zoning.auth_geo p
-      	WHERE ST_Intersects(p.geom, z.geom) 
-      	AND
-      	(SELECT count(*) FROM
-			zoning_legacy_2012.lookup as z
+      	WHERE (SELECT count(*) FROM
+			zoning_legacy_2012.lookup as z, zoning.auth_geo p
 			WHERE ST_Intersects(z.geom, p.geom))>1
       	) foo
 GROUP BY joinnuma, ogc_fid;
