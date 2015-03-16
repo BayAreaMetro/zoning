@@ -91,3 +91,15 @@ GROUP BY
 	parcel_id,
 	ogc_fid,
 	tablename;
+
+ALTER TABLE zoning.parcel_overlaps ADD COLUMN id INTEGER;
+CREATE SEQUENCE zoning_parcel_overlaps_id_seq;
+UPDATE zoning.parcel_overlaps  SET id = nextval('zoning_parcel_overlaps_id_seq');
+ALTER TABLE zoning.parcel_overlaps ALTER COLUMN id SET DEFAULT nextval('zoning_parcel_overlaps_id_seq');
+ALTER TABLE zoning.parcel_overlaps ALTER COLUMN id SET NOT NULL;
+ALTER TABLE zoning.parcel_overlaps ADD PRIMARY KEY (id);
+
+select width_bucket(prop, 0, 100, 9), count(*)
+    from zoning.parcel_overlaps
+group by 1
+order by 1;
