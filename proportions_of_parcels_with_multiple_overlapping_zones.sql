@@ -85,7 +85,7 @@ SELECT p.parcel_id,
  	ST_Intersection(p.geom, z.geom) geom
 FROM zoning.parcels_with_multiple_zoning p,
 zoning.lookup_2012_valid as z
-WHERE ST_Intersects(z.geom, p.geom) f
+WHERE ST_Intersects(z.geom, p.geom)
 ) f
 GROUP BY 
 	parcel_id,
