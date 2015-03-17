@@ -27,3 +27,10 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 SELECT mergetables('');
+
+ALTER TABLE zoning_legacy_2012.lookup ADD COLUMN id INTEGER;
+CREATE SEQUENCE zoning_legacy_2012_lookup_seq;
+UPDATE zoning_legacy_2012.lookup  SET id = nextval('zoning_legacy_2012_lookup_seq');
+ALTER TABLE zoning_legacy_2012.lookup ALTER COLUMN id SET DEFAULT nextval('zoning_legacy_2012_lookup_seq');
+ALTER TABLE zoning_legacy_2012.lookup ALTER COLUMN id SET NOT NULL;
+ALTER TABLE zoning_legacy_2012.lookup ADD PRIMARY KEY (id);
