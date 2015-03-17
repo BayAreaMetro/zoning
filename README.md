@@ -1,7 +1,27 @@
-# land-use-zoning-checks
-QA and cleaning of zoning data
+# Goal
 
-Requirements to use these scripts include PostgreSQL, PostGIS, Python (psycopg2), and GDAL. 
+The goal of this repository ius to keep track of how data from various jurisdictions and sources about zoning were mapped to parcel data. 
+
+# Outcome
+
+The outcome of this process is a table with two rows: parcel_id, zoning_id
+
+We expect that this table will change as we improve on our methods for mapping zoning data to parcels. 
+
+#Process for Creating the Current Table
+The current table is [here](https://mtcdrive.box.com/s/5kppk48fgh1953oj4w2ks50332de3uq5):
+(badata/juris/loc/zoning/parcel_zoning_id_joinnuma.csv)
+
+This table was made by selecting the best candidate files necessary to create it from a folder of legacy files, as detailed here in the file [here](https://github.com/MetropolitanTransportationCommission/land-use-zoning-checks/blob/master/forensics_project_management_folder.txt)
+
+#Generic Zoning Categories and Information (e.g. FAR)
+These data are [here](https://mtcdrive.box.com/s/9pkjbw1lvpd5qtpj1zpc2ccfbxfzly5t)
+
+They are from the source excel file (M:\Data\Urban\JurisdictionsPolicies\ZoningPlans\zoning_codes_base2012.xlsx) and no changes were made to them. 
+
+# Next Version of Table
+
+We are working on an updated version of the zoning to parcel mapping that joins the data to updated parcel data that we have received and attempts to develop a clearer solution to the problem where ~25% of parcels intersect with more than 1 zoning layer. 
 
 ## Problem Statement
 
