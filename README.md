@@ -1,6 +1,6 @@
 # Goal
 
-The goal of this repository ius to keep track of how data from various jurisdictions and sources about zoning were mapped to parcel data. 
+The goal of this repository is to keep track of how data from various jurisdictions and sources about zoning were mapped to parcel data. 
 
 # Outcome
 
