@@ -5,9 +5,12 @@ FILENAME
 HEADERS
 LINE COUNT
 
-for the files in data/csv_process, which are the text files edited in 2012 in the Project Management Folder which was provided as Legacy data (in data/ProjectManagement.zip)
+for the files in data/csv_process, which are the text files 
+edited in 2012 in the Project Management Folder which 
+was available as Legacy data (in data/ProjectManagement.zip)
 
-We used these data to determine, according to line count and date edited, which were the most recent and complete data about zoning at the parcel level.
+We used these data to determine, according to line count and date edited, 
+which were the most recent and complete data about zoning at the parcel level.
 
 EDITED 3/19/2012:
 ==> csv_process/geography_city_3_19.txt <==
