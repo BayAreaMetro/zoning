@@ -12,7 +12,7 @@ We expect that this table will change as we improve on our methods for mapping z
 The current table is [here](https://mtcdrive.box.com/s/5kppk48fgh1953oj4w2ks50332de3uq5):
 (badata/juris/loc/zoning/parcel_zoning_id_joinnuma.csv)
 
-This table was made by selecting the best candidate files necessary to create it from a folder of legacy files, as detailed here in the file [here](https://github.com/MetropolitanTransportationCommission/land-use-zoning-checks/blob/master/forensics_project_management_folder.txt)
+This table was made by selecting the best candidate files necessary to create it from a folder of legacy files, as detailed here in the file [here](https://github.com/MetropolitanTransportationCommission/land-use-zoning-checks/blob/master/forensics_project_management_folder.txt) We then used the sql [here](https://github.com/MetropolitanTransportationCommission/land-use-zoning-checks/blob/master/load-legacy-parcel-to-generic-code.sql) to load that data. 
 
 #Generic Zoning Categories and Information (e.g. FAR)
 These data are [here](https://mtcdrive.box.com/s/9pkjbw1lvpd5qtpj1zpc2ccfbxfzly5t)
