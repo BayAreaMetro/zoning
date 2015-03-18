@@ -7,12 +7,10 @@ sql_string text := '';
 BEGIN
 	sql_string := (SELECT 'SELECT '
 			|| qry.matchfield ||    
-			' FROM (SELECT (r).* 
-			FROM (SELECT (t #= hstore(''wkb_geometry'',null)) as r 
-			FROM zoning_legacy_2012.' || 
+			' FROM zoning_legacy_2012.' || 
 			quote_ident(qry.tablename) || 
 			' as t WHERE ogc_fid=' || 
-			qry.ogc_fid || ') s) g '
+			qry.ogc_fid
 		FROM
 			(select a.parcel_id, a.geom, a.tablename, a.ogc_fid, s.matchfield
 			FROM 
