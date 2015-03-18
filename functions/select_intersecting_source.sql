@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION test_zone(p_id integer)
+CREATE OR REPLACE FUNCTION test_zone(p_id bigint)
   RETURNS text AS
 $BODY$
 DECLARE 

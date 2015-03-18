@@ -61,6 +61,12 @@ SELECT *, ST_Intersection(z.geom,p.geom) FROM
 		zoning.lookup_2012_valid as z, parcel p
 		WHERE ST_Intersects(z.geom, p.geom)
 
+CREATE TABLE pz_valid AS
+SELECT *
+FROM pz
+WHERE ST_IsValid(geom) = TRUE;
+
+
 CREATE INDEX pz_tablename_idx ON pz USING hash (tablename);
 --also do this for all other tablename columns in other tables 
 --that will be used for reference
