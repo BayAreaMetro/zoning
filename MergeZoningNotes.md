@@ -1,19 +1,22 @@
-#notes on the source zoning geodatabase tables/project management spreadsheet
+#Zoning Source GDB Merge
+
+These are notes on merging together all of the tables from the source geodatabases for the generic zoning project. 
+
+The associated merge code is in this repository. 
 
 ##pacifica - pacificageneralplan, pacificagp_022009
-
-using pacificageneralplan and deleting pacificagp_022009 since it contains only 1 row and former has >400 
+Using pacificageneralplan and deleting pacificagp_022009 since it contains only 1 row and former has >400 
 
 ##santa clara - santaclaracity_zoningfeb05, santaclaracountygenplan - REMOVING SANTACLARACITY
-DOESN'T SEEM THAT THE CITY DATA HERE MATCHES THE MATCH FIELD? ZONING NAMES DO NOT MATCH CITY DATA--THEY SEEM TO BE FROM COUNTYGENPLAN
+It doesn't seem that the city data here matches the match field? zoning names do not match city data--they seem to be from countygenplan
 the match field gp_designa does not exist in the city table
-MAY NEED TO RE-DO THE GENERIC ZONING PROCESS FOR THIS ONE
+may need to re-do the generic zoning process for this one
 
 ##Napa 
-does not have a Match field - It seems that zone_desg was used though, although in the general table the spaces are replaced with - that is, RS 4 IS RS-4
+Does not have a Match field - It seems that zone_desg was used though, although in the general table the spaces are replaced with - that is, RS 4 IS RS-4
 
 ##Not in Geodatabase Sources
-these jurisdictions did not have a table in the source geodatabases for zoning.
+These jurisdictions did not have a table in the source geodatabase:
 
 American Canyon
 Cloverdale
