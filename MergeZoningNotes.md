@@ -4,11 +4,13 @@ These are notes on merging together all of the tables from the source geodatabas
 
 The associated merge code is in this repository (lookup-table-merge-2012-zoning.sql)
 
-##pacifica - pacificageneralplan, pacificagp_022009
+##Pacifica
+pacificageneralplan, pacificagp_022009
 Using pacificageneralplan and deleting pacificagp_022009 since it contains only 1 row and former has >400 
 
-##santa clara - santaclaracity_zoningfeb05, santaclaracountygenplan - REMOVING SANTACLARACITY
-It doesn't seem that the city data here matches the match field? zoning names do not match city data--they seem to be from countygenplan.
+##Santa Clara 
+santaclaracity_zoningfeb05, santaclaracountygenplan 
+Removing santaclaracity for now because it doesn't seem that the city data here matches the match field? zoning names do not match city data--they seem to be from countygenplan.
 The match field gp_designa does not exist in the city table.
 May need to re-do the generic zoning process for this one
 
