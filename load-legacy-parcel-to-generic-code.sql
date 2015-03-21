@@ -122,3 +122,15 @@ ALTER TABLE zoning.codes_base2012 ALTER COLUMN RB TYPE BOOLEAN USING RB::BOOLEAN
 ALTER TABLE zoning.codes_base2012 ALTER COLUMN MR TYPE BOOLEAN USING MR::BOOLEAN;
 ALTER TABLE zoning.codes_base2012 ALTER COLUMN MT TYPE BOOLEAN USING MT::BOOLEAN;
 ALTER TABLE zoning.codes_base2012 ALTER COLUMN ME TYPE BOOLEAN USING ME::BOOLEAN;
+
+CREATE TABLE zoning.source_field_name (
+	juris integer, 
+	matchfield text, 
+	tablename text, 
+	city_name text 
+);
+
+COPY zoning.source_field_name FROM '/zoning_data/match_fields_tables_zoning_2012_source.csv' WITH (FORMAT csv, HEADER TRUE);
+
+ALTER TABLE zoning.source_field_name ALTER COLUMN juris SET NOT NULL;
+ALTER TABLE zoning.source_field_name ADD PRIMARY KEY (juris);

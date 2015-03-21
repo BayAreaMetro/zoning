@@ -53,13 +53,24 @@ IN (SELECT parcel_id FROM (SELECT parcel_id, count(*) as countof FROM
 			GROUP BY parcel_id
 			) a WHERE countof>1)
 
--- COULD ALSO CACHE THE FOLLOWING, OR COMBINE WITH ABOVE 
--- e.g. (select *, intersection from parcel,zoning)
---
--- CREATE TABLE pz AS
--- SELECT *, ST_Intersection(z.geom,p.geom) FROM
--- 		zoning.lookup_2012_valid as z, parcel p
--- 		WHERE ST_Intersects(z.geom, p.geom)
+--DID ALSO CACHE THE FOLLOWING, AND ITS USEFUL (SAVES TIME)
+--e.g. (select *, intersection from parcel,zoning)
+
+CREATE TABLE pz AS
+SELECT *, ST_Intersection(z.geom,p.geom) FROM
+		zoning.lookup_2012_valid as z, parcel p
+		WHERE ST_Intersects(z.geom, p.geom)
+
+CREATE TABLE pz_valid AS
+SELECT *
+FROM pz
+WHERE ST_IsValid(geom) = TRUE;
+
+
+CREATE INDEX pz_tablename_idx ON pz USING hash (tablename);
+--also do this for all other tablename columns in other tables 
+--that will be used for reference
+
 
 CREATE TABLE zoning.pmz_parcel_invalid AS
 SELECT *
