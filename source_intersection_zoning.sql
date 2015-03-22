@@ -1,4 +1,4 @@
-CREATE INDEX parcel_idx ON parcels USING GIST (geom);
+CREATE INDEX parcel_idx ON parcel USING GIST (geom);
 
 CREATE INDEX zoning_lookup_idx ON zoning.lookup_new_valid USING GIST (the_geom);
 
@@ -15,7 +15,7 @@ SELECT * from parcel where geom_id
 IN (SELECT geom_id FROM zoning.parcel_intersection_count WHERE countof=0);
 
 
-DROP TABLE zoning.parcels_with_multiple_zoning;
+DROP TABLE IF EXISTS zoning.parcels_with_multiple_zoning;
 CREATE TABLE zoning.parcels_with_multiple_zoning AS
 SELECT * from parcel where geom_id
 IN (SELECT geom_id FROM zoning.parcel_intersection_count WHERE countof>1);
