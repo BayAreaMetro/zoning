@@ -58,14 +58,56 @@ GROUP BY
 	geom_id,
 	id;
 
-ALTER TABLE zoning.parcels_with_one_zone
-    RENAME id TO p_id;
-
-ALTER TABLE zoning.regional
-    RENAME id TO z_id;    
 
 CREATE TABLE zoning.parcel AS
 select p.geom_id, z.id, 100 as prop
 from zoning.parcels_with_one_zone p,
 zoning.regional z
 WHERE ST_Intersects(z.the_geom, p.geom);
+--Query returned successfully: 1263160 rows affected, 1140264 ms execution time.
+
+--make a copy of it:
+CREATE TABLE zoning.parcel_copy AS
+select * from zoning.parcel;
+
+--select only those pairs of geom_id, zoning_id in which prop is max
+CREATE TABLE zoning.parcel_overlaps_maxonly AS
+SELECT geom_id, id, prop 
+FROM zoning.parcel_overlaps WHERE (geom_id,prop) IN 
+( SELECT geom_id, MAX(prop)
+  FROM zoning.parcel_overlaps
+  GROUP BY geom_id
+)
+
+--create table of parcels with >1 max values
+CREATE TABLE zoning.parcel_two_max AS
+SELECT geom_id, id, prop FROM 
+zoning.parcel_overlaps_maxonly where (geom_id) IN
+	(
+	SELECT geom_id from 
+	(
+	select geom_id, count(*) as countof from 
+	zoning.parcel_overlaps_maxonly
+	GROUP BY geom_id
+	) b
+	WHERE b.countof>1
+	)
+--Query returned successfully: 144397 rows affected, 1140 ms execution time.
+
+--same for 1 max, except insert into parcel table
+INSERT INTO zoning.parcel
+SELECT geom_id, id, prop FROM 
+zoning.parcel_overlaps_maxonly where (geom_id) IN
+	(
+	SELECT geom_id from 
+	(
+	select geom_id, count(*) as countof from 
+	zoning.parcel_overlaps_maxonly
+	GROUP BY geom_id
+	) b
+	WHERE b.countof=1
+	)
+--Query returned successfully: 439891 rows affected, 2601 ms execution time.
+
+
+
