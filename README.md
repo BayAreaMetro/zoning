@@ -21,12 +21,12 @@ We added the "prop" column to the stated outcome CSV, so that we know what propo
 ####Source Data:
 
 * 1953960 parcels (valid geoms).
-These were from [spandex](https://github.com/synthicity/spandex)
+ These were from [spandex](https://github.com/synthicity/spandex)
 
 * 224789 zoning geometries (valid geoms)
-see load-2012-zoning.sh for how this was loaded into postgres from source
+ see load-2012-zoning.sh for how this was loaded into postgres from source
 
-We know that a few jurisdictions are missing. See MergeZoningNotes.md for more info. 
+ We know that a few jurisdictions are missing. See MergeZoningNotes.md for more info. 
 
 * 221032 zoning geometries (with source field names)
  Same as above but with fields that have a value in the "match field" as specified in the CityAssignments spreadsheet. 
