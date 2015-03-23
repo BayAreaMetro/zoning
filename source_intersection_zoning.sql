@@ -132,3 +132,10 @@ zoning.parcel_overlaps pzo
 WHERE two.geom_id = pzo.geom_id
 AND two.id = pzo.id
 
+--output a table with geographic information and generic code info for review
+CREATE TABLE zoning.parcel_withdetails AS
+SELECT p.geom, z.*
+FROM zoning.parcel pz,
+zoning.codes_base2012 z,
+parcel p
+WHERE pz.id = z.id AND p.geom_id = pz.geom_id
