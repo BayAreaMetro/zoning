@@ -132,6 +132,10 @@ zoning.parcel_overlaps pzo
 WHERE two.geom_id = pzo.geom_id
 AND two.id = pzo.id
 
+--create indexes for the query below
+create INDEX zoning_parcel_lookup_geom_idx ON zoning.parcel using hash (geom_id);
+create INDEX parcel_geom_id_idx ON parcel using hash (geom_id);
+
 --output a table with geographic information and generic code info for review
 CREATE TABLE zoning.parcel_withdetails AS
 SELECT p.geom, z.*
