@@ -29,8 +29,8 @@ We added the "prop" column to the stated outcome CSV, so that we know what propo
  We know that a few jurisdictions are missing. See MergeZoningNotes.md for more info. 
 
 * 221032 zoning geometries (with source field names)
- Same as above but with fields that have a value in the "match field" as specified in the CityAssignments spreadsheet. 
- Missing zoning Data is visible by visually comparing the zoning.lookup_new_valid table and the zoning.regional table. It appears that in some case an entire jursidictions may be missing, but in another just 1 category (e.g. public space in san jose)
+  Same as above but with fields that have a value in the "match field" as specified in the CityAssignments spreadsheet. 
+  Missing zoning Data is visible by visually comparing the zoning.lookup_new_valid table and the zoning.regional table. It      appears that in some case an entire jursidictions may be missing, but in another just 1 category (e.g. public space in san jose)
 
  see lookup-table-merge-2012-zoning.sql for how this was loaded into postgres from source
  
