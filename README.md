@@ -9,6 +9,8 @@ The outcome of this process is a table with two rows: parcel_id, zoning_id
 We expect that this table will change as we improve on our methods for mapping zoning data to parcels. 
 
 #The Current Table:
+Can be found [here](https://mtcdrive.box.com/s/4ytig75parn4mur4nci707kwlxxila4t)
+
 ##Zoning/Parcel Intersection
 
 This is a walkthrough of how we joined source zoning data (loaded into postgres) with source_intersection_zoning.sql by the numbers.
