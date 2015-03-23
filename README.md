@@ -9,6 +9,8 @@ The outcome of this process is a table with two rows: parcel_id, zoning_id
 We expect that this table will change as we improve on our methods for mapping zoning data to parcels. 
 
 #The Current Table:
+Can be found [here](https://mtcdrive.box.com/s/4ytig75parn4mur4nci707kwlxxila4t)
+
 ##Zoning/Parcel Intersection
 
 This is a walkthrough of how we joined source zoning data (loaded into postgres) with source_intersection_zoning.sql by the numbers.
@@ -20,6 +22,8 @@ We added the "prop" column to the stated outcome CSV, so that we know what propo
 
 * 1953960 parcels (valid geoms)
 see load-legacy-parcel-to-generic-code.sql for how this was loaded into postgres from source
+
+We know that a few jurisdictions are missing. See MergeZoningNotes.md for more info. 
 
 * 224789 zoning geometries (valid geoms)
 see load-2012-zoning.sh for how this was loaded into postgres from source
@@ -60,3 +64,4 @@ The final table includes roughly ~170k parcels, which is about 20k less than the
 We set aside a table of parcels where there were more than 1 equal max values for their intersection. 
 145309 rows affected
 (typically, these are 1 parcel with 2 100% overlaps, so figure about 70k parcels with 2x zones). 
+These data can be downloaded as a shapefile [here](https://mtcdrive.box.com/s/7zzjl6o4knjje1ocwncnqx7e9aprmv6i)
