@@ -12,13 +12,12 @@ BEGIN
 			' as t WHERE ogc_fid=' || 
 			qry.ogc_fid
 		FROM
-			(select a.parcel_id, a.geom, a.tablename, a.ogc_fid, s.matchfield
+			(select a.parcel_id, a.geom, a.tablename, a.ogc_fid, s.matchfield, s.juris
 			FROM 
 			zoning.source_field_name s,
 				(select *
 				from pz 
-				WHERE pz.parcel_id = p_id
-				LIMIT 1) a
+				WHERE pz.parcel_id = p_id) a
 				WHERE s.tablename = a.tablename) qry
 	--LIMIT 1
 	);

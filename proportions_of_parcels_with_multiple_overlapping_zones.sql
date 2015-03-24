@@ -3,14 +3,16 @@ ALTER TABLE parcel
    TYPE Geometry(MultiPolygon, 26910) 
    USING ST_Transform(geom, 26910);
 
--- Can't fix messed up parcel geoms
--- update parcel
---   SET geom=ST_MakeValid(geom);
---   WHERE ST_IsValid(geom) = false;
--- ABOVE FAILS WITH ERROR:
--- Geometry type (GeometryCollection) does not match column type (MultiPolygon)
--- Parcels may be an unecessarily complex geographic unit
--- Look into using raster?
+
+
+/*Can't fix messed up parcel geoms*/
+update parcel
+  SET geom=ST_MakeValid(geom);
+  WHERE ST_IsValid(geom) = false;
+/*ABOVE FAILS WITH ERROR:
+Geometry type (GeometryCollection) does not match column type (MultiPolygon)
+Parcels may be an unecessarily complex geographic unit
+Look into using raster?*/
 
 CREATE TABLE zoning.lookup_2012_valid AS
 SELECT 
@@ -28,6 +30,20 @@ WHERE st_isempty(st_centroid(geom));
 CREATE TABLE parcel_invalid AS
 SELECT *
 FROM parcel
+WHERE ST_IsValid(geom) = false;
+
+CREATE TABLE parcel_geometrycollection
+AS
+SELECT *
+FROM parcel
+WHERE GeometryType(geom) = 'GEOMETRYCOLLECTION';
+--returns 0 rows
+
+DELETE FROM parcel
+WHERE GeometryType(geom) = 'GEOMETRYCOLLECTION';
+
+update parcel
+SET geom=ST_MakeValid(geom);
 WHERE ST_IsValid(geom) = false;
 
 CREATE TABLE parcel_valid as 
@@ -56,7 +72,7 @@ IN (SELECT parcel_id FROM (SELECT parcel_id, count(*) as countof FROM
 --DID ALSO CACHE THE FOLLOWING, AND ITS USEFUL (SAVES TIME)
 --e.g. (select *, intersection from parcel,zoning)
 
-CREATE TABLE pz AS
+CREATE TABLE pz2 AS
 SELECT *, ST_Intersection(z.geom,p.geom) FROM
 		zoning.lookup_2012_valid as z, parcel p
 		WHERE ST_Intersects(z.geom, p.geom)
