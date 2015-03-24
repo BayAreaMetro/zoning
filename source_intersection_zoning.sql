@@ -143,3 +143,20 @@ FROM zoning.parcel pz,
 zoning.codes_base2012 z,
 parcel p
 WHERE pz.id = z.id AND p.geom_id = pz.geom_id
+
+--for multiple max parcels, assign zoning based on census 2010 administrative area boundaries
+---work in progress
+SELECT p.*, city.
+FROM zoning.parcel_two_max_geo p,
+administrative.city_boundaries city,
+administrative.county_boundaries county
+
+
+
+CREATE TABLE zoning.parcel_two_max_geo AS
+SELECT zr.*,p.geom,p.geom_id,two.prop FROM 
+zoning.parcel_two_max two,
+parcel p,
+zoning.regional zr
+WHERE two.geom_id = p.geom_id
+AND zr.id = two.id
