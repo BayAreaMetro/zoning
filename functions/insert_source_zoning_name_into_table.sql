@@ -1,7 +1,7 @@
 -- Function: public.get_zone(bigint)
 
 -- DROP FUNCTION public.get_zone(bigint);
-CREATE OR REPLACE FUNCTION public.get_zone(parcel pz_valid)
+CREATE OR REPLACE FUNCTION public.insert_source_zoning_name_into_table(parcel pz_valid)
   RETURNS TABLE(parcel_id integer, zonename text, juris integer) AS
 $BODY$
 DECLARE 

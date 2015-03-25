@@ -1,5 +1,5 @@
-create extension hstore;
-CREATE OR REPLACE FUNCTION select_source_percent_land(pgeom geometry)
+--MAY NEED TO create extension hstore;
+CREATE OR REPLACE FUNCTION select_row_from_source(pgeom geometry)
   RETURNS text AS
 $BODY$
 DECLARE 
