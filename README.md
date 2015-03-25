@@ -20,6 +20,8 @@ We added the "prop" column to the stated outcome CSV, so that we know what propo
 
 ####Source Data:
 
+Loading scripts for the source data are all in the 'load' directory
+
 * 1953960 parcels (valid geoms).
   
   These were from [spandex](https://github.com/synthicity/spandex)
@@ -34,10 +36,10 @@ We added the "prop" column to the stated outcome CSV, so that we know what propo
   Same as above but with fields that have a value in the "match field" as specified in the CityAssignments spreadsheet. 
   Missing zoning Data is visible by visually comparing the zoning.lookup_new_valid table and the zoning.regional table. It      appears that in some case an entire jursidictions may be missing, but in another just 1 category (e.g. public space in san jose)
 
- see lookup-table-merge-2012-zoning.sql for how this was loaded into postgres from source
+ see process/lookup-table-merge-2012-zoning.sql for how this was loaded into postgres from source
  
 ####Intersection:
-see source_intersection_zoning.sql for how this was done
+see process/source_intersection_zoning.sql for how this was done
 
 * 1820670 parcel intersections with zoning (many to many join--st_intersects)
 
@@ -46,7 +48,7 @@ see source_intersection_zoning.sql for how this was done
 * 462655 parcels intersect with more than 1 zoning geometry
 
 ###Final Output Table/CSV Process
-see source_intersection_zoning.sql for how this was done
+see process/source_intersection_zoning.sql for how this was done
 
 First, we selected the 1311776 parcels that intersect with one zoning geometry and inserted those into the table. 
 
