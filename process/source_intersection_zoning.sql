@@ -144,19 +144,38 @@ zoning.codes_base2012 z,
 parcel p
 WHERE pz.id = z.id AND p.geom_id = pz.geom_id
 
---for multiple max parcels, assign zoning based on census 2010 administrative area boundaries
----work in progress
-SELECT p.*, city.
-FROM zoning.parcel_two_max_geo p,
-administrative.city_boundaries city,
-administrative.county_boundaries county
-
-
+create INDEX zoning_parcel_two_max_lookup_geom_idx ON zoning.parcel_two_max using hash (geom_id);
+create INDEX zoning_regional_id ON zoning.regional using hash (id);
 
 CREATE TABLE zoning.parcel_two_max_geo AS
-SELECT zr.*,p.geom,p.geom_id,two.prop FROM 
+SELECT p.geom,p.geom_id, two.id as zoning_id, two.prop FROM 
 zoning.parcel_two_max two,
-parcel p,
-zoning.regional zr
+parcel p
 WHERE two.geom_id = p.geom_id
-AND zr.id = two.id
+
+CREATE TABLE zoning.parcel_counties AS
+SELECT p.*, county.name10 as countyname1, county.namelsad10 as countyname2, county.geoid10 countygeoid FROM
+			administrative.boundaries_counties county,
+			parcel p
+			WHERE ST_Intersects(county.geom, p.geom);
+--Query returned successfully: 1954393 rows affected, 142212 ms execution time.
+
+CREATE TABLE zoning.parcel_cities_counties AS
+SELECT p.*, city.name10 as cityname1, city.namelsad10 as cityname2, city.geoid10 citygeoid FROM
+			administrative.boundaries_cities city,
+			zoning.parcel_counties p 
+			WHERE ST_Intersects(city.geom, p.geom);
+--Query returned successfully: 1691011 rows affected, 121759 ms execution time.
+
+CREATE TABLE zoning.parcel_in_cities AS
+SELECT p2n.geom_id, p2n.id 
+FROM 
+zoning.parcel_cities_counties pcc,
+(SELECT c.city, p2.geom_id, p2.id 
+FROM
+zoning.codes_base2012 c,
+zoning.parcel_two_max p2
+WHERE c.id = p2.id) p2n
+WHERE p2n.geom_id = pcc.geom_id
+AND pcc.cityname1 = p2n.city
+--Query returned successfully: 48928 rows affected, 3750 ms execution time.
