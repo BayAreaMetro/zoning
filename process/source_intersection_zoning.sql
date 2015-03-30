@@ -332,3 +332,23 @@ SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel ;
 --0
 
 COPY zoning.parcel TO '/zoning_data/zoning_parcels03_30_2015.csv' DELIMITER ',' CSV HEADER;
+
+--recreate table for map inspection
+DROP TABLE zoning.parcel_withdetails;
+CREATE TABLE zoning.parcel_withdetails AS
+SELECT z.*, p.geom
+FROM zoning.parcel pz,
+zoning.codes_base2012 z,
+parcel p
+WHERE pz.id = z.id AND p.geom_id = pz.geom_id
+--Query returned successfully: 1772637 rows affected, 39453 ms execution time.
+
+CREATE INDEX zoning_parcel_withdetails_gidx ON zoning.parcel_withdetails USING GIST (geom);
+
+--copy map inspection  table to production
+sudo -u postgres pg_dump -t zoning.parcel_withdetails zoning |
+psql -h DB_HOST_IP -p 5432 mtc -U DBUSERNAME
+
+--copy map inspection lookup to production
+sudo -u postgres pg_dump -t zoning.parcel zoning |
+psql -h DB_HOST_IP -p 5432 mtc -U DBUSERNAME
