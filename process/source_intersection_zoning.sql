@@ -352,3 +352,5 @@ psql -h DB_HOST_IP -p 5432 mtc -U DBUSERNAME
 --copy map inspection lookup to production
 sudo -u postgres pg_dump -t zoning.parcel zoning |
 psql -h DB_HOST_IP -p 5432 mtc -U DBUSERNAME
+
+COPY zoning.codes_base2012 TO '/zoning_data/zoning_codes_base2012_03_31_2015.csv' DELIMITER ',' CSV HEADER;
