@@ -119,3 +119,9 @@ insert into zoning.parcel
 	zoning.tmp_update9geo_notcovered;
 --Query returned successfully: 52885 rows affected, 7113 ms execution time.
 --parcels with zoning now at 182k
+
+select count (geom_id) - count (distinct geom_id) from zoning.parcel
+--result: 49--where did these double counts come from?
+
+select count (geom_id) - count (distinct geom_id) from zoning.tmp_update9geo_notcovered
+--apparently from the inserted table
