@@ -64,12 +64,22 @@ This added 390363 rows.
 
 The final table includes roughly ~170k parcels, which is about 20k less than the spandex output. 
 
-####Future Work:
-
 #####Parcels With 2 Overlapping Zones
 We set aside a table of parcels where there were more than 1 equal max values for their intersection. 
 145309 rows affected
 (typically, these are 1 parcel with 2 100% overlaps, so figure about 70k parcels with 2x zones). 
 These data can be downloaded as a shapefile [here](https://mtcdrive.box.com/s/7zzjl6o4knjje1ocwncnqx7e9aprmv6i)
 
-Many of these seem to be related to overlapping city/county zoning geometries. In the future, we will use census-based definitions of jurisdiction to decide which zone a parcel falls in. 
+Many of these seem to be related to overlapping city/county zoning geometries. We use use census-based definitions of jurisdiction to decide which zone a parcel falls in.
+
+####Future Work:
+#####Match Field Errors
+
+In the zoning codes base table, the contents of some cities' match fields do not correspond to sourze zoning data (probably due to some kind of character error in excel or user entry). Need to deal with these individually.  
+
+- Richmond
+- Napa (some RI categories)
+
+#####Fill in Missing Areas 
+
+These are listed in ZoningMerge.md notes. We willsource results from the Update9 Geodatabase found in the source data. These data are in the form of zoning information mapped to parcels. We will join them to new parcels spatially. 
