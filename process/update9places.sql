@@ -125,3 +125,25 @@ select count (geom_id) - count (distinct geom_id) from zoning.parcel
 
 select count (geom_id) - count (distinct geom_id) from zoning.tmp_update9geo_notcovered
 --apparently from the inserted table
+
+CREATE TABLE zoning.tmp_update9_doubles AS
+SELECT * FROM  zoning.tmp_update9geo_notcovered WHERE geom_id IN
+(
+SELECT geom_id
+FROM
+(SELECT geom_id, count(*) AS countof
+FROM zoning. zoning.tmp_update9geo_notcovered
+GROUP BY geom_id) p
+WHERE p.countof>1)
+
+select z.*, c.name from zoning.tmp_update9_doubles z, zoning.codes_base2012 c where z.zoning_id=c.id order by geom_id
+--these are actually in the update9 source! $@#$$#$ $%^%^%!
+--not including them for now
+DELETE FROM zoning.parcel
+	WHERE geom_id in zoning.tmp_update9_doubles;
+--Query returned successfully: 77 rows affected, 527 ms execution time.
+
+--renaming to a non tmp table
+ALTER TABLE zoning.tmp_update9_doubles RENAME TO zoning.update9_parcels_with_two_zones
+
+

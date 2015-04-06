@@ -92,3 +92,6 @@ COPY zoning.source_field_name FROM '/zoning_data/match_fields_tables_zoning_2012
 
 ALTER TABLE zoning.source_field_name ALTER COLUMN juris SET NOT NULL;
 ALTER TABLE zoning.source_field_name ADD PRIMARY KEY (juris);
+
+##update incorrect field name for richmond
+update zoning.source_field_name set matchfield='lu_code' where tablename like '%richmond%'
