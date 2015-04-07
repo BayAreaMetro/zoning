@@ -24,9 +24,12 @@
           height: 291px; 
           background: 'img/legend.png' no-repeat center scroll; 
           position: absolute; 
-          top: 0; 
+          bottom: 0; 
           right: 0;
           z-index: 1;
+          border-radius:3px;
+          border:1px solid rgba(0,0,0,0.4);
+          padding:10px;
         } 
 
 /*        #legend{
@@ -39,12 +42,61 @@
         #legend{
           z-index: -1;
         }*/
-        </style>
-        
+
+      .menu-ui {
+        background:#fff;
+        position:absolute;
+        top:10px;right:10px;
+        z-index:1;
+        border-radius:3px;
+        width:120px;
+        border:1px solid rgba(0,0,0,0.4);
+        }
+        .menu-ui a {
+          font-size:13px;
+          color:#404040;
+          display:block;
+          margin:0;padding:0;
+          padding:10px;
+          text-decoration:none;
+          border-bottom:1px solid rgba(0,0,0,0.25);
+          text-align:center;
+          }
+          .menu-ui a:first-child {
+            border-radius:3px 3px 0 0;
+            }
+          .menu-ui a:last-child {
+            border:none;
+            border-radius:0 0 3px 3px;
+            }
+          .menu-ui a:hover {
+            background:#f8f8f8;
+            color:#404040;
+            }
+          .menu-ui a.active {
+            background:#3887BE;
+            color:#FFF;
+            }
+            .menu-ui a.active:hover {
+              background:#3074a4;
+              }
+
+              </style>
+              
     </head>
     
     <body onload='init()'>
-         <div id='legend'><img src="img/legend.png" height="291" width="243"/></div></div>
-         <div id='map'></div>
+        <div id='legend'><img src="img/legend.png" height="291" width="243"/></div></div>
+        <div id='map'></div>
+          <nav id='map-ui' class='menu-ui'>
+            <a href='#' class='active' id='multifamily'>Multifamily</a>
+            <a href='#' class='active' id='singlefamilydetached'>Single-Family Detached</a>
+            <a href='#' class='active' id='office'>Office</a>
+            <a href='#' class='active' id='retailbigbox'>retail-big-box</a>
+            <a href='#' class='active' id='retailstripmall'>retail-strip-mall</a>
+            <a href='#' class='active' id='mixedretail'>mixed-retail</a>
+            <a href='#' class='active' id='mixedemployment'>mixed-employment</a>
+            <a href='#' class='active' id='mixedresidential'>mixed-residential</a>
+          </nav>
     </body>
 </html>
