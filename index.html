@@ -9,18 +9,41 @@
         <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
 
         <style>
-
-
-        #map{
-          width:100%;
-          height:800px;
+        body {
+            padding: 0;
+            margin: 0;
+        }
+        html, body, #map {
+            height: 100%;
+            width: 100%;
         }
 
+        #legend { 
+          width: 243px; 
+          height: 291px; 
+          background: 'img/legend.png' no-repeat center scroll; 
+          position: absolute; 
+          top: 0; 
+          right: 0;
+          z-index: 1;
+        } 
+
+/*        #legend{
+          width:100%;
+          height:100%;
+          position: absolute;
+          top: 0;
+          left: 0;
+        }
+        #legend{
+          z-index: -1;
+        }*/
         </style>
         
     </head>
     
     <body onload='init()'>
-        <div id='map'></div>
+         <div id='legend'><img src="img/legend.png" height="291" width="243"/></div></div>
+         <div id='map'></div>
     </body>
 </html>
