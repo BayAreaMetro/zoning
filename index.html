@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
         <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
         <script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.3.0"></script>
+        <script src="../layer/tile/Bing.js"></script>
 
         <style>
         body {
@@ -43,6 +44,12 @@
           z-index: -1;
         }*/
 
+/*      .leaflet-control-layers {
+        position:absolute;
+        bottom:10px;left:10px;
+        z-index:2;
+      }
+*/
       .menu-ui {
         background:#fff;
         position:absolute;
@@ -91,12 +98,15 @@
           <nav id='map-ui' class='menu-ui'>
             <a href='#' class='active' id='multifamily'>Multifamily</a>
             <a href='#' class='active' id='singlefamilydetached'>Single-Family Detached</a>
+            <a href='#' class='active' id='singlefamilyattached'>Single-Family Attached</a>
             <a href='#' class='active' id='office'>Office</a>
-            <a href='#' class='active' id='retailbigbox'>retail-big-box</a>
-            <a href='#' class='active' id='retailstripmall'>retail-strip-mall</a>
-            <a href='#' class='active' id='mixedretail'>mixed-retail</a>
-            <a href='#' class='active' id='mixedemployment'>mixed-employment</a>
-            <a href='#' class='active' id='mixedresidential'>mixed-residential</a>
+            <a href='#' class='active' id='retailbigbox'>Retail - Big Box</a>
+            <a href='#' class='active' id='retailstripmall'>Retail Strip-mall</a>
+            <a href='#' class='active' id='mixedretail'>Mixed Retail</a>
+            <a href='#' class='active' id='mixedemployment'>Mixed Employment</a>
+            <a href='#' class='active' id='mixedresidential'>Mixed Residential</a>
+            <a href='#' class='active' id='bing'>Aerial Imagery</a>
+            <a href='#' class='active' id='toner'>Streets</a>
           </nav>
     </body>
 </html>

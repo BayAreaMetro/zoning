@@ -7,8 +7,12 @@ function init(){
 var map = L.map('map').setView([37.7, -122.4], 11);
 
 // replace "toner" here with "terrain" or "watercolor"
-var layer = new L.StamenTileLayer("toner");
-map.addLayer(layer);
+var toner = new L.StamenTileLayer("toner");
+map.addLayer(toner);
+
+var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+var bing = new L.BingLayer("Ak9B0icHsz6Z-MEMGpXFxHjFA6liDJYmv2JNiddSzwIK5krb37s03SwekohbbNOs");
+map.addLayer(bing);
 
 /*var zoning_wms = L.tileLayer.wms("http://10.1.1.204:8081/geoserver/gwc/service/wms?", {
     layers: 'mtc:all_codes_colors',
@@ -92,6 +96,15 @@ var singlefamilydetached = L.tileLayer.wms('http://10.1.1.204:8081/geoserver/gwc
     attribution: "MTC"
 }).addTo(map);
 
+var singlefamilyattached = L.tileLayer.wms('http://10.1.1.204:8081/geoserver/gwc/service/wms?', {
+    layers: 'mtc:all_codes_colors',
+    styles: 'mtc:ht-t',
+    format: 'image/png',
+    transparent: true,
+    version: '1.1.0',
+    attribution: "MTC"
+}).addTo(map);
+
 // Layer switcher
 document.getElementById('multifamily').onclick = function () {
     var enable = this.className !== 'active';
@@ -148,5 +161,27 @@ document.getElementById('office').onclick = function () {
     this.className = enable ? 'active' : '';
     return false;
 };
+
+document.getElementById('singlefamilyattached').onclick = function () {
+    var enable = this.className !== 'active';
+    singlefamilyattached.setOpacity(enable ? 1 : 0);
+    this.className = enable ? 'active' : '';
+    return false;
+};
+
+document.getElementById('bing').onclick = function () {
+    var enable = this.className !== 'active';
+    bing.setOpacity(enable ? 1 : 0);
+    this.className = enable ? 'active' : '';
+    return false;
+};
+
+document.getElementById('toner').onclick = function () {
+    var enable = this.className !== 'active';
+    toner.setOpacity(enable ? 1 : 0);
+    this.className = enable ? 'active' : '';
+    return false;
+};
+
 
 }
