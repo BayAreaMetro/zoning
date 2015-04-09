@@ -14,7 +14,7 @@ var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
 var bing = new L.BingLayer("Ak9B0icHsz6Z-MEMGpXFxHjFA6liDJYmv2JNiddSzwIK5krb37s03SwekohbbNOs");
 map.addLayer(bing);
 
-/*var zoning_wms = L.tileLayer.wms("http://10.1.1.204:8081/geoserver/gwc/service/wms?", {
+/*var zoning_wms = L.tileLayer.wms("http://10.1.1.204:8080/geoserver/gwc/service/wms?", {
     layers: 'mtc:all_codes_colors',
     styles: 'mtc:all_colors',
     format: 'image/png',
@@ -24,7 +24,7 @@ map.addLayer(bing);
 });
 zoning_wms.addTo(map);*/
 
-var multifamily = L.tileLayer.wms('http://10.1.1.204:8081/geoserver/gwc/service/wms?', {
+var multifamily = L.tileLayer.wms('http://10.1.1.204:8080/geoserver/gwc/service/wms?', {
     layers: 'mtc:all_codes_colors',
     styles: 'mtc:hm-t',
     format: 'image/png',
@@ -33,7 +33,7 @@ var multifamily = L.tileLayer.wms('http://10.1.1.204:8081/geoserver/gwc/service/
     attribution: "MTC"
 }).addTo(map);
 
-var mixedemployment = L.tileLayer.wms('http://10.1.1.204:8081/geoserver/gwc/service/wms?', {
+var mixedemployment = L.tileLayer.wms('http://10.1.1.204:8080/geoserver/gwc/service/wms?', {
     layers: 'mtc:all_codes_colors',
     styles: 'mtc:me-t',
     format: 'image/png',
@@ -42,7 +42,7 @@ var mixedemployment = L.tileLayer.wms('http://10.1.1.204:8081/geoserver/gwc/serv
     attribution: "MTC"
 }).addTo(map);
 
-var mixedretail = L.tileLayer.wms('http://10.1.1.204:8081/geoserver/gwc/service/wms?', {
+var mixedretail = L.tileLayer.wms('http://10.1.1.204:8080/geoserver/gwc/service/wms?', {
     layers: 'mtc:all_codes_colors',
     styles: 'mtc:mt-t',
     format: 'image/png',
@@ -51,7 +51,7 @@ var mixedretail = L.tileLayer.wms('http://10.1.1.204:8081/geoserver/gwc/service/
     attribution: "MTC"
 }).addTo(map);
 
-var mixedresidential = L.tileLayer.wms('http://10.1.1.204:8081/geoserver/gwc/service/wms?', {
+var mixedresidential = L.tileLayer.wms('http://10.1.1.204:8080/geoserver/gwc/service/wms?', {
     layers: 'mtc:all_codes_colors',
     styles: 'mtc:mr-t',
     format: 'image/png',
@@ -60,7 +60,7 @@ var mixedresidential = L.tileLayer.wms('http://10.1.1.204:8081/geoserver/gwc/ser
     attribution: "MTC"
 }).addTo(map);
 
-var retailbigbox = L.tileLayer.wms('http://10.1.1.204:8081/geoserver/gwc/service/wms?', {
+var retailbigbox = L.tileLayer.wms('http://10.1.1.204:8080/geoserver/gwc/service/wms?', {
     layers: 'mtc:all_codes_colors',
     styles: 'mtc:rb-t',
     format: 'image/png',
@@ -69,7 +69,7 @@ var retailbigbox = L.tileLayer.wms('http://10.1.1.204:8081/geoserver/gwc/service
     attribution: "MTC"
 }).addTo(map);
 
-var retailstripmall = L.tileLayer.wms('http://10.1.1.204:8081/geoserver/gwc/service/wms?', {
+var retailstripmall = L.tileLayer.wms('http://10.1.1.204:8080/geoserver/gwc/service/wms?', {
     layers: 'mtc:all_codes_colors',
     styles: 'mtc:rs-t',
     format: 'image/png',
@@ -78,7 +78,7 @@ var retailstripmall = L.tileLayer.wms('http://10.1.1.204:8081/geoserver/gwc/serv
     attribution: "MTC"
 }).addTo(map);
 
-var office = L.tileLayer.wms('http://10.1.1.204:8081/geoserver/gwc/service/wms?', {
+var office = L.tileLayer.wms('http://10.1.1.204:8080/geoserver/gwc/service/wms?', {
     layers: 'mtc:all_codes_colors',
     styles: 'mtc:of-t',
     format: 'image/png',
@@ -87,7 +87,7 @@ var office = L.tileLayer.wms('http://10.1.1.204:8081/geoserver/gwc/service/wms?'
     attribution: "MTC"
 }).addTo(map);
 
-var singlefamilydetached = L.tileLayer.wms('http://10.1.1.204:8081/geoserver/gwc/service/wms?', {
+var singlefamilydetached = L.tileLayer.wms('http://10.1.1.204:8080/geoserver/gwc/service/wms?', {
     layers: 'mtc:all_codes_colors',
     styles: 'mtc:hs-t',
     format: 'image/png',
@@ -96,7 +96,7 @@ var singlefamilydetached = L.tileLayer.wms('http://10.1.1.204:8081/geoserver/gwc
     attribution: "MTC"
 }).addTo(map);
 
-var singlefamilyattached = L.tileLayer.wms('http://10.1.1.204:8081/geoserver/gwc/service/wms?', {
+var singlefamilyattached = L.tileLayer.wms('http://10.1.1.204:8080/geoserver/gwc/service/wms?', {
     layers: 'mtc:all_codes_colors',
     styles: 'mtc:ht-t',
     format: 'image/png',
