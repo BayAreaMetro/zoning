@@ -80,15 +80,59 @@ We set aside a table of parcels where there were more than 1 equal max values fo
 (typically, these are 1 parcel with 2 100% overlaps, so figure about 70k parcels with 2x zones). 
 These data can be downloaded as a shapefile [here](https://mtcdrive.box.com/s/7zzjl6o4knjje1ocwncnqx7e9aprmv6i)
 
-Many of these seem to be related to overlapping city/county zoning geometries. We use use census-based definitions of jurisdiction to decide which zone a parcel falls in.
+Many of these seem to be related to overlapping city/county zoning geometries. We use use census-based definitions of jurisdiction to decide which zone a parcel falls in. 
 
-####Future Work:
-#####Match Field Errors
+Based on this work, the count of parcels for which we have sourced zoning data was at: 1772637
 
-In the zoning codes base table, the contents of some cities' match fields do not correspond to sourze zoning data (probably due to some kind of character error in excel or user entry). Need to deal with these individually.  
+#####Match Field Errors:
 
-- Richmond
+The [Project Management Spreadsheet] contains errors in the "match field" which is the field that matches the source jurisdiction's zoning definition to those in the zoning_id table which we use as an output -- see [field names].  
+
+We added these name fixes to the end of 'load/load-generic-zoning-code-table.sql'. 
+
+The current data used the process from 'process/richmondmatchcodes.sql', where richmond's data was loaded back into the process individually, for expediency, which achieves the same results as the above. 
+
+Still left to look at:
 - Napa (some RI categories)
+
+#####Other Known Data Outside Project Geodatabases
+
+These jurisdictions did not have tables in the source geodatabase:
+
+-American Canyon
+-Cloverdale
+-Fairfield
+-Healdsburg
+-Piedmont
+-Pinole
+-San Ramon
+-Saratoga
+-Sebastopol
+
+We added these using the process in:
+
+* 'load/update9.sql'
+* 'process/update9places.sql'
+
+######Santa Clara 
+Removing santaclaracity for now because it doesn't seem that the city data here matches the match field? zoning names do not match city data--they seem to be from countygenplan.
+The match field gp_designa does not exist in the city table.
+May need to re-do the generic zoning process for this one
+
+##Napa 
+Does not have a Match field - It seems that zone_desg was used though, although in the general table the spaces are replaced with - that is, RS 4 IS RS-4
+
+
+This table in the GDB did not have an entry in the CityAssignments spreadsheet:
+
+export_output
+
+##Pacifica
+pacificageneralplan, pacificagp_022009
+Using pacificageneralplan and deleting pacificagp_022009 since it contains only 1 row and former has >400 
+
+
+
 
 #####Fill in Missing Areas 
 
