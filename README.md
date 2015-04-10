@@ -72,7 +72,7 @@ parcel_overlaps - a table of parcels with multiple zoning intersections
 We chose them by the largest proportion of area of intersection. However, tens of thousands of parcels have more than 1 100% overlapping zoning geometry (see below). For those that had 1 maximum zoning overlap, we selected it and added it. 
 This added 390363 rows. 
 
-The final table includes roughly ~170k parcels, which is about 20k less than the spandex output. 
+The final table includes roughly ~1.7m parcels, which is about 200k less than the spandex output. 
 
 #####Parcels With 2 Overlapping Zones
 We set aside a table of parcels where there were more than 1 equal max values for their intersection. 
