@@ -4,27 +4,31 @@ The goal of this repository is to keep track of how data from various jurisdicti
 
 # Outcome
 
-The outcome of this process is a table with two rows: parcel_id, zoning_id
+The outcome of this process is a table with three rows: parcel_id, zoning_id, prop
 
 We expect that this table will change as we improve on our methods for mapping zoning data to parcels. 
 
 #The Current Table:
 Can be found [here](https://mtcdrive.box.com/s/4ytig75parn4mur4nci707kwlxxila4t)
 
+##Field Names
+* 'geom_id' is the unique id of a parcel from [spandex](https://github.com/synthicity/spandex)
+* 'prop' is the 'proportion of the parcel in the given zone'  
+* 'zoning_id' is the id of a generic interpretation of the allowed use of a site as defined in this [table](https://mtcdrive.app.box.com/login?redirect_url=%2Fs%2F9pkjbw1lvpd5qtpj1zpc2ccfbxfzly5t)
+
 ##Zoning/Parcel Intersection
 
 This is a walkthrough of how we joined source zoning data (loaded into postgres) with source_intersection_zoning.sql by the numbers.
 
-###Outcome Update:
-We added the "prop" column to the stated outcome CSV, so that we know what proportion of the land area of a parcel was within the zoning id that we assigned to it.
+####Combining the source Geographic Data:
 
-####Source Data:
+#####Project Management Spreadsheet
 
-Loading scripts for the source data are all in the 'load' directory
+Our starting point for this work is a spreadsheet that was used to manage this project originally. It is available [here](https://mtcdrive.box.com/shared/static/gz1azbpqrtj4icrm61yupwii3zl5y335.xlsx). While this spreadsheet did not represent the zoning data project in its entirety, it offers a high level summary that we took as authoritative. In the process below it will be clear where the spreadsheet was missing information that we will add into the process as part of the final product. 
 
-* 1953960 parcels (valid geoms).
-  
-  These were from [spandex](https://github.com/synthicity/spandex)
+According to the above spreadsheet, [6 Geodatabases](https://mtcdrive.box.com/s/9t14sb7ugnx24hrp84kmvku0aq5gdb27) were used to manage the geographic data for this project, each containing feature classes for the various jurisdictions in the Bay Area. Our first step was to load the geometries from all of these feature classes into one table so that we could relate it to a table of geometries for parcel data. 
+
+Loading scripts for the source data are all in this repository in 'load/load-2012-zoning.sh'
 
 * 224789 zoning geometries (valid geoms).
  
@@ -37,6 +41,12 @@ Loading scripts for the source data are all in the 'load' directory
   Missing zoning Data is visible by visually comparing the zoning.lookup_new_valid table and the zoning.regional table. It      appears that in some case an entire jursidictions may be missing, but in another just 1 category (e.g. public space in san jose)
 
  see process/lookup-table-merge-2012-zoning.sql for how this was loaded into postgres from source
+
+#####Parcels
+
+* 1953960 parcels (valid geoms).
+  
+  These were from [spandex](https://github.com/synthicity/spandex)
  
 ####Intersection:
 see process/source_intersection_zoning.sql for how this was done
