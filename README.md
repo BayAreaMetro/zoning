@@ -37,10 +37,7 @@ Loading scripts for the source data are all in this repository in 'load/load-201
 
 * 221032 zoning geometries (with source field names).
   
-  Same as above but with fields that have a value in the "match field" as specified in the CityAssignments spreadsheet. 
-  Missing zoning Data is visible by visually comparing the zoning.lookup_new_valid table and the zoning.regional table. It      appears that in some case an entire jursidictions may be missing, but in another just 1 category (e.g. public space in san jose)
-
- see process/lookup-table-merge-2012-zoning.sql for how this was loaded into postgres from source
+  Same as above but with fields that have a value in the "match field" as specified in the CityAssignments spreadsheet
 
 #####Parcels
 
@@ -48,7 +45,7 @@ Loading scripts for the source data are all in this repository in 'load/load-201
   
   These were from [spandex](https://github.com/synthicity/spandex)
  
-####Intersection:
+####Assigning Zoning to Parcels:
 see process/source_intersection_zoning.sql for how this was done
 
 * 1820670 parcel intersections with zoning (many to many join--st_intersects)
@@ -57,32 +54,37 @@ see process/source_intersection_zoning.sql for how this was done
 
 * 462655 parcels intersect with more than 1 zoning geometry
 
-###Final Output Table/CSV Process
 see process/source_intersection_zoning.sql for how this was done
 
-First, we selected the 1311776 parcels that intersect with one zoning geometry and inserted those into the table. 
+We selected the 1311776 parcels that intersect with one zoning geometry and inserted those into the table. 
 
-Next, we added parcels that intersected with multiple zones as follows. 
+####Intersection Conflict Resolution and Identifying Further Zoning Source Data
 
-We chose these parcels from a table of:
-parcel_overlaps - a table of parcels with multiple zoning intersections
-(each row includes parcel+any intersecting zone)
-921221 rows
+see process/lookup-table-merge-2012-zoning.sql for how this was loaded into postgres from source
 
-We chose them by the largest proportion of area of intersection. However, tens of thousands of parcels have more than 1 100% overlapping zoning geometry (see below). For those that had 1 maximum zoning overlap, we selected it and added it. 
-This added 390363 rows. 
+#####Parcels with more than 1 Zoning assignment
 
-The final table includes roughly ~1.7m parcels, which is about 200k less than the spandex output. 
+We assigned zoning to parcels that intersected with multiple zones as follows. 
 
-#####Parcels With 2 Overlapping Zones
-We set aside a table of parcels where there were more than 1 equal max values for their intersection. 
-145309 rows affected
-(typically, these are 1 parcel with 2 100% overlaps, so figure about 70k parcels with 2x zones). 
-These data can be downloaded as a shapefile [here](https://mtcdrive.box.com/s/7zzjl6o4knjje1ocwncnqx7e9aprmv6i)
+We split these parcels into a table of:  
+parcel_overlaps - a table of parcels with multiple zoning intersections  
+(each row includes parcel+any intersecting zone)  
+921221 parcel + zone combinations  
 
-Many of these seem to be related to overlapping city/county zoning geometries. We use use census-based definitions of jurisdiction to decide which zone a parcel falls in. 
+For each of these parcels, we selected the zoning category with the highest proportion of area of intersection with the parcel. However, tens of thousands of parcels have more than 1 100% overlapping zoning geometry (see below). For those that had 1 maximum zoning overlap, we selected it and added it. 
+This added 390363 parcels to the parcels/zoning table.
 
-Based on this work, the count of parcels for which we have sourced zoning data was at: 1772637
+At this point the parcels/zoning table contained roughly ~1.7m (1702139) parcels, which is about 200k less than the spandex output.
+
+######Parcels with more than 1 Zoning assignment because of jursdiction overlaps
+We set aside a table of parcels where there were more than 1 equal max values for their intersection.  
+145309 rows affected. (typically, these are 1 parcel with 2 100% overlaps, so figure about 70k parcels with 2x zones).   
+These data can be downloaded as a shapefile [here](https://mtcdrive.box.com/s/7zzjl6o4knjje1ocwncnqx7e9aprmv6i).  
+
+Many of these seem to be related to overlapping city/county zoning geometries. We use use census-based definitions of jurisdiction to decide which zone a parcel falls in.  
+
+Based on this work, the count of parcels for which we have sourced zoning data was at:  
+1772637
 
 #####Match Field Errors:
 
@@ -90,50 +92,41 @@ The [Project Management Spreadsheet] contains errors in the "match field" which 
 
 We added these name fixes to the end of 'load/load-generic-zoning-code-table.sql'. 
 
-The current data used the process from 'process/richmondmatchcodes.sql', where richmond's data was loaded back into the process individually, for expediency, which achieves the same results as the above. 
-
-Still left to look at:
-- Napa (some RI categories)
+One of these errors, in the Richmond feature class, we did not detect until after completing the above steps and performing visual inspection. We added the necessary line to the loading script for future use and then we used the process detailed in 'process/richmondmatchcodes.sql', to load richmond individually in this case. 
 
 #####Other Known Data Outside Project Geodatabases
 
-These jurisdictions did not have tables in the source geodatabase:
+These jurisdictions did not have feature classes in the source geodatabase:
 
--American Canyon
--Cloverdale
--Fairfield
--Healdsburg
--Piedmont
--Pinole
--San Ramon
--Saratoga
--Sebastopol
+* American Canyon
+* Cloverdale
+* Fairfield
+* Healdsburg
+* Piedmont
+* Pinole
+* San Ramon
+* Saratoga
+* Sebastopol
 
 We added these using the process in:
 
 * 'load/update9.sql'
 * 'process/update9places.sql'
 
-######Santa Clara 
-Removing santaclaracity for now because it doesn't seem that the city data here matches the match field? zoning names do not match city data--they seem to be from countygenplan.
-The match field gp_designa does not exist in the city table.
-May need to re-do the generic zoning process for this one
+And this [data](https://mtcdrive.box.com/shared/static/45ylob77atbejk867bmmbtlhjuf0ikbm.zip), 
+which is a csv with the zoning for the these areas mapped to "joinnuma", and therefore the set of [parcel data, found in feature class ba8 of this File GDB](https://mtcdrive.box.com/s/uec9rjz6cimvpizlb2so3pupm22d56dq) used for the last round of this work. The vectorization of zoning data for the above jurisdictions (which we have as PDF's and various other non-vector formats), seems not to have been shared by the contractor that performed it. See the comments in the sql above for where there may have been errors in mapping the data using a parcel-to-parcel spatial intersection.  
 
-##Napa 
-Does not have a Match field - It seems that zone_desg was used though, although in the general table the spaces are replaced with - that is, RS 4 IS RS-4
+After adding these data, the count of parcels with zoning data is at:
+1857290
 
+Still left to look at:
+######Santa Clara City
+The feature class for Santa Clara City in the base Geodatabases mentioned in [Project Management Spreadsheet] did not have a "match field" corresponding to the spreadsheet. That is, in the spreadsheet, the indicated "matchfield" was 'gp_designa'. However, that field does exist the feature class in the Geodatabase. We found a shapefile in the Santa Clara city folder that does have that matchfield which seems to be dated '02', so we use that, assuming that the feature class in the GDB was improperly added. However, there is also another shapefile in that folder that seems to match the feature class in the Geodatabases. This file may be more recent, since it seems to have a date in the name that is '05', however it was not part of the original process and has no generic zoning assignment. 
 
-This table in the GDB did not have an entry in the CityAssignments spreadsheet:
+######Fairfield:
+We need to add these data using a parcel-to-parcel match as with update9.sql, above. It seems there is are no vector data for source image of zoning. However, there is a spreadsheet mapping joinnuma to zoning_id. 
 
-export_output
-
-##Pacifica
-pacificageneralplan, pacificagp_022009
-Using pacificageneralplan and deleting pacificagp_022009 since it contains only 1 row and former has >400 
-
-
-
-
-#####Fill in Missing Areas 
-
-These are listed in ZoningMerge.md notes. We willsource results from the Update9 Geodatabase found in the source data. These data are in the form of zoning information mapped to parcels. We will join them to new parcels spatially. 
+######Missing categories from Matchfields:
+* Napa (some RI categories)  
+	Does not have a Match field - It seems that zone_desg was used though, although in the general table the spaces are replaced with - that is, RS 4 IS RS-4
+* public space in san jose
