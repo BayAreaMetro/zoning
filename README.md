@@ -132,3 +132,4 @@ We need to add these data using a parcel-to-parcel match as with update9.sql, ab
 * Napa (some RI categories)  
 	Does not have a Match field - It seems that zone_desg was used though, although in the general table the spaces are replaced with - that is, RS 4 IS RS-4
 * public space in san jose
+* https://github.com/MetropolitanTransportationCommission/zoning-qa/blob/master/process/richmondmatchcodes.sql#L31
