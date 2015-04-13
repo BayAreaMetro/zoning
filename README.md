@@ -86,11 +86,11 @@ Many of these seem to be related to overlapping city/county zoning geometries. W
 Based on this work, the count of parcels for which we have sourced zoning data was at:  
 1772637
 
-####Other Errors:
+####Other Errors
 
-#####Match Field Errors:
+#####Match Field Errors
 
-The [Project Management Spreadsheet] contains errors in the "match field" which is the field that matches the source jurisdiction's zoning definition to those in the zoning_id table which we use as an output -- see [field names].  
+The [Project Management Spreadsheet](#####Project Management Spreadsheet) contains errors in the "match field" which is the field that matches the source jurisdiction's zoning definition to those in the zoning_id table which we use as an output -- see [field names](##Field Names).  
 
 We added these name fixes to the end of 'load/load-generic-zoning-code-table.sql', before [Assigning Zoning to Parcels](####Assigning Zoning to Parcels).
 
