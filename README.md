@@ -54,13 +54,13 @@ see process/source_intersection_zoning.sql for how this was done
 
 * 462655 parcels intersect with more than 1 zoning geometry
 
-see process/source_intersection_zoning.sql for how this was done
+see process/source_intersection_zoning.sql for how this was loaded and [the dump of the postgres schema here](https://mtcdrive.box.com/s/ng5n51tt30huxfstbgzhqraaknpsgcvu) for the result.
 
 We selected the 1311776 parcels that intersect with only one zoning geometry and inserted those into the table. 
 
 ####Intersection Conflict Resolution and Identifying Further Zoning Source Data
 
-see process/lookup-table-merge-2012-zoning.sql for how this was loaded into postgres from source
+see process/lookup-table-merge-2012-zoning.sql for how this was done.
 
 #####Parcels with more than 1 Zoning assignment
 
