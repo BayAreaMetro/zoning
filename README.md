@@ -37,7 +37,7 @@ Loading scripts for the source data are all in this repository in 'load/load-201
 
 * 221032 zoning geometries (with source field names).
   
-  Same as above but with fields that have a value in the "match field" as specified in the CityAssignments spreadsheet (and corrected as specified in the [Match Field Errors](#####Match-Field-Errors) section. 
+  Same as above but with fields that have a value in the "match field" as specified in the CityAssignments spreadsheet (and corrected as specified in the [Match Field Errors](#match-field-errors) section. 
 
 #####Parcels
 
