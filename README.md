@@ -37,7 +37,7 @@ Loading scripts for the source data are all in this repository in 'load/load-201
 
 * 221032 zoning geometries (with source field names).
   
-  Same as above but with fields that have a value in the "match field" as specified in the CityAssignments spreadsheet (and corrected as specified in the [Match Field Errors](#####Match Field Errors) section. 
+  Same as above but with fields that have a value in the "match field" as specified in the CityAssignments spreadsheet (and corrected as specified in the [Match Field Errors](#####Match-Field-Errors) section. 
 
 #####Parcels
 
@@ -90,9 +90,9 @@ Based on this work, the count of parcels for which we have sourced zoning data w
 
 #####Match Field Errors
 
-The [Project Management Spreadsheet](#####Project Management Spreadsheet) contains errors in the "match field" which is the field that matches the source jurisdiction's zoning definition to those in the zoning_id table which we use as an output -- see [field names](##Field Names).  
+The [Project Management Spreadsheet](#####Project Management Spreadsheet) contains errors in the "match field" which is the field that matches the source jurisdiction's zoning definition to those in the zoning_id table which we use as an output -- see [field names](##Field-Names).  
 
-We added these name fixes to the end of 'load/load-generic-zoning-code-table.sql', before [Assigning Zoning to Parcels](####Assigning Zoning to Parcels).
+We added these name fixes to the end of 'load/load-generic-zoning-code-table.sql', before [Assigning Zoning to Parcels](####Assigning-Zoning-to-Parcels).
 
 One of these errors, in the Richmond feature class, we did not detect until after completing the above steps. We added the necessary line to the loading script for future use. Then we used the process detailed in 'process/richmondmatchcodes.sql', to load richmond individually and append its parcels/zoning. 
 
