@@ -38,6 +38,10 @@ ogr2ogr -skipfailures -f "PostgreSQL" \
 PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" \
 data/PlannedLandUsePhase6.gdb
 
+#the layer for santa clara city in the geodatabase does not match the CityAssignments "Match field" so we replace it with a shapefile from the santa clara directory that does:
+ogr2ogr -f "PostgreSQL" \
+PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" /data/source_zoning_data_missing_from_GDB/SantaClara/City_Santa_Clara_GP_LU_02.shp
+
 # sudo -u postgres legacy_2012_zoning -c 'ALTER SCHEMA public RENAME TO zoning_legacy_2012;'
 # sudo -u postgres legacy_2012_zoning -c 'ALTER TABLE zoning_legacy_2012.export_output RENAME TO zoning_legacy_2012.monte_sereno;'
 
