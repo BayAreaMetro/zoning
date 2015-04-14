@@ -3,15 +3,20 @@
 #it is unlikely that this would need to occur
 #as long as legacy2012.dump already exists
 
-DBUSERNAME=$DBUSERNAME
-DBPASSWORD=$DBPASSWORD
-DBHOST=$DBHOST
-DBPORT=$DBPORT
-DBNAME=plu 
+# DBUSERNAME=$DBUSERNAME
+# DBPASSWORD=$DBPASSWORD
+# DBHOST=$DBHOST
+# DBPORT=$DBPORT
+# DBNAME=plu 
+
+#might need to:
+sudo -u postgres createuser -s vagrant
+#ALTER USER username CREATEDB
+
+createdb -U vagrant plu 
 
 # RUN COMMENTED COMMANDS IN THE VM, OR ELSE DO THEM IN PGADMIN
 # #drop if db exists
-createdb plu
 psql plu -c "create extension postgis;"
 psql plu -c "create extension postgis_topology;"
 
