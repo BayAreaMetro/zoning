@@ -5,7 +5,13 @@
 # 	bash load/load-2012-zoning.sh
 
 #the following are just stubs and won't work right now
-parcel_zoning.csv: bay_area_zoning.sql parcels_spandex.sql plu_bay_area_zoning.sql parcels_update9.sql parcels_ba8.sql zoning_santa_clara.sql parcels_fairfield.sql 
+parcel_zoning.csv: bay_area_zoning.sql \
+	zoning_santa_clara.sql \
+	parcels_spandex.sql \
+	plu_bay_area_zoning.sql \
+	parcels_zoning_update9.sql \
+	parcels_zoning_fairfield.sql \
+	parcels_ba8.sql
 	psql -f process/update9places.sql
 	psql -f process/parcel_zoning_intersection.sql
 
