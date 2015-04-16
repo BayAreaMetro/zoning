@@ -1,3 +1,6 @@
+# if using the postgres/postgis development vm, https://github.com/buckleytom/pg-app-dev-vm, 
+# the user will need to create a file called ~/.pgpass with the following line:
+# localhost:25432:vagrant:vagrant:vagrant
 #need to add
 # parcels_zoning_santa_clara.sql
 # parcels_fairfield.sql: 
@@ -8,12 +11,12 @@ parcel_zoning.csv: bay_area_zoning.sql \
 	plu_bay_area_zoning.sql \
 	parcels_zoning_update9.sql \
 	ba8_parcels.sql
-	psql -f process/update9places.sql
-	psql -f process/parcel_zoning_intersection.sql
+	psql -p 25432 -h localhost -U vagrant process/update9places.sql
+	psql -p 25432 -h localhost -U vagrant process/parcel_zoning_intersection.sql
 
 bay_area_zoning.sql: data_source/jurisdiction_zoning.sql
-	psql vagrant < data_source/jurisdiction_zoning.sql
-	psql -f process/merge_jurisdiction_zoning.sql
+	psql -p 25432 -h localhost -U vagrant < data_source/jurisdiction_zoning.sql
+	psql -p 25432 -h localhost -U vagrant process/merge_jurisdiction_zoning.sql
 
 #where plu refers to the old "planned land use"/comprehensive plan project
 plu_bay_area_zoning.sql: data_source/PLU2008_Updated.shp
@@ -40,7 +43,7 @@ parcels_spandex.sql:
 	-o data_source/parcels_spandex.sql
 
 update9_parcels.sql: data_source/Parcels2010_Update9.csv
-	psql -f load/update9.sql
+	psql vagrant -p 25432 -U vagrant -h localhost -f load/update9.sql
 
 data_source/ba8_parcels.sql: 
 	perl s3-curl/s3curl.pl --id=company \
