@@ -8,15 +8,29 @@
 #the following are just stubs and won't work right now
 parcel_zoning.csv: bay_area_zoning.sql \
 	parcels_spandex.sql \
+	source_field_name.sql \
 	plu_bay_area_zoning.sql \
 	parcels_zoning_update9.sql \
-	ba8_parcels.sql
+	ba8_parcels.sql 
 	psql -p 25432 -h localhost -U vagrant process/update9places.sql
 	psql -p 25432 -h localhost -U vagrant process/parcel_zoning_intersection.sql
 
-bay_area_zoning.sql: data_source/jurisdiction_zoning.sql
+bay_area_zoning.sql: data_source/jurisdiction_zoning.sql \
+	data_source/zoning_codes_base_2012.csv \
+	data_source/match_fields_tables_zoning_2012_source.csv
 	psql -p 25432 -h localhost -U vagrant < data_source/jurisdiction_zoning.sql
-	psql -p 25432 -h localhost -U vagrant process/merge_jurisdiction_zoning.sql
+	psql -p 25432 -h localhost -U vagrant vagrant -f process/load-generic-zoning-code-table.sql
+	psql -p 25432 -h localhost -U vagrant vagrant -f process/merge_jurisdiction_zoning.sql
+
+data_source/match_fields_tables_zoning_2012_source.csv:
+	perl s3-curl/s3curl.pl --id=company \
+	-- http://landuse.s3.amazonaws.com/zoning/match_fields_tables_zoning_2012_source.sql \
+	-o data_source/match_fields_tables_zoning_2012_source.sql
+
+data_source/zoning_codes_base_2012.csv:
+	perl s3-curl/s3curl.pl --id=company \
+	-- http://landuse.s3.amazonaws.com/zoning/zoning_codes_base_2012.sql \
+	-o data_source/zoning_codes_base_2012.sql
 
 #where plu refers to the old "planned land use"/comprehensive plan project
 plu_bay_area_zoning.sql: data_source/PLU2008_Updated.shp
@@ -26,7 +40,7 @@ plu_bay_area_zoning.sql: data_source/PLU2008_Updated.shp
 	pg_dump vagrant --table=plu2008_updated > plu_bay_area_zoning.sql
 
 data_source/PLU2008_Updated.shp: 
-	perl s3-curl/s3curl.pl --id=company 
+	perl s3-curl/s3curl.pl --id=company \
 	-- http://landuse.s3.amazonaws.com/zoning/PLU2008_Updated.zip \
 	-o data_source/PLU2008_Updated.zip
 	unzip data_source/PLU2008_Updated
