@@ -6,54 +6,81 @@
 # parcels_fairfield.sql: 
 
 #the following are just stubs and won't work right now
-parcel_zoning.csv: bay_area_zoning.sql \
-	parcels_spandex.sql \
-	plu_bay_area_zoning.sql \
-	parcels_zoning_update9.sql \
-	ba8_parcels.sql
-	psql -p 25432 -h localhost -U vagrant process/update9places.sql
-	psql -p 25432 -h localhost -U vagrant process/parcel_zoning_intersection.sql
 
-bay_area_zoning.sql: data_source/jurisdiction_zoning.sql
-	psql -p 25432 -h localhost -U vagrant < data_source/jurisdiction_zoning.sql
-	psql -p 25432 -h localhost -U vagrant process/merge_jurisdiction_zoning.sql
+get = perl s3-curl/s3curl.pl --id=company -- http://landuse.s3.amazonaws.com/zoning/
+ARGS = -p 25432 -h localhost -U vagrant 
+
+parcel_zoning.csv: bay_area_zoning.sql \
+	data_source/parcels_spandex.sql \
+	plu_bay_area_zoning.sql \
+	update9_parcels.sql \
+	data_source/ba8_parcels.sql
+	psql $(ARGS) vagrant process/update9places.sql
+	psql $(ARGS) vagrant process/parcel_zoning_intersection.sql
+
+bay_area_zoning.sql: data_source/PlannedLandUsePhase1.gdb \
+	data_source/zoning_codes_base2012.csv \
+	data_source/match_fields_tables_zoning_2012_source.csv
+	psql $(ARGS) -c "CREATE SCHEMA zoning;"
+	bash load/load-2012-zoning.sh
+	psql $(ARGS) vagrant -f process/load-generic-zoning-code-table.sql
+	psql $(ARGS) vagrant -f process/merge_jurisdiction_zoning.sql
+
+update9_parcels.sql: data_source/Parcels2010_Update9.sql data_source/ba8_parcels.sql
+	psql $(ARGS) vagrant < data_source/ba8_parcels.sql
+
+data_source/Parcels2010_Update9.sql: data_source/Parcels2010_Update9.csv
+	psql $(ARGS) vagrant -f load/update9.sql
+	pg_dump $(ARGS) vagrant --table=Parcels2010_Update9 > data_source/Parcels2010_Update9.sql
+
+data_source/PlannedLandUsePhase1.gdb: data_source/PlannedLandUse1Through6.gdb.zip
+	unzip -d data_source/ data_source/PlannedLandUse1Through6.gdb.zip
 
 #where plu refers to the old "planned land use"/comprehensive plan project
 plu_bay_area_zoning.sql: data_source/PLU2008_Updated.shp
-	ogr2ogr -f "PostgreSQL" \ 
-	PG:"host=localhost port=25432 dbname=vagrant user=vagrant password=vagrant" \
-	data_source/PLU2008_Updated.shp
-	pg_dump vagrant --table=plu2008_updated > plu_bay_area_zoning.sql
+	ogr2ogr -f "PostgreSQL" PG:"host=localhost port=25432 dbname=vagrant user=vagrant password=vagrant" data_source/PLU2008_Updated.shp
+	pg_dump $(ARGS) vagrant --table=plu2008_updated > plu_bay_area_zoning.sql
 
-data_source/PLU2008_Updated.shp: 
-	perl s3-curl/s3curl.pl --id=company 
-	-- http://landuse.s3.amazonaws.com/zoning/PLU2008_Updated.zip \
-	-o data_source/PLU2008_Updated.zip
-	unzip data_source/PLU2008_Updated
+data_source/PLU2008_Updated.shp: data_source/PLU2008_Updated.zip
+	unzip -d data_source/ data_source/PLU2008_Updated
 	touch data_source/PLU2008_Updated.shp 
 
-data_source/jurisdiction_zoning.sql:
-	perl s3-curl/s3curl.pl --id=company \
-	-- http://landuse.s3.amazonaws.com/zoning/jurisdiction_zoning.sql \
-	-o data_source/jurisdiction_zoning.sql
+data_source/PlannedLandUse1Through6.gdb.zip: s3-curl/s3curl.pl
+	$(get)PlannedLandUse1Through6.gdb.zip \
+	-o data_source/PlannedLandUse1Through6.gdb.zip
 
-parcels_spandex.sql:
-	perl s3-curl/s3curl.pl --id=company \
-	-- http://landuse.s3.amazonaws.com/zoning/parcels_spandex.sql \
+data_source/match_fields_tables_zoning_2012_source.csv:
+	$(get)match_fields_tables_zoning_2012_source.csv \
+	-o data_source/match_fields_tables_zoning_2012_source.csv
+
+data_source/zoning_codes_base2012.csv:
+	$(get)zoning_codes_base2012.csv \
+	-o data_source/zoning_codes_base2012.csv
+
+data_source/PLU2008_Updated.zip:
+	$(get)PLU2008_Updated.zip \
+	-o data_source/PLU2008_Updated.zip
+
+# data_source/jurisdiction_zoning.sql:
+# 	perl s3-curl/s3curl.pl --id=company \
+# 	-- http://landuse.s3.amazonaws.com/zoning/jurisdiction_zoning.sql \
+# 	-o data_source/jurisdiction_zoning.sql
+
+data_source/parcels_spandex.sql:
+	$(get)parcels_spandex.sql \
 	-o data_source/parcels_spandex.sql
 
-update9_parcels.sql: data_source/Parcels2010_Update9.csv
-	psql vagrant -p 25432 -U vagrant -h localhost -f load/update9.sql
-
-data_source/ba8_parcels.sql: 
-	perl s3-curl/s3curl.pl --id=company \
-	-- http://landuse.s3.amazonaws.com/zoning/ba8_parcels.sql \
-	-o data_source/ba8_parcels.sql
+data_source/Parcels2010_Update9.csv:
+	$(get)Parcels2010_Update9.csv \
+	-o data_source/Parcels2010_Update9.csv	
 
 data_source/zoning_data/zoning_codes_dictionary.csv: s3-curl/s3curl.pl
-	perl s3-curl/s3curl.pl --id=company \
-	-- http://landuse.s3.amazonaws.com/zoning/zoning_data/zoning_codes_dictionary.csv \
+	$(get)zoning_codes_dictionary.csv \
 	-o data_source/zoning_codes_dictionary.csv 
+
+data_source/ba8_parcels.sql: 
+	$(get)ba8parcels.sql \
+	-o data_source/ba8_parcels.sql
 
 s3curl/s3curl.pl: s3curl.zip
 	unzip s3-curl.zip
@@ -65,10 +92,3 @@ s3curl.zip:
 # just loading these from sql dumps for now.
 # can fix this when GDAL 1.11/2.0 gets released
 #
-# data_source/PlannedLandUsePhase1.gdb: data_source/PlannedLandUse1Through6.gdb.zip
-# 	unzip -d data_source/ data_source/PlannedLandUse1Through6.gdb.zip
-
-# data_source/PlannedLandUse1Through6.gdb.zip: s3-curl/s3curl.pl
-# 	perl s3-curl/s3curl.pl --id=company 
-# 	-- http://landuse.s3.amazonaws.com/zoning/PlannedLandUse1Through6.gdb.zip \
-# 	-o data_source/PlannedLandUse1Through6.gdb.zip
