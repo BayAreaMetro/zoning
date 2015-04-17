@@ -1,8 +1,15 @@
--- Function: public.mergetables(text)
+CREATE SCHEMA zoning;
 
--- DROP FUNCTION public.mergetables(text);
+CREATE TABLE zoning.jurisdiction_zoning
+(
+  ogc_fid integer,
+  tablename text,
+  zoning text,
+  juris integer,
+  the_geom geometry
+);
 
-CREATE OR REPLACE FUNCTION public.mergetables(sql_string text)
+CREATE OR REPLACE FUNCTION zoning.merge_jursidictions()
   RETURNS text AS
 $BODY$
 DECLARE
@@ -40,4 +47,6 @@ BEGIN
 	 --EXECUTE sql_string;
 END;
 $BODY$
-  LANGUAGE plpgsql VOLATILE
+  LANGUAGE plpgsql VOLATILE;
+
+COPY zoning.jurisdiction_zoning to 'jurisdiction_zoning.sql'
