@@ -15,22 +15,31 @@ parcel_zoning.csv: bay_area_zoning.sql \
 	psql -p 25432 -h localhost -U vagrant process/update9places.sql
 	psql -p 25432 -h localhost -U vagrant process/parcel_zoning_intersection.sql
 
-bay_area_zoning.sql: data_source/jurisdiction_zoning.sql \
-	data_source/zoning_codes_base_2012.csv \
+bay_area_zoning.sql: data_source/PlannedLandUsePhase1.gdb \
+	data_source/zoning_codes_base2012.csv \
 	data_source/match_fields_tables_zoning_2012_source.csv
-	psql -p 25432 -h localhost -U vagrant < data_source/jurisdiction_zoning.sql
+	psql -p 25432 -h localhost -U vagrant -c "CREATE SCHEMA zoning;"
+	bash load/load-2012-zoning.sh
 	psql -p 25432 -h localhost -U vagrant vagrant -f process/load-generic-zoning-code-table.sql
 	psql -p 25432 -h localhost -U vagrant vagrant -f process/merge_jurisdiction_zoning.sql
 
+data_source/PlannedLandUsePhase1.gdb: data_source/PlannedLandUse1Through6.gdb.zip
+	unzip -d data_source/ data_source/PlannedLandUse1Through6.gdb.zip
+
+data_source/PlannedLandUse1Through6.gdb.zip: s3-curl/s3curl.pl
+	perl s3-curl/s3curl.pl --id=company 
+	-- http://landuse.s3.amazonaws.com/zoning/PlannedLandUse1Through6.gdb.zip \
+	-o data_source/PlannedLandUse1Through6.gdb.zip
+
 data_source/match_fields_tables_zoning_2012_source.csv:
 	perl s3-curl/s3curl.pl --id=company \
-	-- http://landuse.s3.amazonaws.com/zoning/match_fields_tables_zoning_2012_source.sql \
-	-o data_source/match_fields_tables_zoning_2012_source.sql
+	-- http://landuse.s3.amazonaws.com/zoning/match_fields_tables_zoning_2012_source.csv \
+	-o data_source/match_fields_tables_zoning_2012_source.csv
 
-data_source/zoning_codes_base_2012.csv:
+data_source/zoning_codes_base2012.csv:
 	perl s3-curl/s3curl.pl --id=company \
-	-- http://landuse.s3.amazonaws.com/zoning/zoning_codes_base_2012.sql \
-	-o data_source/zoning_codes_base_2012.sql
+	-- http://landuse.s3.amazonaws.com/zoning/zoning_codes_base2012.csv \
+	-o data_source/zoning_codes_base2012.csv
 
 #where plu refers to the old "planned land use"/comprehensive plan project
 plu_bay_area_zoning.sql: data_source/PLU2008_Updated.shp
@@ -46,10 +55,10 @@ data_source/PLU2008_Updated.shp:
 	unzip data_source/PLU2008_Updated
 	touch data_source/PLU2008_Updated.shp 
 
-data_source/jurisdiction_zoning.sql:
-	perl s3-curl/s3curl.pl --id=company \
-	-- http://landuse.s3.amazonaws.com/zoning/jurisdiction_zoning.sql \
-	-o data_source/jurisdiction_zoning.sql
+# data_source/jurisdiction_zoning.sql:
+# 	perl s3-curl/s3curl.pl --id=company \
+# 	-- http://landuse.s3.amazonaws.com/zoning/jurisdiction_zoning.sql \
+# 	-o data_source/jurisdiction_zoning.sql
 
 parcels_spandex.sql:
 	perl s3-curl/s3curl.pl --id=company \
@@ -79,10 +88,3 @@ s3curl.zip:
 # just loading these from sql dumps for now.
 # can fix this when GDAL 1.11/2.0 gets released
 #
-# data_source/PlannedLandUsePhase1.gdb: data_source/PlannedLandUse1Through6.gdb.zip
-# 	unzip -d data_source/ data_source/PlannedLandUse1Through6.gdb.zip
-
-# data_source/PlannedLandUse1Through6.gdb.zip: s3-curl/s3curl.pl
-# 	perl s3-curl/s3curl.pl --id=company 
-# 	-- http://landuse.s3.amazonaws.com/zoning/PlannedLandUse1Through6.gdb.zip \
-# 	-o data_source/PlannedLandUse1Through6.gdb.zip
