@@ -34,8 +34,8 @@ PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=$
 data_source/PlannedLandUsePhase6.gdb
 
 psql -p 25432 -h localhost -U vagrant staging -c 'ALTER SCHEMA public RENAME TO zoning_legacy_2012;'
-sudo -p 25432 -h localhost -U vagrant staging -c 'ALTER TABLE zoning_legacy_2012.export_output RENAME TO zoning_legacy_2012.monte_sereno;'
-sudo -p 25432 -h localhost -U vagrant staging -c 'DROP TABLE zoning_legacy_2012.pacificagp_022009;'
+psql -p 25432 -h localhost -U vagrant staging -c 'ALTER TABLE zoning_legacy_2012.export_output RENAME TO monte_sereno;'
+psql -p 25432 -h localhost -U vagrant staging -c 'DROP TABLE zoning_legacy_2012.pacificagp_022009;'
 # sudo -u postgres plu -skipfailures -f scraps/alter_table_multiple_schema.sql
 # rm legacy2012.dump
 

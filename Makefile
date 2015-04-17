@@ -12,8 +12,8 @@ parcel_zoning.csv: bay_area_zoning.sql \
 	plu_bay_area_zoning.sql \
 	parcels_zoning_update9.sql \
 	ba8_parcels.sql 
-	psql -p 25432 -h localhost -U vagrant process/update9places.sql
-	psql -p 25432 -h localhost -U vagrant process/parcel_zoning_intersection.sql
+	psql -p 25432 -h localhost -U vagrant vagrant process/update9places.sql
+	psql -p 25432 -h localhost -U vagrant vagrant process/parcel_zoning_intersection.sql
 
 bay_area_zoning.sql: data_source/PlannedLandUsePhase1.gdb \
 	data_source/zoning_codes_base2012.csv \
