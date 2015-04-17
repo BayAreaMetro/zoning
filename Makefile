@@ -39,10 +39,26 @@ plu_bay_area_zoning.sql: data_source/PLU2008_Updated.shp
 	ogr2ogr -f "PostgreSQL" PG:"host=localhost port=25432 dbname=vagrant user=vagrant password=vagrant" data_source/PLU2008_Updated.shp
 	pg_dump $(ARGS) vagrant --table=plu2008_updated > plu_bay_area_zoning.sql
 
+data_source/county10_ba.shp: data_source/county10_ba.zip
+	unzip -d data_source/ data_source/county10_ba.zip
+	touch data_source/county10_ba.shp
+
+data_source/city10_ba.shp: data_source/city10_ba.zip
+	unzip -d data_source/ data_source/city10_ba.zip
+	touch data_source/city10_ba.shp
+
 #where plu refers to the old "planned land use"/comprehensive plan project
 data_source/ba8_parcels.sql: 
 	$(get)ba8parcels.sql \
 	-o data_source/ba8_parcels.sql
+
+data_source/city10_ba.zip:
+	$(get)city10_ba.zip \
+	-o data_source/city10_ba.zip
+
+data_source/county10_ba.zip:
+	$(get)county10_ba.zip \
+	-o data_source/county10_ba.zip
 
 data_source/match_fields_tables_zoning_2012_source.csv:
 	$(get)match_fields_tables_zoning_2012_source.csv \
