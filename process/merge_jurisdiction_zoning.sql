@@ -1,8 +1,3 @@
-DROP TABLE zoning_legacy_2012.export_output;
-DROP TABLE zoning_legacy_2012.pacificagp_022009;
-
-CREATE SCHEMA zoning;
-
 CREATE TABLE zoning.merged_jurisdictions
 (
   ogc_fid integer,
@@ -54,4 +49,4 @@ $BODY$
 
 select zoning.merge();
 
-COPY zoning.merged_jurisdictions to 'bay_area_zoning.sql';
+\COPY zoning.merged_jurisdictions to 'bay_area_zoning.sql';

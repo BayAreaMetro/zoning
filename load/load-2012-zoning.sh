@@ -3,49 +3,39 @@
 #it is unlikely that this would need to occur
 #as long as legacy2012.dump already exists
 
-# DBUSERNAME=$DBUSERNAME
-# DBPASSWORD=$DBPASSWORD
-# DBHOST=$DBHOST
-# DBPORT=$DBPORT
-# DBNAME=plu 
-
-#might need to:
-sudo -u postgres createuser -s vagrant
-#ALTER USER username CREATEDB
-
-createdb -U vagrant plu 
-
-# RUN COMMENTED COMMANDS IN THE VM, OR ELSE DO THEM IN PGADMIN
-# #drop if db exists
-psql plu -c "create extension postgis;"
-psql plu -c "create extension postgis_topology;"
+DBUSERNAME=vagrant
+DBPASSWORD=vagrant
+DBHOST=localhost
+DBPORT=25432
+DBNAME=staging 
 
 ogr2ogr -skipfailures -f "PostgreSQL" \
 PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" \
-data/PlannedLandUsePhase1.gdb
+data_source/PlannedLandUsePhase1.gdb
 
-# ogr2ogr -skipfailures -f "PostgreSQL" \
-# PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" \
-# data/PlannedLandUsePhase2.gdb
+ogr2ogr -skipfailures -f "PostgreSQL" \
+PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" \
+data_source/PlannedLandUsePhase2.gdb
 
-# ogr2ogr -skipfailures -f "PostgreSQL" \
-# PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" \
-# data/PlannedLandUsePhase3.gdb
+ogr2ogr -skipfailures -f "PostgreSQL" \
+PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" \
+data_source/PlannedLandUsePhase3.gdb
 
-# ogr2ogr -skipfailures -f "PostgreSQL" \
-# PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" \
-# data/PlannedLandUsePhase4.gdb
+ogr2ogr -skipfailures -f "PostgreSQL" \
+PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" \
+data_source/PlannedLandUsePhase4.gdb
 
-# ogr2ogr -skipfailures -f "PostgreSQL" \
-# PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" \
-# data/PlannedLandUsePhase5.gdb
+ogr2ogr -skipfailures -f "PostgreSQL" \
+PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" \
+data_source/PlannedLandUsePhase5.gdb
 
-# ogr2ogr -skipfailures -f "PostgreSQL" \
-# PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" \
-# data/PlannedLandUsePhase6.gdb
+ogr2ogr -skipfailures -f "PostgreSQL" \
+PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" \
+data_source/PlannedLandUsePhase6.gdb
 
-# sudo -u postgres plu -c 'ALTER SCHEMA public RENAME TO zoning_legacy_2012;'
-# sudo -u postgres plu -c 'ALTER TABLE zoning_legacy_2012.export_output RENAME TO zoning_legacy_2012.monte_sereno;'
+psql -p 25432 -h localhost -U vagrant staging -c 'ALTER SCHEMA public RENAME TO zoning_legacy_2012;'
+sudo -p 25432 -h localhost -U vagrant staging -c 'ALTER TABLE zoning_legacy_2012.export_output RENAME TO zoning_legacy_2012.monte_sereno;'
+sudo -p 25432 -h localhost -U vagrant staging -c 'DROP TABLE zoning_legacy_2012.pacificagp_022009;'
 # sudo -u postgres plu -skipfailures -f scraps/alter_table_multiple_schema.sql
 # rm legacy2012.dump
 
