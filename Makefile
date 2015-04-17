@@ -35,35 +35,18 @@ data_source/Parcels2010_Update9.sql: data_source/Parcels2010_Update9.csv
 data_source/PlannedLandUsePhase1.gdb: data_source/PlannedLandUse1Through6.gdb.zip
 	unzip -d data_source/ data_source/PlannedLandUse1Through6.gdb.zip
 
-#where plu refers to the old "planned land use"/comprehensive plan project
 plu_bay_area_zoning.sql: data_source/PLU2008_Updated.shp
 	ogr2ogr -f "PostgreSQL" PG:"host=localhost port=25432 dbname=vagrant user=vagrant password=vagrant" data_source/PLU2008_Updated.shp
 	pg_dump $(ARGS) vagrant --table=plu2008_updated > plu_bay_area_zoning.sql
 
-data_source/PLU2008_Updated.shp: data_source/PLU2008_Updated.zip
-	unzip -d data_source/ data_source/PLU2008_Updated
-	touch data_source/PLU2008_Updated.shp 
-
-data_source/PlannedLandUse1Through6.gdb.zip: s3-curl/s3curl.pl
-	$(get)PlannedLandUse1Through6.gdb.zip \
-	-o data_source/PlannedLandUse1Through6.gdb.zip
+#where plu refers to the old "planned land use"/comprehensive plan project
+data_source/ba8_parcels.sql: 
+	$(get)ba8parcels.sql \
+	-o data_source/ba8_parcels.sql
 
 data_source/match_fields_tables_zoning_2012_source.csv:
 	$(get)match_fields_tables_zoning_2012_source.csv \
 	-o data_source/match_fields_tables_zoning_2012_source.csv
-
-data_source/zoning_codes_base2012.csv:
-	$(get)zoning_codes_base2012.csv \
-	-o data_source/zoning_codes_base2012.csv
-
-data_source/PLU2008_Updated.zip:
-	$(get)PLU2008_Updated.zip \
-	-o data_source/PLU2008_Updated.zip
-
-# data_source/jurisdiction_zoning.sql:
-# 	perl s3-curl/s3curl.pl --id=company \
-# 	-- http://landuse.s3.amazonaws.com/zoning/jurisdiction_zoning.sql \
-# 	-o data_source/jurisdiction_zoning.sql
 
 data_source/parcels_spandex.sql:
 	$(get)parcels_spandex.sql \
@@ -73,13 +56,21 @@ data_source/Parcels2010_Update9.csv:
 	$(get)Parcels2010_Update9.csv \
 	-o data_source/Parcels2010_Update9.csv	
 
-data_source/zoning_data/zoning_codes_dictionary.csv: s3-curl/s3curl.pl
-	$(get)zoning_codes_dictionary.csv \
-	-o data_source/zoning_codes_dictionary.csv 
+data_source/PlannedLandUse1Through6.gdb.zip: s3-curl/s3curl.pl
+	$(get)PlannedLandUse1Through6.gdb.zip \
+	-o data_source/PlannedLandUse1Through6.gdb.zip
 
-data_source/ba8_parcels.sql: 
-	$(get)ba8parcels.sql \
-	-o data_source/ba8_parcels.sql
+data_source/PLU2008_Updated.shp: data_source/PLU2008_Updated.zip
+	unzip -d data_source/ data_source/PLU2008_Updated
+	touch data_source/PLU2008_Updated.shp 
+
+data_source/PLU2008_Updated.zip:
+	$(get)PLU2008_Updated.zip \
+	-o data_source/PLU2008_Updated.zip
+
+data_source/zoning_codes_base2012.csv:
+	$(get)zoning_codes_base2012.csv \
+	-o data_source/zoning_codes_base2012.csv
 
 s3curl/s3curl.pl: s3curl.zip
 	unzip s3-curl.zip
@@ -87,7 +78,3 @@ s3curl/s3curl.pl: s3curl.zip
 s3curl.zip:
 	curl -o s3-curl.zip http://s3.amazonaws.com/doc/s3-example-code/s3-curl.zip
 
-# since FileGDB requires gdal 1.11 and ubuntu trusty gdal is 1.10,
-# just loading these from sql dumps for now.
-# can fix this when GDAL 1.11/2.0 gets released
-#
