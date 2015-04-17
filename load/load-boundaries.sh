@@ -1,8 +1,8 @@
-DBUSERNAME=$1
-DBPASSWORD=$2
-DBHOST=$3
-DBPORT=$4
-DBNAME=mtc
+DBUSERNAME=vagrant
+DBPASSWORD=vagrant
+DBHOST=localhost
+DBPORT=25432
+DBNAME=staging 
 
 ogr2ogr -f "PostgreSQL" \
 PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" \

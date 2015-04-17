@@ -21,9 +21,8 @@ parcel_zoning.csv: bay_area_zoning.sql \
 bay_area_zoning.sql: data_source/PlannedLandUsePhase1.gdb \
 	data_source/zoning_codes_base2012.csv \
 	data_source/match_fields_tables_zoning_2012_source.csv
-	psql $(ARGS) -c "CREATE SCHEMA zoning;"
 	bash load/load-2012-zoning.sh
-	psql $(ARGS) vagrant -f process/load-generic-zoning-code-table.sql
+	psql $(ARGS) vagrant -f load/load-generic-zoning-code-table.sql
 	psql $(ARGS) vagrant -f process/merge_jurisdiction_zoning.sql
 
 update9_parcels.sql: data_source/Parcels2010_Update9.sql data_source/ba8_parcels.sql

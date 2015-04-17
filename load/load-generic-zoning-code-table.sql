@@ -1,4 +1,5 @@
-
+DROP SCHEMA IF EXISTS zoning;
+CREATE SCHEMA zoning;
 ----- Load legacy code to generic type and information lookup table
 
 CREATE TABLE zoning.codes_dictionary (
