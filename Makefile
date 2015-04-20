@@ -18,12 +18,17 @@ parcel_zoning.csv: bay_area_zoning.sql \
 	psql $(ARGS) vagrant process/update9places.sql
 	psql $(ARGS) vagrant process/parcel_zoning_intersection.sql
 
+	psql $(ARGS) vagrant -f process/merge_jurisdiction_zoning.sql
+
+#########################
+####LOAD IN POSTGRES#####
+#########################
+
 bay_area_zoning.sql: data_source/PlannedLandUsePhase1.gdb \
 	data_source/zoning_codes_base2012.csv \
 	data_source/match_fields_tables_zoning_2012_source.csv
 	bash load/load-2012-zoning.sh
 	psql $(ARGS) vagrant -f load/load-generic-zoning-code-table.sql
-	psql $(ARGS) vagrant -f process/merge_jurisdiction_zoning.sql
 
 update9_parcels.sql: data_source/Parcels2010_Update9.sql data_source/ba8_parcels.sql
 	psql $(ARGS) vagrant < data_source/ba8_parcels.sql
@@ -32,12 +37,13 @@ data_source/Parcels2010_Update9.sql: data_source/Parcels2010_Update9.csv
 	psql $(ARGS) vagrant -f load/update9.sql
 	pg_dump $(ARGS) vagrant --table=Parcels2010_Update9 > data_source/Parcels2010_Update9.sql
 
-data_source/PlannedLandUsePhase1.gdb: data_source/PlannedLandUse1Through6.gdb.zip
-	unzip -d data_source/ data_source/PlannedLandUse1Through6.gdb.zip
-
 plu_bay_area_zoning.sql: data_source/PLU2008_Updated.shp
 	ogr2ogr -f "PostgreSQL" PG:"host=localhost port=25432 dbname=vagrant user=vagrant password=vagrant" data_source/PLU2008_Updated.shp
 	pg_dump $(ARGS) vagrant --table=plu2008_updated > plu_bay_area_zoning.sql
+
+##############
+####UNZIP#####
+##############
 
 data_source/county10_ba.shp: data_source/county10_ba.zip
 	unzip -d data_source/ data_source/county10_ba.zip
@@ -46,6 +52,13 @@ data_source/county10_ba.shp: data_source/county10_ba.zip
 data_source/city10_ba.shp: data_source/city10_ba.zip
 	unzip -d data_source/ data_source/city10_ba.zip
 	touch data_source/city10_ba.shp
+
+data_source/PlannedLandUsePhase1.gdb: data_source/PlannedLandUse1Through6.gdb.zip
+	unzip -d data_source/ data_source/PlannedLandUse1Through6.gdb.zip
+
+##############
+###DOWNLOAD###
+##############
 
 #where plu refers to the old "planned land use"/comprehensive plan project
 data_source/ba8_parcels.sql: 
