@@ -89,32 +89,32 @@ CREATE TABLE zoning.source_field_name (
 	city_name text 
 );
 
-COPY zoning.source_field_name FROM 'data_source/match_fields_tables_zoning_2012_source.csv' WITH (FORMAT csv, HEADER TRUE);
+\COPY zoning.source_field_name FROM 'data_source/match_fields_tables_zoning_2012_source.csv' WITH (FORMAT csv, HEADER TRUE);
 
 ALTER TABLE zoning.source_field_name ALTER COLUMN juris SET NOT NULL;
 ALTER TABLE zoning.source_field_name ADD PRIMARY KEY (juris);
 
-##update incorrect fields for various places
+--update incorrect fields for various places
 update zoning.source_field_name 
 set matchfield='lu_code' 
-where tablename like '%richmond%'
+where tablename like '%richmond%';
 	
 UPDATE zoning.source_field_name
 SET matchfield = 'zoning'
-WHERE juris=27
+WHERE juris=27;
 
 UPDATE zoning.source_field_name 
 SET tablename = 'alamedacountygp2006db'
-where tablename like '%alamedagp2%'
+where tablename like '%alamedagp2%';
 
 UPDATE zoning.source_field_name 
 SET matchfield = 'new_zoning'
-where tablename = 'elcerritozoning'
+where tablename = 'elcerritozoning';
 
 UPDATE zoning.source_field_name 
 SET matchfield = 'urbsimlu'
-where tablename = 'fremontgeneralplan'
+where tablename = 'fremontgeneralplan';
 
 UPDATE zoning.source_field_name 
 SET matchfield = 'dxf_text'
-where tablename = 'orinda_zoning'
+where tablename = 'orinda_zoning';
