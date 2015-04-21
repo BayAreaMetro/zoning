@@ -63,39 +63,39 @@ data_source/PLU2008_Updated.shp: data_source/PLU2008_Updated.zip
 ##############
 
 #where plu refers to the old "planned land use"/comprehensive plan project
-data_source/ba8_parcels.sql: 
+data_source/ba8_parcels.sql: s3curl/s3curl.pl
 	$(get)ba8parcels.sql \
 	-o data_source/ba8_parcels.sql
 
-data_source/city10_ba.zip:
+data_source/city10_ba.zip: s3curl/s3curl.pl
 	$(get)city10_ba.zip \
 	-o data_source/city10_ba.zip
 
-data_source/county10_ca.zip:
+data_source/county10_ca.zip: s3curl/s3curl.pl
 	$(get)county10_ca.zip \
 	-o data_source/county10_ca.zip
 
-data_source/match_fields_tables_zoning_2012_source.csv:
+data_source/match_fields_tables_zoning_2012_source.csv: s3curl/s3curl.pl
 	$(get)match_fields_tables_zoning_2012_source.csv \
 	-o data_source/match_fields_tables_zoning_2012_source.csv
 
-data_source/parcels_spandex.sql:
+data_source/parcels_spandex.sql: s3curl/s3curl.pl
 	$(get)parcels_spandex.sql \
 	-o data_source/parcels_spandex.sql
 
-data_source/Parcels2010_Update9.csv:
+data_source/Parcels2010_Update9.csv: s3curl/s3curl.pl
 	$(get)Parcels2010_Update9.csv \
 	-o data_source/Parcels2010_Update9.csv	
 
-data_source/PlannedLandUse1Through6.gdb.zip:
+data_source/PlannedLandUse1Through6.gdb.zip: s3curl/s3curl.pl
 	$(get)PlannedLandUse1Through6.gdb.zip \
 	-o data_source/PlannedLandUse1Through6.gdb.zip
 
-data_source/PLU2008_Updated.zip:
+data_source/PLU2008_Updated.zip: s3curl/s3curl.pl
 	$(get)PLU2008_Updated.zip \
 	-o data_source/PLU2008_Updated.zip
 
-data_source/zoning_codes_base2012.csv:
+data_source/zoning_codes_base2012.csv: s3curl/s3curl.pl
 	$(get)zoning_codes_base2012.csv \
 	-o data_source/zoning_codes_base2012.csv
 
