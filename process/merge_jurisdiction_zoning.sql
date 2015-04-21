@@ -13,11 +13,11 @@ $BODY$
 DECLARE
     	tables CURSOR FOR SELECT *
 	      FROM information_schema.tables
-	      WHERE table_schema = 'zoning_legacy_2012'
+	      WHERE table_schema = 'zoning_staging'
 	      ORDER BY "table_name" ASC
 	      LIMIT ((SELECT count(*)
 		  FROM information_schema.tables
-		  WHERE table_schema = 'zoning_legacy_2012')-1);
+		  WHERE table_schema = 'zoning_staging')-1);
 		sql_string text := '';
 BEGIN
 	 FOR table_record IN tables LOOP
@@ -29,12 +29,12 @@ BEGIN
 		 || qry.matchfield ||    
 		 ' as text) as zoning, ' 
 		 || qry.juris ||
-		 ' as juris from zoning_legacy_2012.'
+		 ' as juris from zoning_staging.'
 		 || table_record."table_name" || 
 		 ', ST_Force2D(wkb_geometry) as the_geom ' 
 		FROM
 			(
-				select matchfield, CAST(juris as text)
+				select substring(matchfield from 1 for 10) as matchfield, CAST(juris as text)
 					FROM zoning.source_field_name s
 				WHERE s.tablename = table_record."table_name") qry
 			);
@@ -49,4 +49,4 @@ $BODY$
 
 select zoning.merge();
 
-\COPY zoning.merged_jurisdictions to 'bay_area_zoning.sql';
+\COPY zoning.merged_jurisdictions to 'bay_area_zoning.sql';*/

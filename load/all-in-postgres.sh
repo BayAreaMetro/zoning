@@ -21,7 +21,7 @@ PGPASSWORD=vagrant psql -p $DBPORT -h $DBHOST -U $DBUSERNAME $DBNAME -c "CREATE 
 #JURISDICTION-BASED ZONING SOURCE DATA
 ls data_source/jurisdictional/*.shp | cut -d "/" -f3 | xargs -I {} ogr2ogr -skipfailures -f "PostgreSQL" \
 PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" \
--nlt PROMOTE_TO_MULTI -nln zoning_staging.{} data_source/jurisdictional/{}
+-nlt PROMOTE_TO_MULTI -lco SCHEMA=zoning_staging data_source/jurisdictional/{}
 
 #GENERIC ZONING CODE TABLE
 PGPASSWORD=vagrant psql -p $DBPORT -h $DBHOST -U $DBUSERNAME $DBNAME -f load/load-generic-zoning-code-table.sql
