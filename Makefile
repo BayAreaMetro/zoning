@@ -8,50 +8,47 @@
 #the following are just stubs and won't work right now
 
 get = perl s3-curl/s3curl.pl --id=company -- http://landuse.s3.amazonaws.com/zoning/
-ARGS = 
 
-parcel_zoning.csv: bay_area_zoning.sql \
-	data_source/parcels_spandex.sql \
-	plu_bay_area_zoning.sql \
-	update9_parcels.sql \
-	data_source/ba8_parcels.sql
-	psql $(ARGS) vagrant process/update9places.sql
-	psql $(ARGS) vagrant process/parcel_zoning_intersection.sql
+# parcel_zoning.csv: \
+# 	bay_area_zoning.sql \
+# 	data_source/parcels_spandex.sql \
+# 	plu_bay_area_zoning.sql \
+# 	update9_parcels.sql \
+# 	data_source/ba8_parcels.sql
+# 	psql $(ARGS) vagrant process/update9places.sql
+# 	psql $(ARGS) vagrant process/parcel_zoning_intersection.sql
 
-	psql $(ARGS) vagrant -f process/merge_jurisdiction_zoning.sql
+# 	psql $(ARGS) vagrant -f process/merge_jurisdiction_zoning.sql
 
 #########################
 ####LOAD IN POSTGRES#####
 #########################
 
-bay_area_zoning.sql: data_source/PlannedLandUsePhase1.gdb \
+zoningdb.sql: \
+	data_source/ba8_parcels.sql \
+	data_source/city10_ba.shp \
+	data_source/county10_ca.shp \
+	data_source/match_fields_tables_zoning_2012_source.csv \
+	data_source/parcels_spandex.sql \
+	data_source/Parcels2010_Update9.csv \
+	data_source/jurisdictional/AlamedaCountyGP2006db.shp \
 	data_source/zoning_codes_base2012.csv \
-	data_source/match_fields_tables_zoning_2012_source.csv
-	bash load/load-2012-zoning.sh
-	psql -p 5432 -h localhost -U vagrant vagrant -f load/load-generic-zoning-code-table.sql
-
-update9_parcels.sql: data_source/Parcels2010_Update9.sql data_source/ba8_parcels.sql
-	psql $(ARGS) vagrant < data_source/ba8_parcels.sql
-
-data_source/Parcels2010_Update9.sql: data_source/Parcels2010_Update9.csv
-	psql $(ARGS) vagrant -f load/update9.sql
-	pg_dump $(ARGS) vagrant --table=Parcels2010_Update9 > data_source/Parcels2010_Update9.sql
-
-data_source/PLU2008_Updated.shp
+	data_source/PLU2008_Updated.shp
+	bash load/all-in-postgres.sh
 
 ##############
 ###PREPARE####
 ##############
 
 data_source/jurisdictional/AlamedaCountyGP2006db.shp: data_source/PlannedLandUsePhase1.gdb
-	load/jurisdiction_shapefile_directory.sh
+	bash load/jurisdiction_shapefile_directory.sh
 
 data_source/PlannedLandUsePhase1.gdb: data_source/PlannedLandUse1Through6.gdb.zip
 	unzip -d data_source/ data_source/PlannedLandUse1Through6.gdb.zip
 
-data_source/county10_ba.shp: data_source/county10_ba.zip
-	unzip -d data_source/ data_source/county10_ba.zip
-	touch data_source/county10_ba.shp
+data_source/county10_ca.shp: data_source/county10_ca.zip
+	unzip -d data_source/ data_source/county10_ca.zip
+	touch data_source/county10_ca.shp
 
 data_source/city10_ba.shp: data_source/city10_ba.zip
 	unzip -d data_source/ data_source/city10_ba.zip
@@ -74,9 +71,9 @@ data_source/city10_ba.zip:
 	$(get)city10_ba.zip \
 	-o data_source/city10_ba.zip
 
-data_source/county10_ba.zip:
-	$(get)county10_ba.zip \
-	-o data_source/county10_ba.zip
+data_source/county10_ca.zip:
+	$(get)county10_ca.zip \
+	-o data_source/county10_ca.zip
 
 data_source/match_fields_tables_zoning_2012_source.csv:
 	$(get)match_fields_tables_zoning_2012_source.csv \
