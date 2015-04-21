@@ -57,6 +57,10 @@ data_source/city10_ba.shp: data_source/city10_ba.zip
 	unzip -d data_source/ data_source/city10_ba.zip
 	touch data_source/city10_ba.shp
 
+data_source/PLU2008_Updated.shp: data_source/PLU2008_Updated.zip
+	unzip -d data_source/ data_source/PLU2008_Updated
+	touch data_source/PLU2008_Updated.shp 
+
 ##############
 ###DOWNLOAD###
 ##############
@@ -89,10 +93,6 @@ data_source/Parcels2010_Update9.csv:
 data_source/PlannedLandUse1Through6.gdb.zip:
 	$(get)PlannedLandUse1Through6.gdb.zip \
 	-o data_source/PlannedLandUse1Through6.gdb.zip
-
-data_source/PLU2008_Updated.shp: data_source/PLU2008_Updated.zip
-	unzip -d data_source/ data_source/PLU2008_Updated
-	touch data_source/PLU2008_Updated.shp 
 
 data_source/PLU2008_Updated.zip:
 	$(get)PLU2008_Updated.zip \
