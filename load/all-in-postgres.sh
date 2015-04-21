@@ -30,7 +30,10 @@ PGPASSWORD=vagrant psql -p $DBPORT -h $DBHOST -U $DBUSERNAME $DBNAME -f load/loa
 ogr2ogr -f "PostgreSQL" PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" data_source/PLU2008_Updated.shp
 
 #UPDATE9 PARCELS from ba8
-PGPASSWORD=vagrant psql -p $DBPORT -h $DBHOST -U $DBUSERNAME $DBNAME < data_source/ba8_parcels.sql
+PGPASSWORD=vagrant psql -p $DBPORT -h $DBHOST -U $DBUSERNAME $DBNAME < data_source/ba8parcels.sql
+
+#SPANDEX PARCELS
+PGPASSWORD=vagrant psql -p $DBPORT -h $DBHOST -U $DBUSERNAME $DBNAME < data_source/parcels_spandex.sql
 
 #UPDATE9 TABLE (joinnuma, zoning_id)
 PGPASSWORD=vagrant psql -p $DBPORT -h $DBHOST -U $DBUSERNAME $DBNAME -f load/update9.sql

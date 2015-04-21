@@ -1,4 +1,4 @@
-CREATE SCHEMDA zoning;
+CREATE SCHEMA zoning;
 
 DROP TABLE IF EXISTS zoning.update9;
 CREATE TABLE zoning.update9
