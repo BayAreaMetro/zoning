@@ -1,3 +1,7 @@
+DROP TABLE zoning_staging.export_output; -- SHOULD BE RENAME TO  monte_sereno--NEED TO UPDATE MATCH TABLE THOUGH
+DROP TABLE zoning_staging.pacificagp_022009;
+DROP TABLE zoning_staging.santaclaracity_zoningfeb05;
+
 CREATE TABLE zoning.merged_jurisdictions
 (
   ogc_fid integer,

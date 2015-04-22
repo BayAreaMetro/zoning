@@ -118,3 +118,5 @@ where tablename = 'fremontgeneralplan';
 UPDATE zoning.source_field_name 
 SET matchfield = 'dxf_text'
 where tablename = 'orinda_zoning';
+
+delete from zoning.source_field_name where juris=27;
