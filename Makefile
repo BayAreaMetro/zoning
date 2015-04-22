@@ -68,41 +68,43 @@ data_source/ba8parcels.sql: s3-curl/s3curl.pl
 	$(get)ba8parcels.sql \
 	-o data_source/ba8parcels.sql
 
-data_source/city10_ba.zip: s3-curl/s3curl.pl
-	$(get)city10_ba.zip \
-	-o data_source/city10_ba.zip
-
-data_source/county10_ca.zip: s3-curl/s3curl.pl
-	$(get)county10_ca.zip \
-	-o data_source/county10_ca.zip
-
-data_source/match_fields_tables_zoning_2012_source.csv: s3-curl/s3curl.pl
-	$(get)match_fields_tables_zoning_2012_source.csv \
-	-o data_source/match_fields_tables_zoning_2012_source.csv
-
 data_source/parcels_spandex.sql: s3-curl/s3curl.pl
 	$(get)parcels_spandex.sql \
-	-o data_source/parcels_spandex.sql
+	-o data_archive/parcels_spandex.sql
 
 data_source/Parcels2010_Update9.csv: s3-curl/s3curl.pl
 	$(get)Parcels2010_Update9.csv \
 	-o data_source/Parcels2010_Update9.csv	
 
-data_source/PlannedLandUse1Through6.gdb.zip: s3-curl/s3curl.pl
-	$(get)PlannedLandUse1Through6.gdb.zip \
-	-o data_source/PlannedLandUse1Through6.gdb.zip
-
-data_source/PLU2008_Updated.zip: s3-curl/s3curl.pl
-	$(get)PLU2008_Updated.zip \
-	-o data_source/PLU2008_Updated.zip
-
 data_source/zoning_codes_base2012.csv: s3-curl/s3curl.pl
 	$(get)zoning_codes_base2012.csv \
 	-o data_source/zoning_codes_base2012.csv
 
+data_archive/city10_ba.zip: s3-curl/s3curl.pl
+	$(get)city10_ba.zip \
+	-o data_archive/city10_ba.zip
+
+data_archive/county10_ca.zip: s3-curl/s3curl.pl
+	$(get)county10_ca.zip \
+	-o data_archive/county10_ca.zip
+
+data_archive/match_fields_tables_zoning_2012_source.csv: s3-curl/s3curl.pl
+	$(get)match_fields_tables_zoning_2012_source.csv \
+	-o data_archive/match_fields_tables_zoning_2012_source.csv
+
+data_archive/PlannedLandUse1Through6.gdb.zip: s3-curl/s3curl.pl
+	$(get)PlannedLandUse1Through6.gdb.zip \
+	-o data_archive/PlannedLandUse1Through6.gdb.zip
+
+data_archive/PLU2008_Updated.zip: s3-curl/s3curl.pl
+	$(get)PLU2008_Updated.zip \
+	-o data_archive/PLU2008_Updated.zip
+
 s3-curl/s3curl.pl: s3-curl.zip
 	unzip s3-curl.zip
 	touch s3-curl/s3curl.pl
+	mkdir data_archives
+	mkdir data_source
 
 s3-curl.zip:
 	curl -o s3-curl.zip http://s3.amazonaws.com/doc/s3-example-code/s3-curl.zip
