@@ -53,4 +53,4 @@ $BODY$
 
 select zoning.merge();
 
-\COPY zoning.merged_jurisdictions to 'bay_area_zoning.sql';*/
+\COPY zoning.merged_jurisdictions to 'bay_area_zoning.sql';
