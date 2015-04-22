@@ -397,3 +397,17 @@ zoning.parcel_two_max two,
 parcel p
 WHERE two.geom_id = p.geom_id
 
+create INDEX parcel_geom_id_idx ON parcel using hash (geom_id);
+
+--USE PLU 2008 WHERE NO OTHER DATA AVAILABLE
+
+CREATE TABLE zoning.unmapped_parcels AS
+select * from parcel 
+where geom_id not in (
+SELECT geom_id from zoning.parcel);
+
+CREATE TABLE zoning.unmapped_parcel_zoning AS
+SELECT p.geom_id, z.origgplu,z.gengplu 
+FROM zoning.unmapped_parcels p,
+public.plu2008_updated z 
+WHERE ST_Intersects(z.geom,p.geom);
