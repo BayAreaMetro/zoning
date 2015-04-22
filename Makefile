@@ -70,7 +70,7 @@ data_source/ba8parcels.sql: s3-curl/s3curl.pl
 
 data_source/parcels_spandex.sql: s3-curl/s3curl.pl
 	$(get)parcels_spandex.sql \
-	-o data_archive/parcels_spandex.sql
+	-o data_source/parcels_spandex.sql
 
 data_source/Parcels2010_Update9.csv: s3-curl/s3curl.pl
 	$(get)Parcels2010_Update9.csv \
