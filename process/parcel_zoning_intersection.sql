@@ -192,6 +192,14 @@ WHERE p2n.geom_id = pcc.geom_id
 AND pcc.cityname1 = p2n.city;
 --Query returned successfully: 48928 rows affected, 3750 ms execution time.
 
+CREATE TABLE zoning.parcel_in_cities_doubles AS 
+SELECT geom_id
+FROM
+(SELECT geom_id, count(*) AS countof
+FROM zoning.parcel_in_cities
+GROUP BY geom_id) p
+WHERE p.countof>1;
+
 DELETE FROM zoning.parcel_in_cities WHERE geom_id IN
 (
 SELECT geom_id
