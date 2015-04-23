@@ -20,6 +20,13 @@ get = perl s3-curl/s3curl.pl --id=company -- http://landuse.s3.amazonaws.com/zon
 
 # 	PGPASSWORD=vagrant psql -p $DBPORT -h $DBHOST -U $DBUSERNAME $DBNAME -f process/merge_jurisdiction_zoning.sql
 
+parcel_zoning.csv: 
+	PGPASSWORD=vagrant psql \
+	-p $DBPORT -h $DBHOST -U $DBUSERNAME $DBNAME \
+	-f process/merge_jurisdiction_zoning.sql
+	PGPASSWORD=vagrant psql \
+	-p $DBPORT -h $DBHOST -U $DBUSERNAME $DBNAME \
+	-f process/parcel_zoning_intersection.sql
 #########################
 ####LOAD IN POSTGRES#####
 #########################
