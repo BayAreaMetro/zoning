@@ -1,0 +1,12 @@
+COMMENT ON TABLE parcel is 'parcel_zoning intersection-spandex parcels';
+COMMENT ON TABLE parcel_invalid is 'parcel_zoning intersection';
+COMMENT ON TABLE parcel_geometrycollection is 'parcel_zoning intersection-';
+COMMENT ON TABLE parcel_valid is 'parcel_zoning intersection-valid subset of spandex parcels';
+COMMENT ON TABLE zoning.lookup_valid is 'parcel_zoning intersection-subset of zoning.merged_jurisdictions with valid geometries';
+COMMENT ON TABLE zoning.parcel_intersection_count is 'parcel_zoning intersection-st_intersects of parcel and zoning';
+COMMENT ON TABLE zoning.parcels_with_multiple_zoning is 'parcel_zoning intersection-';
+COMMENT ON TABLE zoning.parcels_with_one_zone is 'parcel_zoning intersection-';
+COMMENT ON TABLE zoning.parcel is 'parcel_zoning intersection-final parcel/zoning table';
+COMMENT ON TABLE zoning.parcel_overlaps is 'parcel_zoning intersection-area calculations for parcels in several zoning geoms';
+COMMENT ON TABLE zoning.parcel_overlaps_maxonly  is 'parcel_zoning intersection-inserted in final table';
+COMMENT ON TABLE zoning.parcel_two_max is 'parcel_zoning intersection-';
