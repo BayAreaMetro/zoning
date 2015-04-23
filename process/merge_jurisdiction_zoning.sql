@@ -1,14 +1,15 @@
-DROP TABLE zoning_staging.export_output; -- SHOULD BE RENAME TO  monte_sereno--NEED TO UPDATE MATCH TABLE THOUGH
-DROP TABLE zoning_staging.pacificagp_022009;
-DROP TABLE zoning_staging.santaclaracity_zoningfeb05;
+DROP TABLE IF EXISTS zoning_staging.export_output; -- SHOULD BE RENAME TO  monte_sereno--NEED TO UPDATE MATCH TABLE THOUGH
+DROP TABLE IF EXISTS zoning_staging.pacificagp_022009;
+DROP TABLE IF EXISTS zoning_staging.santaclaracity_zoningfeb05;
 
+DROP TABLE IF EXISTS zoning.merged_jurisdictions;
 CREATE TABLE zoning.merged_jurisdictions
 (
   ogc_fid integer,
   tablename text,
   zoning text,
   juris integer,
-  the_geom geometry
+  the_geom geometry(Multipolygon,26910)
 );
 
 CREATE OR REPLACE FUNCTION zoning.merge()
@@ -26,16 +27,17 @@ DECLARE
 BEGIN
 	 FOR table_record IN tables LOOP
 	 sql_string := (SELECT '
-		 insert into zoning.merged_jurisdictions
-		 select ogc_fid, ' 
-		 || quote_LITERAL(table_record."table_name") 
-		 || ', CAST('
-		 || qry.matchfield ||    
-		 ' as text) as zoning, ' 
-		 || qry.juris ||
-		 ' as juris from zoning_staging.'
-		 || table_record."table_name" || 
-		 ', ST_Force2D(wkb_geometry) as the_geom ' 
+		 insert into zoning.merged_jurisdictions 
+		 select ogc_fid, ' ||
+		 quote_LITERAL(table_record."table_name") || 
+		 ', CAST(' ||
+		 qry.matchfield ||    
+		 ' as text) as zoning, ' ||
+	 	 qry.juris ||
+		 ' as juris,' ||
+		 'ST_Force2D(wkb_geometry) as the_geom ' ||
+		 'from zoning_staging.' ||
+		 table_record."table_name"		 
 		FROM
 			(
 				select substring(matchfield from 1 for 10) as matchfield, CAST(juris as text)
