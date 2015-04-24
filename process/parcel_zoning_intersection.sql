@@ -70,10 +70,17 @@ IN (SELECT geom_id FROM zoning.parcel_intersection_count WHERE countof=1);
 CREATE INDEX z_parcels_with_one_zone_gidx ON zoning.parcels_with_one_zone USING GIST (geom);
 VACUUM (ANALYZE) zoning.parcels_with_one_zone;
 
+CREATE TABLE zoning.merged_jurisdictions_ids AS 
+SELECT c.id as zoning_id, z.the_geom FROM
+zoning.codes_dictionary c,
+zoning.merged_jurisdictions z
+WHERE c.juris=z.juris 
+AND c.name = z.zoning;
+
 CREATE TABLE zoning.parcel AS
-select p.geom_id, z.id, 100 as prop
-from zoning.parcels_with_one_zone p,
-zoning.lookup_valid z
+SELECT p.geom_id, z.zoning_id, 100 AS prop
+FROM zoning.parcels_with_one_zone p,
+zoning.merged_jurisdictions_ids z
 WHERE ST_Intersects(z.the_geom, p.geom);
 --Query returned successfully: 1263160 rows affected, 1140264 ms execution time.
 

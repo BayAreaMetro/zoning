@@ -2,9 +2,10 @@ DROP TABLE parcel_invalid;
 DROP TABLE parcel_geometrycollection;
 DROP TABLE parcel_valid;
 DROP TABLE zoning.lookup_valid; 
-DROP TABLE zoning.parcel_intersection_coun
+DROP TABLE zoning.parcel_intersection_count;
 DROP TABLE zoning.parcels_with_multiple_zoning;
 DROP TABLE zoning.parcels_with_one_zone;
+DROP TABLE zoning.merged_jurisdictions_ids;
 DROP TABLE zoning.parcel;
 DROP TABLE zoning.parcel_overlaps; 
 DROP TABLE zoning.parcel_overlaps_maxonly;
