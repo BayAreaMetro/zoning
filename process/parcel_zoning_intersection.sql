@@ -35,7 +35,7 @@ FROM
 
 CREATE INDEX lookup_2012_valid_gidx ON zoning.lookup_valid USING GIST (geom);
 
-INSERT INTO zoning.lookup_2012_problem_geoms (
+CREATE TABLE zoning.lookup_2012_problem_geoms (
 SELECT *
 FROM zoning.lookup_valid
 WHERE GeometryType(geom) = 'GEOMETRYCOLLECTION');
