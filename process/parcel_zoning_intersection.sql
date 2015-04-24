@@ -2,7 +2,7 @@
 SELECT VALID GEOMS ONLY, 
 PUT THEM IN EPSG USED FOR ZONING*/
 
-ALTER TABLE parcel 
+/*ALTER TABLE parcel 
    ALTER COLUMN geom 
    TYPE Geometry(MultiPolygon, 26910) 
    USING ST_Transform(geom, 26910);
@@ -26,17 +26,25 @@ WHERE GeometryType(geom) = 'GEOMETRYCOLLECTION';
 CREATE TABLE parcel_valid as 
 SELECT * FROM parcel
 WHERE ST_IsValid(geom) = true;
-
+*/
 /*SET UP ZONING, 
 SELECT VALID GEOMS ONLY*/
 
-CREATE TABLE zoning.lookup_valid AS
+/*CREATE TABLE zoning.lookup_valid AS
 SELECT 
 	ogc_fid, tablename, ST_MakeValid(the_geom) geom
 FROM
 	zoning.merged_jurisdictions;
 
 CREATE INDEX lookup_2012_valid_gidx ON zoning.lookup_valid USING GIST (geom);
+*/
+CREATE TABLE zoning.merged_jurisdictions_problem_geoms AS
+SELECT *
+FROM zoning.lookup_valid
+WHERE GeometryType(geom) = 'GEOMETRYCOLLECTION';
+
+DELETE FROM zoning.lookup_valid
+WHERE GeometryType(geom) = 'GEOMETRYCOLLECTION';
 
 CREATE TABLE zoning.parcel_intersection_count AS
 SELECT geom_id, count(*) as countof FROM
