@@ -35,7 +35,7 @@ CREATE TABLE zoning.codes_dictionary (
 	ME text 
 );
 
-\COPY zoning.codes_dictionary FROM 'data_source/zoning_codes_base_2012.csv' WITH (FORMAT csv, DELIMITER ',', HEADER TRUE);
+\COPY zoning.codes_dictionary FROM 'data_source/zoning_codes_base2012.csv' WITH (FORMAT csv, DELIMITER ',', HEADER TRUE);
 
 UPDATE zoning.codes_dictionary SET HS = case when HS = 'x' then 'TRUE' else 'FALSE' end;
 UPDATE zoning.codes_dictionary SET HT = case when HT = 'x' then 'TRUE' else 'FALSE' end;
