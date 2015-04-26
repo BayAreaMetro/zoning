@@ -20,10 +20,8 @@ WHERE GeometryType(geom) = 'GEOMETRYCOLLECTION';
 DELETE FROM parcel
 WHERE GeometryType(geom) = 'GEOMETRYCOLLECTION';
 
---WHY ISN'T THE FOLLOWING NECESSARY/USED LATER?
-CREATE TABLE parcel_valid as 
-SELECT * FROM parcel
-WHERE ST_IsValid(geom) = true;
+DELETE FROM parcel 
+WHERE ST_IsValid(geom) = false;
 
 --SET UP ZONING, SELECT VALID GEOMS ONLY
 
@@ -92,14 +90,14 @@ THAN 1 ZONING MULTIPOLYGON
 --uses fewer columns from the zoning.lookup_valid table
 CREATE TABLE zoning.parcel_overlaps AS
 SELECT 
-	parcel_id,
+	geom_id,
 	ogc_fid,
 	tablename,
 	sum(ST_Area(geom)) area,
 	round(sum(ST_Area(geom))/min(parcelarea) * 1000) / 10 prop,
 	ST_Union(geom) geom
 FROM (
-SELECT p.parcel_id, 
+SELECT p.geom_id, 
 	z.ogc_fid, 
 	z.tablename,
  	ST_Area(p.geom) parcelarea, 
@@ -109,9 +107,10 @@ zoning.lookup_valid as z
 WHERE ST_Intersects(z.geom, p.geom)
 ) f
 GROUP BY 
-	parcel_id,
+	geom_id,
 	ogc_fid,
 	tablename;
+
 
 ALTER TABLE zoning.parcel_overlaps ADD COLUMN id INTEGER;
 CREATE SEQUENCE zoning_parcel_overlaps_id_seq;
