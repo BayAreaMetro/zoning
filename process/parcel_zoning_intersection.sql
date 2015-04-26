@@ -196,7 +196,7 @@ FROM
 zoning.parcel_cities_counties pcc,
 (SELECT c.city, p2.geom_id, p2.id 
 FROM
-zoning.codes_base2012 c,
+zoning.codes_dictionary c,
 zoning.parcel_two_max p2
 WHERE c.id = p2.id) p2n
 WHERE p2n.geom_id = pcc.geom_id
@@ -249,7 +249,7 @@ SELECT p2n.geom_id, p2n.zoning_id, p2n.city, cb.name10 as countyname1, p2n.geom
 FROM 
 	(SELECT c.city, p2.geom_id, p2.zoning_id, p2.geom
 	FROM
-	zoning.codes_base2012 c,
+	zoning.codes_dictionary c,
 	zoning.parcel_two_max_not_in_cities p2
 	WHERE c.id = p2.zoning_id) p2n,
 	administrative.boundaries_counties cb
