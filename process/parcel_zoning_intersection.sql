@@ -25,7 +25,8 @@ WHERE GeometryType(geom) = 'GEOMETRYCOLLECTION';
 DELETE FROM parcel 
 WHERE ST_IsValid(geom) = false;
 
---SET UP ZONING, SELECT VALID GEOMS ONLY
+CREATE INDEX parcel_gidx ON parcel USING GIST (geom);
+VACUUM (ANALYZE) parcel;
 
 CREATE TABLE zoning.bay_area AS
 SELECT 
@@ -48,18 +49,19 @@ FROM zoning.bay_area
 WHERE GeometryType(geom) = 'GEOMETRYCOLLECTION';
 --returns 0 rows
 
-DELETE FROM zoning.geometry_collection
+DELETE FROM zoning.bay_area
 WHERE GeometryType(geom) = 'GEOMETRYCOLLECTION';
-
-CREATE INDEX zoning_bay_area_gidx ON zoning.bay_area USING GIST (geom);
---PREPARE NECESSARY DATA FOR INTERSECTION
 
 CREATE TABLE zoning.bay_area_generic AS 
 SELECT c.id as zoning_id, z.geom FROM
 zoning.codes_dictionary c,
 zoning.bay_area z
 WHERE c.juris=z.juris 
-AND c.name = z.zoning;
+AND c.name = z.zoning;*/
+
+CREATE INDEX zoning_bay_area_generic_gidx ON zoning.bay_area_generic USING GIST (geom);
+CREATE INDEX zoning_bay_area_zoning_id_gidx ON zoning.bay_area_generic USING HASH (zoning_id);
+VACUUM (ANALYZE) zoning.bay_area_generic;
 
 /*
 CREATE TABLE zoning.parcel_counties AS
@@ -85,6 +87,29 @@ WHERE ST_Intersects(city.wkb_geometry, p.geom);
 --IF THERE ARE PROBLEMS WITH THIS overlap selection
 --take a look at the history for this script for one that
 --uses fewer columns from the zoning.lookup_valid table
+
+CREATE TABLE zoning.parcel_intersection AS
+SELECT z.zoning_id, p.geom_id FROM
+			zoning.bay_area_generic as z, parcel p
+			WHERE ST_Intersects(z.geom, p.geom);
+
+CREATE TABLE zoning.parcel_intersection_count AS
+SELECT geom_id, count(*) as countof FROM
+			zoning.parcel_intersection
+			GROUP BY geom_id;
+
+CREATE INDEX zoning_parcel_intersection_count ON zoning.parcel_intersection_count (countof);
+VACUUM (ANALYZE) zoning.parcel_intersection_count;
+
+DROP VIEW IF EXISTS zoning.parcels_with_multiple_zoning;
+CREATE VIEW zoning.parcels_with_multiple_zoning AS
+SELECT * from parcel where geom_id
+IN (SELECT geom_id FROM zoning.parcel_intersection_count WHERE countof>1);
+--Query returned successfully: 462655 rows affected, 6854 ms execution time.
+
+/*CREATE INDEX z_parcels_with_multiple_zoning_gidx ON zoning.parcels_with_multiple_zoning USING GIST (geom);
+VACUUM (ANALYZE) zoning.parcels_with_multiple_zoning;*/
+
 CREATE TABLE zoning.parcel_overlaps AS
 SELECT 
 	geom_id,
@@ -97,13 +122,17 @@ SELECT p.geom_id,
 	z.zoning_id, 
  	ST_Area(p.geom) parcelarea, 
  	ST_Intersection(p.geom, z.geom) geom
-FROM zoning.parcel p,
+FROM zoning.parcels_with_multiple_zoning p,
 zoning.bay_area_generic as z
 WHERE ST_Intersects(z.geom, p.geom)
 ) f
 GROUP BY 
 	geom_id,
 	zoning_id;
+
+CREATE INDEX zoning_parcel_overlaps_gidx ON zoning.parcel_overlaps USING GIST (geom);
+CREATE INDEX zoning_parcel_overlaps_geom_id_idx ON zoning.parcel_overlaps USING hash (geom_id);
+CREATE INDEX zoning_parcel_overlaps_zoning_id_idx ON zoning.parcel_overlaps USING hash (zoning_id);
 
 ALTER TABLE zoning.parcel_overlaps ADD COLUMN id INTEGER;
 CREATE SEQUENCE zoning_parcel_overlaps_id_seq;
@@ -112,42 +141,20 @@ ALTER TABLE zoning.parcel_overlaps ALTER COLUMN id SET DEFAULT nextval('zoning_p
 ALTER TABLE zoning.parcel_overlaps ALTER COLUMN id SET NOT NULL;
 ALTER TABLE zoning.parcel_overlaps ADD PRIMARY KEY (id);
 
-CREATE TABLE zoning.parcel_intersection_count AS
-SELECT geom_id, count(*) as countof FROM
-			zoning.parcel_overlaps
-			GROUP BY geom_id;
-
---FIX MULTIPLES PROBLEMS
-
-DROP TABLE IF EXISTS zoning.parcels_with_multiple_zoning;
-CREATE TABLE zoning.parcels_with_multiple_zoning AS
-SELECT * from parcel where geom_id
-IN (SELECT geom_id FROM zoning.parcel_intersection_count WHERE countof>1);
---Query returned successfully: 462655 rows affected, 6854 ms execution time.
-
-CREATE INDEX z_parcels_with_multiple_zoning_gidx ON zoning.parcels_with_multiple_zoning USING GIST (geom);
-VACUUM (ANALYZE) zoning.parcels_with_multiple_zoning;
-
-DROP TABLE IF EXISTS zoning.parcels_with_one_zone;
-CREATE TABLE zoning.parcels_with_one_zone AS
-SELECT * from parcel where geom_id
-IN (SELECT geom_id FROM zoning.parcel_intersection_count WHERE countof=1);
---Query returned successfully: 1311776 rows affected, 16436 ms execution time.
-
-CREATE INDEX z_parcels_with_one_zone_gidx ON zoning.parcels_with_one_zone USING GIST (geom);
-VACUUM (ANALYZE) zoning.parcels_with_one_zone;
+VACUUM (ANALYZE) zoning.parcel_overlaps;
 
 -- PRINT OUT A SUMMARY OF THE RESULTS OF PARCEL overlaps:
-
+/*
 select width_bucket(prop, 0, 100, 9), count(*)
     from zoning.parcel_overlaps
 group by 1
 order by 1;
+*/
 
 --select only those pairs of geom_id, zoning_id in which
 --the proportion of overlap is the maximum
-DROP TABLE IF EXISTS zoning.parcel_overlaps_maxonly;
-CREATE TABLE zoning.parcel_overlaps_maxonly AS
+DROP VIEW IF EXISTS zoning.parcel_overlaps_maxonly;
+CREATE VIEW zoning.parcel_overlaps_maxonly AS
 SELECT geom_id, id, prop 
 FROM zoning.parcel_overlaps WHERE (geom_id,prop) IN 
 ( SELECT geom_id, MAX(prop)
@@ -158,8 +165,8 @@ FROM zoning.parcel_overlaps WHERE (geom_id,prop) IN
 --Unfortunately, many parcels have 2 max values
 
 --So, create table of parcels with >1 max values
-DROP TABLE IF EXISTS zoning.parcel_two_max;
-CREATE TABLE zoning.parcel_two_max AS
+DROP VIEW IF EXISTS zoning.parcel_two_max;
+CREATE VIEW zoning.parcel_two_max AS
 SELECT geom_id, id, prop FROM 
 zoning.parcel_overlaps_maxonly where (geom_id) IN
 	(
@@ -179,15 +186,18 @@ THAT ARE CLAIMED BY 2 (OR MORE)
 JURISDICTIONAL ZONING GEOMETRIES 
 */
 
+create INDEX zoning_codes_dictionary_idx ON zoning.codes_dictionary using hash (id);
+VACUUM (ANALYZE) zoning.codes_dictionary;
+
 CREATE TABLE zoning.parcel_in_cities AS
-SELECT p2n.geom_id, p2n.id 
+SELECT p2n.geom_id, p2n.zoning_id 
 FROM 
 zoning.parcel_cities_counties pcc,
-(SELECT c.city, p2.geom_id, p2.id 
+(SELECT c.city, p2.geom_id, p2._zoning_id 
 FROM
 zoning.codes_dictionary c,
-zoning.parcel_two_max p2
-WHERE c.id = p2.id) p2n
+zoning.parcel_two_max p2 --parcel_two_max is a twice derived view on zoning.parcel_overlaps
+WHERE c.id = p2.zoning_id) p2n
 WHERE p2n.geom_id = pcc.geom_id
 AND pcc.cityname1 = p2n.city;
 --Query returned successfully: 48928 rows affected, 3750 ms execution time.
@@ -302,13 +312,11 @@ WHERE p.countof>1);
 -------
 --FILL IN ZONING.PARCEL TABLE
 -------
-
 CREATE TABLE zoning.parcel AS
-SELECT p.geom_id, z.zoning_id, 100 AS prop
-FROM zoning.parcels_with_one_zone p,
-zoning.parcel_overlaps po
-WHERE po.geom_id=p.geom_id;
---Query returned successfully: 1263160 rows affected, 1140264 ms execution time.
+SELECT geom_id, zoning_id, 100 AS prop
+FROM zoning.parcel_intersection
+WHERE geom_id
+IN (SELECT geom_id FROM zoning.parcel_intersection_count WHERE countof=1)
 
 --same for 1 max, except insert those into the parcel table
 INSERT INTO zoning.parcel
