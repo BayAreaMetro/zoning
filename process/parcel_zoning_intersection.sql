@@ -114,9 +114,9 @@ FROM (
 SELECT p.geom_id, 
 	z.zoning_id, 
  	ST_Area(p.geom) parcelarea, 
- 	ST_Intersection(p.geom, z.geom) geom
-FROM zoning.parcels_with_multiple_zoning p,
-zoning.bay_area_generic as z
+ 	ST_Intersection(p.geom, z.geom) geom 
+FROM (select geom_id, geom FROM zoning.parcels_with_multiple_zoning) as p,
+(select zoning_id, geom from zoning.bay_area_generic) as z
 WHERE ST_Intersects(z.geom, p.geom)
 ) f
 GROUP BY 
