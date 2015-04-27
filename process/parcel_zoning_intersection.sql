@@ -79,19 +79,12 @@ zoning.parcel_counties p
 WHERE ST_Intersects(city.wkb_geometry, p.geom);
 */
 
---INTERSECTION 1
-
---INTERSECTION 2
-
---First, get stats on how much area falls in each intersection
---IF THERE ARE PROBLEMS WITH THIS overlap selection
---take a look at the history for this script for one that
---uses fewer columns from the zoning.lookup_valid table
-
 CREATE TABLE zoning.parcel_intersection AS
-SELECT z.zoning_id, p.geom_id FROM
-			zoning.bay_area_generic as z, parcel p
-			WHERE ST_Intersects(z.geom, p.geom);
+SELECT p.geom_id,z.zoning_id FROM
+	(select zoning_id, geom from zoning.bay_area_generic) AS z, 
+	(select geom_id, geom from parcel) AS p
+WHERE p.geom && z.geom AND
+ST_Intersects(p.geom,z.geom);
 
 CREATE TABLE zoning.parcel_intersection_count AS
 SELECT geom_id, count(*) as countof FROM
