@@ -1,3 +1,7 @@
+DROP TABLE zoning.bay_area;
+DROP TABLE zoning.invalid;
+DROP TABLE zoning.geometry_collection;
+DROP TABLE zoning.bay_area_generic;
 DROP TABLE parcel_invalid;
 DROP TABLE parcel_geometrycollection;
 DROP TABLE parcel_valid;

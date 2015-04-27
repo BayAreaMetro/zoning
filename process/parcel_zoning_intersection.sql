@@ -29,7 +29,7 @@ WHERE ST_IsValid(geom) = false;
 
 CREATE TABLE zoning.bay_area AS
 SELECT 
-	ogc_fid, tablename, ST_MakeValid(the_geom) geom
+	ogc_fid, tablename, juris, zoning, ST_MakeValid(the_geom) geom
 FROM
 	zoning.merged_jurisdictions;
 
@@ -52,19 +52,10 @@ DELETE FROM zoning.geometry_collection
 WHERE GeometryType(geom) = 'GEOMETRYCOLLECTION';
 
 CREATE INDEX zoning_bay_area_gidx ON zoning.bay_area USING GIST (geom);
-
-CREATE TABLE zoning.lookup_2012_problem_geoms (
-SELECT *
-FROM zoning.lookup_valid
-WHERE GeometryType(geom) = 'GEOMETRYCOLLECTION');
-
-DELETE FROM zoning.lookup_valid
-WHERE GeometryType(geom) = 'GEOMETRYCOLLECTION';
-
 --PREPARE NECESSARY DATA FOR INTERSECTION
 
 CREATE TABLE zoning.bay_area_generic AS 
-SELECT c.id as zoning_id, z.the_geom FROM
+SELECT c.id as zoning_id, z.geom FROM
 zoning.codes_dictionary c,
 zoning.bay_area z
 WHERE c.juris=z.juris 
