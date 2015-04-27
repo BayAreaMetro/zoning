@@ -170,25 +170,25 @@ zoning.parcel_overlaps_maxonly where (geom_id) IN
 	);
 --Query returned successfully: 390363 rows affected, 1634 ms execution time.
 
-/*
+/*n
 BELOW WE DEAL WITH THE PARCELS 
 THAT ARE CLAIMED BY 2 (OR MORE) 
 JURISDICTIONAL ZONING GEOMETRIES 
 */
 
 CREATE TABLE zoning.parcel_counties AS
-SELECT p.*, county.name10 as countyname1, county.namelsad10 as countyname2, county.geoid10 countygeoid FROM
+SELECT county.name10 as countyname1, county.namelsad10 as countyname2, county.geoid10 countygeoid, p.zoning_id,p.geom_id,p.geom FROM
 			county10_ca county,
 			parcel p
 			WHERE ST_Intersects(county.wkb_geometry, p.geom);
 --Query returned successfully: 1954393 rows affected, 142212 ms execution time.
 
 CREATE TABLE zoning.parcel_cities_counties AS
-SELECT p.*, city.name10 as cityname1, city.namelsad10 as cityname2, city.geoid10 citygeoid FROM
-			city10_ba city,
-			zoning.parcel_counties p 
-			WHERE ST_Intersects(city.wkb_geometry, p.geom);
---Query returned successfully: 1691011 rows affected, 121759 ms execution time.
+SELECT city.name10 as cityname1, city.namelsad10 as cityname2, city.geoid10 citygeoid, p.zoning_id,p.geom_id,p.id,p.geom
+FROM 
+city10_ba city,
+zoning.parcel_counties p 
+WHERE ST_Intersects(city.wkb_geometry, p.geom);
 
 CREATE TABLE zoning.parcel_in_cities AS
 SELECT p2n.geom_id, p2n.id 
