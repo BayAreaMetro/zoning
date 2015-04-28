@@ -226,14 +226,19 @@ GROUP BY geom_id) p
 WHERE p.countof>1);
 --Query returned successfully: 3121 rows affected, 87 ms execution time.
 
-create INDEX zoning_parcel_in_cities_geomid_idx ON zoning.parcel_in_cities using hash (geom_id);
+CREATE INDEX zoning_parcel_two_max_zoningid_idx ON zoning.parcel_two_max USING hash (zoning_id);
+CREATE INDEX zoning_parcel_two_max_geomid_idx ON zoning.parcel_two_max USING hash (geom_id);
+VACUUM (ANALYZE) zoning.parcel_two_max;
+
 CREATE TABLE zoning.parcel_two_max_geo AS
-SELECT z.zoning_id,p.geom_id,two.prop,p.geom FROM 
-zoning.parcel_two_max two,
-parcel p,
-zoning.bay_area_generic z
-WHERE two.geom_id = p.geom_id
-AND z.zoning_id = two.zoning_id;
+SELECT two.zoning_id,p.geom_id,two.prop,p.geom 
+FROM 
+	(select zoning_id, geom_id, prop from zoning.parcel_two_max) as two,
+	(select geom_id, geom from parcel) as p
+WHERE two.geom_id = p.geom_id;
+
+create INDEX zoning_parcel_in_cities_geomid_idx ON zoning.parcel_in_cities using hash (geom_id);
+VACUUM (ANALYZE) zoning.parcel_in_cities;
 
 --select parcels that have multiple overlaps that are not in cities
 DROP VIEW IF EXISTS zoning.parcel_two_max_not_in_cities;
