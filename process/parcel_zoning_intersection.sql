@@ -284,7 +284,7 @@ ONLY 1 ZONING TYPE USING THE RULE
 BASED ON WHICH JURISDICTION THEY ARE LOCATED IN
 */
 
-CREATE TABLE zoning.parcels_in_multiple_cities AS
+/*CREATE TABLE zoning.parcels_in_multiple_cities AS
 SELECT * FROM zoning.parcel_in_cities WHERE geom_id IN
 (
 SELECT geom_id
@@ -292,7 +292,7 @@ FROM
 (SELECT geom_id, count(*) AS countof
 FROM zoning.parcel_in_cities
 GROUP BY geom_id) p
-WHERE p.countof>1);
+WHERE p.countof>1);*/
 --Query returned successfully: 3121 rows affected, 3337 ms execution time.
 
 CREATE TABLE zoning.parcels_in_multiple_counties AS
