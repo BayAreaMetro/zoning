@@ -411,7 +411,7 @@ create INDEX zoning_parcel_lookup_geom_idx ON zoning.parcel using hash (geom_id)
 
 --output a table with geographic information and generic code info for review
 CREATE TABLE zoning.parcel_withdetails AS
-SELECT p.geom, z.*
+SELECT z.*, p.geom
 FROM zoning.parcel pz,
 zoning.codes_dictionary z,
 parcel p
