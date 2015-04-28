@@ -397,13 +397,13 @@ FOR VISUAL INSPECTION OF OF THE ABOVE
 
 
 --create same from overlaps union table
-CREATE TABLE zoning.parcel_two_max_geo_overlaps AS
+/*CREATE TABLE zoning.parcel_two_max_geo_overlaps AS
 SELECT pzo.*
 FROM 
 zoning.parcel_two_max two,
 zoning.parcel_overlaps pzo
 WHERE two.geom_id = pzo.geom_id
-AND two.id = pzo.id;
+AND two.id = pzo.id;*/
 
 --create indexes for the query below
 create INDEX zoning_parcel_lookup_geom_idx ON zoning.parcel using hash (geom_id);
