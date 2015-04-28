@@ -335,11 +335,11 @@ CREATE TABLE zoning.parcel AS
 SELECT geom_id, zoning_id, 100 AS prop
 FROM zoning.parcel_intersection
 WHERE geom_id
-IN (SELECT geom_id FROM zoning.parcel_intersection_count WHERE countof=1)
+IN (SELECT geom_id FROM zoning.parcel_intersection_count WHERE countof=1);
 
 --same for 1 max, except insert those into the parcel table
 INSERT INTO zoning.parcel
-SELECT geom_id, id, prop FROM 
+SELECT geom_id, zoning_id, prop FROM 
 zoning.parcel_overlaps_maxonly where (geom_id) IN
 	(
 	SELECT geom_id from 
@@ -353,12 +353,12 @@ zoning.parcel_overlaps_maxonly where (geom_id) IN
 --Query returned successfully: 390363 rows affected, 1634 ms execution time.
 
 INSERT INTO zoning.parcel
-SELECT z.geom_id, z.id, zo.prop
+SELECT z.geom_id, z.zoning_id, zo.prop
 FROM
 zoning.parcel_overlaps_maxonly zo,
 zoning.parcel_in_cities z
 WHERE z.geom_id = zo.geom_id
-AND zo.id = z.id;
+AND zo.zoning_id = z.zoning_id;
 --Query returned successfully: 45807 rows affected, 1129 ms execution time.
 
 INSERT INTO zoning.parcel
@@ -367,7 +367,7 @@ FROM
 zoning.parcel_overlaps_maxonly zo,
 zoning.temp_parcel_county_table z
 WHERE z.geom_id = zo.geom_id
-AND zo.id = z.zoning_id;
+AND zo.zoning_id = z.zoning_id;
 --Query returned successfully: 24691 rows affected, 560 ms execution time.
 
 --THE FOLLOWING IS A CHECK THAT PARCELS ARE STILL UNIQUE
@@ -413,9 +413,9 @@ create INDEX parcel_geom_id_idx ON parcel using hash (geom_id);
 CREATE TABLE zoning.parcel_withdetails AS
 SELECT p.geom, z.*
 FROM zoning.parcel pz,
-zoning.codes_base2012 z,
+zoning.codes_dictionary z,
 parcel p
-WHERE pz.id = z.id AND p.geom_id = pz.geom_id;
+WHERE pz.zoning_id = z.id AND p.geom_id = pz.geom_id;
 
 create INDEX zoning_parcel_two_max_lookup_geom_idx ON zoning.parcel_two_max using hash (geom_id);
 
