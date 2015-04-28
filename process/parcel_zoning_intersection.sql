@@ -159,7 +159,7 @@ order by 1;
 --select only those pairs of geom_id, zoning_id in which
 --the proportion of overlap is the maximum
 DROP VIEW IF EXISTS zoning.parcel_overlaps_maxonly;
-CREATE VIEW zoning.parcel_overlaps_maxonly AS
+CREATE TABLE zoning.parcel_overlaps_maxonly AS
 SELECT geom_id, zoning_id, prop 
 FROM zoning.parcel_overlaps WHERE (geom_id,prop) IN 
 ( SELECT geom_id, MAX(prop)
@@ -170,8 +170,8 @@ FROM zoning.parcel_overlaps WHERE (geom_id,prop) IN
 --Unfortunately, many parcels have 2 max values
 
 --So, create table of parcels with >1 max values
-DROP VIEW IF EXISTS zoning.parcel_two_max;
-CREATE VIEW zoning.parcel_two_max AS
+DROP TABLE IF EXISTS zoning.parcel_two_max;
+CREATE TABLE zoning.parcel_two_max AS
 SELECT geom_id, zoning_id, prop FROM 
 zoning.parcel_overlaps_maxonly where (geom_id) IN
 	(
