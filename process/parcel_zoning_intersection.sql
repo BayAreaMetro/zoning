@@ -417,15 +417,13 @@ zoning.codes_dictionary z,
 parcel p
 WHERE pz.zoning_id = z.id AND p.geom_id = pz.geom_id;
 
-create INDEX zoning_parcel_two_max_lookup_geom_idx ON zoning.parcel_two_max using hash (geom_id);
+/*create INDEX zoning_parcel_two_max_lookup_geom_idx ON zoning.parcel_two_max using hash (geom_id);*/
 
-CREATE TABLE zoning.parcel_two_max_geo AS
+/*CREATE TABLE zoning.parcel_two_max_geo AS
 SELECT p.geom,p.geom_id, two.id as zoning_id, two.prop FROM 
 zoning.parcel_two_max two,
 parcel p
-WHERE two.geom_id = p.geom_id;
-
-create INDEX parcel_geom_id_idx ON parcel using hash (geom_id);
+WHERE two.geom_id = p.geom_id;*/
 
 --USE PLU 2008 WHERE NO OTHER DATA AVAILABLE
 
