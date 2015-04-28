@@ -260,8 +260,8 @@ FROM
 	zoning.codes_dictionary c,
 	zoning.parcel_two_max_not_in_cities p2
 	WHERE c.id = p2.zoning_id) p2n,
-	administrative.boundaries_counties cb
-WHERE ST_Intersects(cb.geom,p2n.geom);
+	county10_ca cb
+WHERE ST_Intersects(cb.wkb_geometry,p2n.geom);
 --Query returned successfully: 50561 rows affected, 2052 ms execution time.
 
 DROP TABLE IF EXISTS zoning.temp_parcel_county_table;
