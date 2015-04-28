@@ -226,6 +226,13 @@ WHERE p.countof>1);
 --Query returned successfully: 3121 rows affected, 87 ms execution time.
 
 create INDEX zoning_parcel_in_cities_geomid_idx ON zoning.parcel_in_cities using hash (geom_id);
+CREATE TABLE zoning.parcel_two_max_geo AS
+SELECT z.zoning_id,p.geom_id,two.prop,p.geom FROM 
+zoning.parcel_two_max two,
+parcel p,
+zoning.bay_area_generic z
+WHERE two.geom_id = p.geom_id
+AND z.zoning_id = two.zoning_id;
 
 --select parcels that have multiple overlaps that are not in cities
 DROP VIEW IF EXISTS zoning.parcel_two_max_not_in_cities;
@@ -380,19 +387,7 @@ BELOW WE CREATE TABLES WITH GEOGRAPHIC DATA
 FOR VISUAL INSPECTION OF OF THE ABOVE
 */
 
---create geographic table of double max parcels for visual inspection
-CREATE TABLE zoning.parcel_two_max_geo AS
-SELECT zr.*,p.geom,p.geom_id,two.prop FROM 
-zoning.parcel_two_max two,
-parcel p,
-zoning.regional zr
-WHERE two.geom_id = p.geom_id
-AND zr.id = two.id;
 
-CREATE INDEX zoning_parcel_overlaps_geom_idx ON zoning.parcel_overlaps USING hash (geom_id);
-CREATE INDEX zoning_parcel_two_max_geom_idx ON zoning.parcel_two_max USING hash (geom_id);
-CREATE INDEX zoning_parcel_overlaps_idx ON zoning.parcel_overlaps USING hash (id);
-CREATE INDEX zoning_parcel_two_max_idx ON zoning.parcel_two_max USING hash (id);
 
 --create same from overlaps union table
 CREATE TABLE zoning.parcel_two_max_geo_overlaps AS
@@ -416,7 +411,6 @@ parcel p
 WHERE pz.id = z.id AND p.geom_id = pz.geom_id;
 
 create INDEX zoning_parcel_two_max_lookup_geom_idx ON zoning.parcel_two_max using hash (geom_id);
-create INDEX zoning_regional_id ON zoning.regional using hash (id);
 
 CREATE TABLE zoning.parcel_two_max_geo AS
 SELECT p.geom,p.geom_id, two.id as zoning_id, two.prop FROM 
