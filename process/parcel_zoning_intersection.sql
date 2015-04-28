@@ -96,9 +96,10 @@ VACUUM (ANALYZE) zoning.parcel_intersection_count;
 
 DROP VIEW IF EXISTS zoning.parcels_with_multiple_zoning;
 CREATE VIEW zoning.parcels_with_multiple_zoning AS
-SELECT * from parcel where geom_id
+SELECT geom_id, geom from parcel where geom_id
 IN (SELECT geom_id FROM zoning.parcel_intersection_count WHERE countof>1);
 --Query returned successfully: 462655 rows affected, 6854 ms execution time.
+*/
 
 /*CREATE INDEX z_parcels_with_multiple_zoning_gidx ON zoning.parcels_with_multiple_zoning USING GIST (geom);
 VACUUM (ANALYZE) zoning.parcels_with_multiple_zoning;*/
