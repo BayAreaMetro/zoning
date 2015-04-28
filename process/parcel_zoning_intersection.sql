@@ -432,14 +432,42 @@ select * from parcel
 where geom_id not in (
 SELECT geom_id from zoning.parcel);
 
+CREATE INDEX zoning_unmapped_parcel_gidx ON zoning.unmapped_parcels using GIST (geom);
+VACUUM (ANALYZE) zoning.unmapped_parcels;
+
 CREATE TABLE zoning.unmapped_parcel_zoning AS
-SELECT p.geom_id, z.origgplu,z.gengplu 
+SELECT p.geom_id, z.origgplu, z.gengplu 
 FROM zoning.unmapped_parcels p,
 public.plu2008_updated z 
-WHERE ST_Intersects(z.geom,p.geom);
+WHERE ST_Intersects(z.wkb_geometry,p.geom);
 
 CREATE TABLE zoning.unmapped_parcel_intersection_count AS
 SELECT geom_id, count(*) as countof FROM
-			public.plu2008_updated as z, zoning.unmapped_parcels p
-			WHERE ST_Intersects(z.geom, p.geom)
+			zoning.unmapped_parcel_zoning
 			GROUP BY geom_id;
+
+CREATE TABLE zoning.parcel_overlaps_plu AS
+SELECT 
+	geom_id,
+	origgplu,
+	sum(ST_Area(geom)) area,
+	round(sum(ST_Area(geom))/min(parcelarea) * 1000) / 10 prop,
+	ST_Union(geom) geom
+FROM (
+	SELECT p.geom_id, 
+		z.origgplu, 
+	 	ST_Area(p.geom) parcelarea, 
+	 	ST_Intersection(p.geom, z.wkb_geometry) geom 
+	FROM 
+		(select geom_id, geom 
+			FROM zoning.unmapped_parcels
+			WHERE geom_id in 
+				(select geom_id 
+					from zoning.unmapped_parcel_intersection_count 
+					WHERE countof>1)) as p,
+				(select origgplu, wkb_geometry from plu2008_updated) as z
+		WHERE ST_Intersects(z.wkb_geometry, p.geom)
+		) f
+GROUP BY 
+	geom_id,
+	origgplu;
