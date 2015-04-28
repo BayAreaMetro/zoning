@@ -159,7 +159,7 @@ order by 1;
 --the proportion of overlap is the maximum
 DROP VIEW IF EXISTS zoning.parcel_overlaps_maxonly;
 CREATE VIEW zoning.parcel_overlaps_maxonly AS
-SELECT geom_id, id, prop 
+SELECT geom_id, zoning_id, prop 
 FROM zoning.parcel_overlaps WHERE (geom_id,prop) IN 
 ( SELECT geom_id, MAX(prop)
   FROM zoning.parcel_overlaps
@@ -171,7 +171,7 @@ FROM zoning.parcel_overlaps WHERE (geom_id,prop) IN
 --So, create table of parcels with >1 max values
 DROP VIEW IF EXISTS zoning.parcel_two_max;
 CREATE VIEW zoning.parcel_two_max AS
-SELECT geom_id, id, prop FROM 
+SELECT geom_id, zoning_id, prop FROM 
 zoning.parcel_overlaps_maxonly where (geom_id) IN
 	(
 	SELECT geom_id from 
@@ -190,14 +190,15 @@ THAT ARE CLAIMED BY 2 (OR MORE)
 JURISDICTIONAL ZONING GEOMETRIES 
 */
 
-create INDEX zoning_codes_dictionary_idx ON zoning.codes_dictionary using hash (id);
+DROP INDEX IF EXISTS zoning_codes_dictionary_idx;
+CREATE INDEX zoning_codes_dictionary_idx ON zoning.codes_dictionary using hash (id);
 VACUUM (ANALYZE) zoning.codes_dictionary;
 
 CREATE TABLE zoning.parcel_in_cities AS
 SELECT p2n.geom_id, p2n.zoning_id 
 FROM 
 zoning.parcel_cities_counties pcc,
-(SELECT c.city, p2.geom_id, p2._zoning_id 
+(SELECT c.city, p2.geom_id, p2.zoning_id 
 FROM
 zoning.codes_dictionary c,
 zoning.parcel_two_max p2 --parcel_two_max is a twice derived view on zoning.parcel_overlaps
