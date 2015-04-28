@@ -438,24 +438,3 @@ SELECT geom_id, count(*) as countof FROM
 			public.plu2008_updated as z, zoning.unmapped_parcels p
 			WHERE ST_Intersects(z.geom, p.geom)
 			GROUP BY geom_id;
-
-
-DROP TABLE IF EXISTS zoning.parcels_with_multiple_zoning;
-CREATE TABLE zoning.parcels_with_multiple_zoning AS
-SELECT * from parcel where geom_id
-IN (SELECT geom_id FROM zoning.parcel_intersection_count WHERE countof>1);
---Query returned successfully: 462655 rows affected, 6854 ms execution time.
-
-CREATE INDEX z_parcels_with_multiple_zoning_gidx ON zoning.parcels_with_multiple_zoning USING GIST (geom);
-VACUUM (ANALYZE) zoning.parcels_with_multiple_zoning;
-
-DROP TABLE IF EXISTS zoning.parcels_with_one_zone;
-CREATE TABLE zoning.parcels_with_one_zone AS
-SELECT * from parcel where geom_id
-IN (SELECT geom_id FROM zoning.parcel_intersection_count WHERE countof=1);
---Query returned successfully: 1311776 rows affected, 16436 ms execution time.
-
-CREATE INDEX z_parcels_with_one_zone_gidx ON zoning.parcels_with_one_zone USING GIST (geom);
-VACUUM (ANALYZE) zoning.parcels_with_one_zone;
-
-*/
