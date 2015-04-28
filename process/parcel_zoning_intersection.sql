@@ -25,6 +25,7 @@ WHERE GeometryType(geom) = 'GEOMETRYCOLLECTION';
 DELETE FROM parcel 
 WHERE ST_IsValid(geom) = false;
 
+create INDEX parcel_geom_id_idx ON parcel using hash (geom_id);
 CREATE INDEX parcel_gidx ON parcel USING GIST (geom);
 VACUUM (ANALYZE) parcel;
 
