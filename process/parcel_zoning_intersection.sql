@@ -63,21 +63,32 @@ CREATE INDEX zoning_bay_area_generic_gidx ON zoning.bay_area_generic USING GIST 
 CREATE INDEX zoning_bay_area_zoning_id_gidx ON zoning.bay_area_generic USING HASH (zoning_id);
 VACUUM (ANALYZE) zoning.bay_area_generic;
 
-/*
+--IN THE FUTURE, THESE SHOULD JUST BE PART OF THE parcel table?
+DROP TABLE IF EXISTS zoning.parcel_counties;
 CREATE TABLE zoning.parcel_counties AS
-SELECT county.name10 as countyname1, county.namelsad10 as countyname2, county.geoid10 countygeoid, p.zoning_id,p.geom_id,p.geom FROM
+SELECT county.name10 as countyname1, county.namelsad10 as countyname2, county.geoid10 countygeoid,p.geom_id, p.geom FROM
 			county10_ca county,
 			parcel p
 			WHERE ST_Intersects(county.wkb_geometry, p.geom);
 --Query returned successfully: 1954393 rows affected, 142212 ms execution time.
 
+DROP INDEX IF EXISTS zoning_parcel_counties_gidx;
+CREATE INDEX zoning_parcel_counties_geomid_idx ON zoning.parcel_counties using GIST (geom);
+VACUUM (ANALYZE) zoning.parcel_counties;
+
+DROP TABLE IF EXISTS zoning_parcel_counties_gidx;
 CREATE TABLE zoning.parcel_cities_counties AS
-SELECT city.name10 as cityname1, city.namelsad10 as cityname2, city.geoid10 citygeoid, p.zoning_id,p.geom_id,p.id,p.geom
+SELECT city.name10 as cityname1, city.namelsad10 as cityname2, city.geoid10 citygeoid, p.geom_id
 FROM 
 city10_ba city,
 zoning.parcel_counties p 
 WHERE ST_Intersects(city.wkb_geometry, p.geom);
-*/
+
+DROP INDEX IF EXISTS zoning_parcel_cities_counties_geomid_idx;
+CREATE INDEX zoning_parcel_cities_counties_geomid_idx ON zoning.parcel_cities_counties using hash (geom_id);
+DROP INDEX IF EXISTS zoning_codes_dictionary_idx;
+CREATE INDEX zoning_parcel_cities_counties_cityname_idx ON zoning.parcel_cities_counties using hash (cityname1);
+VACUUM (ANALYZE) zoning.parcel_cities_counties;
 
 CREATE TABLE zoning.parcel_intersection AS
 SELECT p.geom_id,z.zoning_id FROM
@@ -149,7 +160,7 @@ order by 1;
 --the proportion of overlap is the maximum
 DROP VIEW IF EXISTS zoning.parcel_overlaps_maxonly;
 CREATE VIEW zoning.parcel_overlaps_maxonly AS
-SELECT geom_id, id, prop 
+SELECT geom_id, zoning_id, prop 
 FROM zoning.parcel_overlaps WHERE (geom_id,prop) IN 
 ( SELECT geom_id, MAX(prop)
   FROM zoning.parcel_overlaps
@@ -161,7 +172,7 @@ FROM zoning.parcel_overlaps WHERE (geom_id,prop) IN
 --So, create table of parcels with >1 max values
 DROP VIEW IF EXISTS zoning.parcel_two_max;
 CREATE VIEW zoning.parcel_two_max AS
-SELECT geom_id, id, prop FROM 
+SELECT geom_id, zoning_id, prop FROM 
 zoning.parcel_overlaps_maxonly where (geom_id) IN
 	(
 	SELECT geom_id from 
@@ -180,14 +191,15 @@ THAT ARE CLAIMED BY 2 (OR MORE)
 JURISDICTIONAL ZONING GEOMETRIES 
 */
 
-create INDEX zoning_codes_dictionary_idx ON zoning.codes_dictionary using hash (id);
+DROP INDEX IF EXISTS zoning_codes_dictionary_idx;
+CREATE INDEX zoning_codes_dictionary_idx ON zoning.codes_dictionary using hash (id);
 VACUUM (ANALYZE) zoning.codes_dictionary;
 
 CREATE TABLE zoning.parcel_in_cities AS
 SELECT p2n.geom_id, p2n.zoning_id 
 FROM 
 zoning.parcel_cities_counties pcc,
-(SELECT c.city, p2.geom_id, p2._zoning_id 
+(SELECT c.city, p2.geom_id, p2.zoning_id 
 FROM
 zoning.codes_dictionary c,
 zoning.parcel_two_max p2 --parcel_two_max is a twice derived view on zoning.parcel_overlaps
@@ -215,6 +227,13 @@ WHERE p.countof>1);
 --Query returned successfully: 3121 rows affected, 87 ms execution time.
 
 create INDEX zoning_parcel_in_cities_geomid_idx ON zoning.parcel_in_cities using hash (geom_id);
+CREATE TABLE zoning.parcel_two_max_geo AS
+SELECT z.zoning_id,p.geom_id,two.prop,p.geom FROM 
+zoning.parcel_two_max two,
+parcel p,
+zoning.bay_area_generic z
+WHERE two.geom_id = p.geom_id
+AND z.zoning_id = two.zoning_id;
 
 --select parcels that have multiple overlaps that are not in cities
 DROP VIEW IF EXISTS zoning.parcel_two_max_not_in_cities;
@@ -369,19 +388,7 @@ BELOW WE CREATE TABLES WITH GEOGRAPHIC DATA
 FOR VISUAL INSPECTION OF OF THE ABOVE
 */
 
---create geographic table of double max parcels for visual inspection
-CREATE TABLE zoning.parcel_two_max_geo AS
-SELECT zr.*,p.geom,p.geom_id,two.prop FROM 
-zoning.parcel_two_max two,
-parcel p,
-zoning.regional zr
-WHERE two.geom_id = p.geom_id
-AND zr.id = two.id;
 
-CREATE INDEX zoning_parcel_overlaps_geom_idx ON zoning.parcel_overlaps USING hash (geom_id);
-CREATE INDEX zoning_parcel_two_max_geom_idx ON zoning.parcel_two_max USING hash (geom_id);
-CREATE INDEX zoning_parcel_overlaps_idx ON zoning.parcel_overlaps USING hash (id);
-CREATE INDEX zoning_parcel_two_max_idx ON zoning.parcel_two_max USING hash (id);
 
 --create same from overlaps union table
 CREATE TABLE zoning.parcel_two_max_geo_overlaps AS
@@ -405,7 +412,6 @@ parcel p
 WHERE pz.id = z.id AND p.geom_id = pz.geom_id;
 
 create INDEX zoning_parcel_two_max_lookup_geom_idx ON zoning.parcel_two_max using hash (geom_id);
-create INDEX zoning_regional_id ON zoning.regional using hash (id);
 
 CREATE TABLE zoning.parcel_two_max_geo AS
 SELECT p.geom,p.geom_id, two.id as zoning_id, two.prop FROM 
@@ -433,24 +439,3 @@ SELECT geom_id, count(*) as countof FROM
 			public.plu2008_updated as z, zoning.unmapped_parcels p
 			WHERE ST_Intersects(z.geom, p.geom)
 			GROUP BY geom_id;
-
-
-DROP TABLE IF EXISTS zoning.parcels_with_multiple_zoning;
-CREATE TABLE zoning.parcels_with_multiple_zoning AS
-SELECT * from parcel where geom_id
-IN (SELECT geom_id FROM zoning.parcel_intersection_count WHERE countof>1);
---Query returned successfully: 462655 rows affected, 6854 ms execution time.
-
-CREATE INDEX z_parcels_with_multiple_zoning_gidx ON zoning.parcels_with_multiple_zoning USING GIST (geom);
-VACUUM (ANALYZE) zoning.parcels_with_multiple_zoning;
-
-DROP TABLE IF EXISTS zoning.parcels_with_one_zone;
-CREATE TABLE zoning.parcels_with_one_zone AS
-SELECT * from parcel where geom_id
-IN (SELECT geom_id FROM zoning.parcel_intersection_count WHERE countof=1);
---Query returned successfully: 1311776 rows affected, 16436 ms execution time.
-
-CREATE INDEX z_parcels_with_one_zone_gidx ON zoning.parcels_with_one_zone USING GIST (geom);
-VACUUM (ANALYZE) zoning.parcels_with_one_zone;
-
-*/
