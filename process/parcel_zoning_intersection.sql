@@ -307,10 +307,10 @@ GROUP BY geom_id) p
 WHERE p.countof>1);
 
 \COPY zoning.parcels_in_multiple_cities TO '/zoning_data/parcels_in_multiple_cities.csv' DELIMITER ',' CSV HEADER;
-https://mtcdrive.box.com/shared/static/uumadei43eqxl5ll90fdtqz7nxhhg711.csv;
+--https://mtcdrive.box.com/shared/static/uumadei43eqxl5ll90fdtqz7nxhhg711.csv;
 
 \COPY zoning.parcels_in_multiple_counties TO '/zoning_data/parcels_in_multiple_counties.csv' DELIMITER ',' CSV HEADER;
-https://mtcdrive.box.com/shared/static/ouya6lylpd4e1z5vqfz2gngebkmgfkur.csv;
+--https://mtcdrive.box.com/shared/static/ouya6lylpd4e1z5vqfz2gngebkmgfkur.csv;
 
 DELETE FROM zoning.temp_parcel_county_table WHERE geom_id IN
 (
