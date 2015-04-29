@@ -99,9 +99,9 @@ data_archive/county10_ca.zip: s3-curl/s3curl.pl
 	$(get)county10_ca.zip \
 	-o data_archive/county10_ca.zip
 
-data_archive/match_fields_tables_zoning_2012_source.csv: s3-curl/s3curl.pl
+data_source/match_fields_tables_zoning_2012_source.csv: s3-curl/s3curl.pl
 	$(get)match_fields_tables_zoning_2012_source.csv \
-	-o data_archive/match_fields_tables_zoning_2012_source.csv
+	-o data_source/match_fields_tables_zoning_2012_source.csv
 
 data_archive/PlannedLandUse1Through6.gdb.zip: s3-curl/s3curl.pl
 	$(get)PlannedLandUse1Through6.gdb.zip \
