@@ -58,7 +58,7 @@ SELECT c.id as zoning_id, z.geom FROM
 zoning.codes_dictionary c,
 zoning.bay_area z
 WHERE c.juris=z.juris 
-AND c.name = z.zoning;*/
+AND c.name = z.zoning;
 
 CREATE INDEX zoning_bay_area_generic_gidx ON zoning.bay_area_generic USING GIST (geom);
 CREATE INDEX zoning_bay_area_zoning_id_gidx ON zoning.bay_area_generic USING HASH (zoning_id);
@@ -111,7 +111,7 @@ CREATE VIEW zoning.parcels_with_multiple_zoning AS
 SELECT geom_id, geom from parcel where geom_id
 IN (SELECT geom_id FROM zoning.parcel_intersection_count WHERE countof>1);
 --Query returned successfully: 462655 rows affected, 6854 ms execution time.
-*/
+
 
 /*CREATE INDEX z_parcels_with_multiple_zoning_gidx ON zoning.parcels_with_multiple_zoning USING GIST (geom);
 VACUUM (ANALYZE) zoning.parcels_with_multiple_zoning;*/
