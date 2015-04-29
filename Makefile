@@ -114,7 +114,7 @@ data_archive/PLU2008_Updated.zip: s3-curl/s3curl.pl
 s3-curl/s3curl.pl: s3-curl.zip
 	unzip -o s3-curl.zip
 	touch s3-curl/s3curl.pl
-	mkdir -p data_archives
+	mkdir -p data_archive
 	mkdir -p data_source
 
 s3-curl.zip:
