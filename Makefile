@@ -24,7 +24,7 @@ DBNAME=vagrant
 
 # 	PGPASSWORD=vagrant psql -p $DBPORT -h $DBHOST -U $DBUSERNAME $DBNAME -f process/merge_jurisdiction_zoning.sql
 
-parcel_zoning.csv: 
+parcel_zoning.csv: zoningdb.sql
 	PGPASSWORD=vagrant psql \
 	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
 	-f process/merge_jurisdiction_zoning.sql
