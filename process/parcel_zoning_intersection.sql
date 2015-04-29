@@ -382,7 +382,7 @@ SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel;
 -------------------------------------------------
 -------------------------------------------------
 
-COPY zoning.parcel TO '/zoning_data/zoning_parcels03_30_2015.csv' DELIMITER ',' CSV HEADER;
+\COPY zoning.parcel TO '/zoning_data/zoning_parcels03_30_2015.csv' DELIMITER ',' CSV HEADER;
 
 /*
 BELOW WE CREATE TABLES WITH GEOGRAPHIC DATA
