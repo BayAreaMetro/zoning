@@ -33,7 +33,8 @@ The makefile will fetch all the required data. It is hosted on MTC s3. Ask Keare
 
 You can use your MTC s3 keys to authenticate. To set this up do:
 
-'cat >/.s3curl <<EOL
+'''
+cat >/.s3curl <<EOL
 %awsSecretAccessKeys = (
     # corporate account
     company => {
@@ -42,7 +43,8 @@ You can use your MTC s3 keys to authenticate. To set this up do:
     },
 );
 ... 
-EOL'
+EOL
+'''
 
 then 'chmod 600 ~/.s3curl' to set this file's permissions to be for your user only. 
 
