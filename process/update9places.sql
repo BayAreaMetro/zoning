@@ -10,7 +10,7 @@ select a.juris,  b.juris,  c.juris,  d.juris,  e.juris,  f.juris,  g.juris,  h.j
 (select distinct juris from zoning.codes where city like '%Sebastopol%')  i
 # result: ARRAY[53, 11, 10, 13, 95, 73, 80, 28, 17]
 
-ARRAY[53, 11, 10, 13, 95, 73, 80, 28, 17]
+--ARRAY[53, 11, 10, 13, 95, 73, 80, 28, 17]
 
 CREATE TABLE zoning.update9_intersection_count AS
 SELECT geom_id, count(*) as countof FROM
