@@ -55,19 +55,19 @@ data_source/jurisdictional/AlamedaCountyGP2006db.shp: data_source/PlannedLandUse
 	bash load/jurisdiction_shapefile_directory.sh
 
 data_source/PlannedLandUsePhase1.gdb: data_archive/PlannedLandUse1Through6.gdb.zip
-	unzip -d data_source/ data_archive/PlannedLandUse1Through6.gdb.zip
+	unzip -o -d data_source/ data_archive/PlannedLandUse1Through6.gdb.zip
 	touch data_source/PlannedLandUsePhase1.gdb
 
 data_source/county10_ca.shp: data_archive/county10_ca.zip
-	unzip -d data_source/ data_archive/county10_ca.zip
+	unzip -o -d data_source/ data_archive/county10_ca.zip
 	touch data_source/county10_ca.shp
 
 data_source/city10_ba.shp: data_archive/city10_ba.zip
-	unzip -d data_source/ data_archive/city10_ba.zip
+	unzip -o -d data_source/ data_archive/city10_ba.zip
 	touch data_source/city10_ba.shp
 
 data_source/PLU2008_Updated.shp: data_archive/PLU2008_Updated.zip
-	unzip -d data_source/ data_archive/PLU2008_Updated.zip
+	unzip -o -d data_source/ data_archive/PLU2008_Updated.zip
 	touch data_source/PLU2008_Updated.shp 
 
 ##############
@@ -112,7 +112,7 @@ data_archive/PLU2008_Updated.zip: s3-curl/s3curl.pl
 	-o data_archive/PLU2008_Updated.zip
 
 s3-curl/s3curl.pl: s3-curl.zip
-	unzip s3-curl.zip
+	unzip -o s3-curl.zip
 	touch s3-curl/s3curl.pl
 	mkdir -p data_archives
 	mkdir -p data_source
