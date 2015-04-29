@@ -44,11 +44,8 @@ BEGIN
 					FROM zoning.source_field_name s
 				WHERE s.tablename = table_record."table_name") qry
 			);
-	 RAISE NOTICE '(%)', sql_string;
 	 	EXECUTE sql_string;
 	 END LOOP;
-	 RETURN sql_string;
-	 --EXECUTE sql_string;
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE;
