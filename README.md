@@ -1,6 +1,56 @@
-# Goal
+#Intro 
 
-The goal of this repository is to keep track of how data from various jurisdictions and sources about zoning were mapped to parcel data. 
+Use this repo to produce a CSV with a generic zoning code assigned to every parcel in the SF Bay Area in 2010. 
+
+#Requirements
+
+PostGIS 2.1, Postgres 9.3, GDAL 1.11 or > (1.10 could work but you won't be able to read/write from source File GDBs)
+
+You can use the vagrant scripts here to set up an environment on the MTC Land Use Server: https://github.com/buckleytom/pg-app-dev-vm/tree/landuse-specific.  
+
+For computers with less RAM/CPU's, try: https://github.com/buckleytom/pg-app-dev-vm/tree/master  
+
+#Usage
+
+The Makefile contains all the high level instructions on what data is needed, where to get it, pointers to scripts to load it into Postgres, and how parcel and zoning data are joined. 
+
+##Data
+At a high level, the data required are: 
+
+filename|description
+---------------|--------------
+ba8parcels.sql | From feature class in source FileGDB 
+city10_ba.shp | city boundaries (2010 census) MTC edits for water-features and others
+county10_ca.shp | county boundaries (2010 census) MTC edits for water-features and others
+match_fields_tables_zoning_2012_source.csv | From the [Project Management Spreadsheet](https://mtcdrive.box.com/shared/static/gz1azbpqrtj4icrm61yupwii3zl5y335.xlsx) - described below
+parcels_spandex.sql | from [spandex](https://github.com/synthicity/spandex)
+Parcels2010_Update9.csv | from forensic analysis of received data
+jurisdictional/*.shp | A directory of shapefiles, one for each jurisdiction in the bay area for which we have data from the [6 Geodatabases](https://mtcdrive.box.com/s/9t14sb7ugnx24hrp84kmvku0aq5gdb27) discussed below.
+zoning_codes_base2012.csv | from this [table](https://mtcdrive.app.box.com/login?redirect_url=%2Fs%2F9pkjbw1lvpd5qtpj1zpc2ccfbxfzly5t)
+PLU2008_Updated.shp	| From the Planned Land Use project by ABAG
+
+The makefile will fetch all the required data. It is hosted on MTC s3. Ask Kearey Smith for access to the s3 land use bucket if you do not have it already. You can also also just download the folder from the s3 web interface and put it in a folder called  in the same directory as this Makefile. 
+
+You can use your MTC s3 keys to authenticate. To set this up do:
+
+'cat >/.s3curl <<EOL
+%awsSecretAccessKeys = (
+    # corporate account
+    company => {
+        id => 'REPLACE_ME_WITH_YOUR_KEY_ID(THE SHORTER ONE)',
+        key => 'REPLACE_ME_WITH_YOUR_SECRET_KEY',
+    },
+);
+... 
+EOL'
+
+then 'chmod 600 ~/.s3curl' to set this file's permissions to be for your user only. 
+
+Then run 'make' in the repository directory.
+
+##Loading/Processing
+
+If you already have the data, then run 'make' in the repository directory.
 
 # Outcome
 
