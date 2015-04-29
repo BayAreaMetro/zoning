@@ -8,7 +8,11 @@
 #the following are just stubs and won't work right now
 
 get = perl s3-curl/s3curl.pl --id=company -- http://landuse.s3.amazonaws.com/zoning/
-
+DBUSERNAME=vagrant
+DBPASSWORD=vagrant
+DBHOST=localhost
+DBPORT=5432
+DBNAME=vagrant 
 # parcel_zoning.csv: \
 # 	bay_area_zoning.sql \
 # 	data_source/parcels_spandex.sql \
@@ -22,10 +26,10 @@ get = perl s3-curl/s3curl.pl --id=company -- http://landuse.s3.amazonaws.com/zon
 
 parcel_zoning.csv: 
 	PGPASSWORD=vagrant psql \
-	-p $DBPORT -h $DBHOST -U $DBUSERNAME $DBNAME \
+	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
 	-f process/merge_jurisdiction_zoning.sql
 	PGPASSWORD=vagrant psql \
-	-p $DBPORT -h $DBHOST -U $DBUSERNAME $DBNAME \
+	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
 	-f process/parcel_zoning_intersection.sql
 #########################
 ####LOAD IN POSTGRES#####
