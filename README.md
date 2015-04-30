@@ -1,18 +1,18 @@
-#Intro 
+###Intro 
 
 Use this repo to produce a CSV with a generic zoning code assigned to every parcel in the SF Bay Area in 2010. 
 
-#Requirements
+###Requirements
 
 PostGIS 2.1, Postgres 9.3, GDAL 1.11 or > (1.10 could work but you won't be able to read/write from source File GDBs)
 
 You can use the vagrant scripts here to set up an environment on the MTC Land Use Server: https://github.com/buckleytom/pg-app-dev-vm/tree/master
 
-#Usage
+###Usage
 
 The Makefile contains all the high level instructions on what data is needed, where to get it, pointers to scripts to load it into Postgres, and how parcel and zoning data are joined. 
 
-##Data
+####Data
 At a high level, the data required are: 
 
 filename|description
@@ -35,7 +35,7 @@ You can use your MTC s3 keys to authenticate. To set this up do:
 ```
 cat >/.s3curl <<EOL
 %awsSecretAccessKeys = (
-    # corporate account
+    ### corporate account
     company => {
         id => 'REPLACE_ME_WITH_YOUR_KEY_ID(THE SHORTER ONE)',
         key => 'REPLACE_ME_WITH_YOUR_SECRET_KEY',
@@ -49,31 +49,31 @@ then `chmod 600 ~/.s3curl` to set this file's permissions to be for your user on
 
 Then run `make` in the repository directory.
 
-##Loading/Processing
+####Loading/Processing
 
 If you already have the data, then run 'make' in the repository directory.
 
-# Outcome
+### Outcome
 
 The outcome of this process is a table with three rows: parcel_id, zoning_id, prop
 
 We expect that this table will change as we improve on our methods for mapping zoning data to parcels. 
 
-#The Current Table:
+###The Current Table:
 Can be found [here](https://mtcdrive.box.com/s/4ytig75parn4mur4nci707kwlxxila4t)
 
-##Field Names
+####Field Names
 * 'geom_id' is the unique id of a parcel from [spandex](https://github.com/synthicity/spandex)
 * 'prop' is the 'proportion of the parcel in the given zone'  
 * 'zoning_id' is the id of a generic interpretation of the allowed use of a site as defined in this [table](https://mtcdrive.app.box.com/login?redirect_url=%2Fs%2F9pkjbw1lvpd5qtpj1zpc2ccfbxfzly5t)
 
-##Zoning/Parcel Intersection
+####Zoning/Parcel Intersection
 
 This is a walkthrough of how we joined source zoning data (loaded into postgres) with source_intersection_zoning.sql by the numbers.
 
-####Combining the source Geographic Data:
+########Combining the source Geographic Data:
 
-#####Project Management Spreadsheet
+###########Project Management Spreadsheet
 
 Our starting point for this work is a spreadsheet that was used to manage this project originally. It is available [here](https://mtcdrive.box.com/shared/static/gz1azbpqrtj4icrm61yupwii3zl5y335.xlsx). While this spreadsheet did not represent the zoning data project in its entirety, it offers a high level summary that we took as authoritative. In the process below it will be clear where the spreadsheet was missing information that we will add into the process as part of the final product. 
 
@@ -88,15 +88,15 @@ Loading scripts for the source data are all in this repository in 'load/load-201
 
 * 221032 zoning geometries (with source field names).
   
-  Same as above but with fields that have a value in the "match field" as specified in the CityAssignments spreadsheet (and corrected as specified in the [Match Field Errors](#match-field-errors) section. 
+  Same as above but with fields that have a value in the "match field" as specified in the CityAssignments spreadsheet (and corrected as specified in the [Match Field Errors](###match-field-errors) section. 
 
-#####Parcels
+###########Parcels
 
 * 1953960 parcels (valid geoms).
   
   These were from [spandex](https://github.com/synthicity/spandex)
  
-####Assigning Zoning to Parcels:
+########Assigning Zoning to Parcels:
 see process/source_intersection_zoning.sql for how this was done
 
 * 1820670 parcel intersections with zoning (many to many join--st_intersects)
@@ -109,11 +109,11 @@ see process/source_intersection_zoning.sql for how this was loaded and [the dump
 
 We selected the 1311776 parcels that intersect with only one zoning geometry and inserted those into the table. 
 
-####Intersection Conflict Resolution and Identifying Further Zoning Source Data
+########Intersection Conflict Resolution and Identifying Further Zoning Source Data
 
 see process/lookup-table-merge-2012-zoning.sql for how this was done.
 
-#####Parcels with more than 1 Zoning assignment
+###########Parcels with more than 1 Zoning assignment
 
 We assigned zoning to parcels that intersected with multiple zones as follows. 
 
@@ -137,17 +137,17 @@ Many of these seem to be related to overlapping city/county zoning geometries. W
 Based on this work, the count of parcels for which we have sourced zoning data was at:  
 1772637
 
-####Other Errors
+########Other Errors
 
-#####Match Field Errors
+###########Match Field Errors
 
-The [Project Management Spreadsheet](#####Project Management Spreadsheet) contains errors in the "match field" which is the field that matches the source jurisdiction's zoning definition to those in the zoning_id table which we use as an output -- see [field names](##Field-Names).  
+The [Project Management Spreadsheet](###########Project Management Spreadsheet) contains errors in the "match field" which is the field that matches the source jurisdiction's zoning definition to those in the zoning_id table which we use as an output -- see [field names](####Field-Names).  
 
-We added these name fixes to the end of 'load/load-generic-zoning-code-table.sql', before [Assigning Zoning to Parcels](####Assigning-Zoning-to-Parcels).
+We added these name fixes to the end of 'load/load-generic-zoning-code-table.sql', before [Assigning Zoning to Parcels](########Assigning-Zoning-to-Parcels).
 
 One of these errors, in the Richmond feature class, we did not detect until after completing the above steps. We added the necessary line to the loading script for future use. Then we used the process detailed in 'process/richmondmatchcodes.sql', to load richmond individually and append its parcels/zoning. 
 
-#####Geospatial Data Outside Project Geodatabases
+###########Geospatial Data Outside Project Geodatabases
 
 These jurisdictions did not have feature classes in the source geodatabase:
 
@@ -183,4 +183,4 @@ We need to add these data using a parcel-to-parcel match as with update9.sql, ab
 * Napa (some RI categories)  
 	Does not have a Match field - It seems that zone_desg was used though, although in the general table the spaces are replaced with - that is, RS 4 IS RS-4
 * public space in san jose
-* https://github.com/MetropolitanTransportationCommission/zoning-qa/blob/master/process/richmondmatchcodes.sql#L31
+* https://github.com/MetropolitanTransportationCommission/zoning-qa/blob/master/process/richmondmatchcodes.sql###L31
