@@ -6,9 +6,7 @@ Use this repo to produce a CSV with a generic zoning code assigned to every parc
 
 PostGIS 2.1, Postgres 9.3, GDAL 1.11 or > (1.10 could work but you won't be able to read/write from source File GDBs)
 
-You can use the vagrant scripts here to set up an environment on the MTC Land Use Server: https://github.com/buckleytom/pg-app-dev-vm/tree/landuse-specific.  
-
-For computers with less RAM/CPU's, try: https://github.com/buckleytom/pg-app-dev-vm/tree/master  
+You can use the vagrant scripts here to set up an environment on the MTC Land Use Server: https://github.com/buckleytom/pg-app-dev-vm/tree/master
 
 #Usage
 
