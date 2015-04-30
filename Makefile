@@ -1,28 +1,13 @@
-# if using the postgres/postgis development vm, https://github.com/buckleytom/pg-app-dev-vm, 
-# the user will need to create a file called ~/.pgpass with the following line:
-# localhost:25432:vagrant:vagrant:vagrant
-#need to add
-# parcels_zoning_santa_clara.sql
-# parcels_fairfield.sql: 
-
-#the following are just stubs and won't work right now
-
 get = perl s3-curl/s3curl.pl --id=company -- http://landuse.s3.amazonaws.com/zoning/
 DBUSERNAME=vagrant
 DBPASSWORD=vagrant
 DBHOST=localhost
 DBPORT=5432
 DBNAME=vagrant 
-# parcel_zoning.csv: \
-# 	bay_area_zoning.sql \
-# 	data_source/parcels_spandex.sql \
-# 	plu_bay_area_zoning.sql \
-# 	update9_parcels.sql \
-# 	data_source/ba8_parcels.sql
-# 	psql $(ARGS) vagrant process/update9places.sql
-# 	psql $(ARGS) vagrant process/parcel_zoning_intersection.sql
 
-# 	PGPASSWORD=vagrant psql -p $DBPORT -h $DBHOST -U $DBUSERNAME $DBNAME -f process/merge_jurisdiction_zoning.sql
+#########################
+##Join Parcels/Zoning####
+#########################
 
 parcel_zoning.csv: zoningdb.sql
 	PGPASSWORD=vagrant psql \
