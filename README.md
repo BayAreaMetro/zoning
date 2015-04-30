@@ -18,7 +18,7 @@ At a high level, the data required are:
 filename|description
 ---------------|--------------
 jurisdictional/*.shp | Zoning v2 A directory of shapefiles, one for each jurisdiction in the bay area for which we have data from the [6 Geodatabases](https://mtcdrive.box.com/s/9t14sb7ugnx24hrp84kmvku0aq5gdb27) discussed below.
-PLU2008_Updated.shp	| Zoning v1 From the Planned Land Use project by ABAG
+PLU2008_Updated.shp | Zoning v1 From the Planned Land Use project by ABAG
 parcels_spandex.sql | Parcels v2 from [spandex](https://github.com/synthicity/spandex)
 ba8parcels.sql | Parcels v1 From [feature class ba8 of this File GDB](https://mtcdrive.box.com/s/uec9rjz6cimvpizlb2so3pupm22d56dq)
 city10_ba.shp | city boundaries (2010 census) MTC edits for water-features and others
@@ -71,9 +71,9 @@ Can be found [here](https://mtcdrive.box.com/s/4ytig75parn4mur4nci707kwlxxila4t)
 
 This is a walkthrough of how we joined source zoning data (loaded into postgres) with source_intersection_zoning.sql by the numbers.
 
-########Combining the source Geographic Data:
+#######Combining the source Geographic Data:
 
-###########Project Management Spreadsheet
+#######Project Management Spreadsheet
 
 Our starting point for this work is a spreadsheet that was used to manage this project originally. It is available [here](https://mtcdrive.box.com/shared/static/gz1azbpqrtj4icrm61yupwii3zl5y335.xlsx). While this spreadsheet did not represent the zoning data project in its entirety, it offers a high level summary that we took as authoritative. In the process below it will be clear where the spreadsheet was missing information that we will add into the process as part of the final product. 
 
@@ -90,13 +90,13 @@ Loading scripts for the source data are all in this repository in 'load/load-201
   
   Same as above but with fields that have a value in the "match field" as specified in the CityAssignments spreadsheet (and corrected as specified in the [Match Field Errors](###match-field-errors) section. 
 
-###########Parcels
+#######Parcels
 
 * 1953960 parcels (valid geoms).
   
   These were from [spandex](https://github.com/synthicity/spandex)
  
-########Assigning Zoning to Parcels:
+#######Assigning Zoning to Parcels:
 see process/source_intersection_zoning.sql for how this was done
 
 * 1820670 parcel intersections with zoning (many to many join--st_intersects)
@@ -109,11 +109,11 @@ see process/source_intersection_zoning.sql for how this was loaded and [the dump
 
 We selected the 1311776 parcels that intersect with only one zoning geometry and inserted those into the table. 
 
-########Intersection Conflict Resolution and Identifying Further Zoning Source Data
+#######Intersection Conflict Resolution and Identifying Further Zoning Source Data
 
 see process/lookup-table-merge-2012-zoning.sql for how this was done.
 
-###########Parcels with more than 1 Zoning assignment
+#######Parcels with more than 1 Zoning assignment
 
 We assigned zoning to parcels that intersected with multiple zones as follows. 
 
@@ -137,17 +137,17 @@ Many of these seem to be related to overlapping city/county zoning geometries. W
 Based on this work, the count of parcels for which we have sourced zoning data was at:  
 1772637
 
-########Other Errors
+#######Other Errors
 
-###########Match Field Errors
+#######Match Field Errors
 
-The [Project Management Spreadsheet](###########Project Management Spreadsheet) contains errors in the "match field" which is the field that matches the source jurisdiction's zoning definition to those in the zoning_id table which we use as an output -- see [field names](####Field-Names).  
+The [Project Management Spreadsheet](#######Project Management Spreadsheet) contains errors in the "match field" which is the field that matches the source jurisdiction's zoning definition to those in the zoning_id table which we use as an output -- see [field names](####Field-Names).  
 
-We added these name fixes to the end of 'load/load-generic-zoning-code-table.sql', before [Assigning Zoning to Parcels](########Assigning-Zoning-to-Parcels).
+We added these name fixes to the end of 'load/load-generic-zoning-code-table.sql', before [Assigning Zoning to Parcels](#######Assigning-Zoning-to-Parcels).
 
 One of these errors, in the Richmond feature class, we did not detect until after completing the above steps. We added the necessary line to the loading script for future use. Then we used the process detailed in 'process/richmondmatchcodes.sql', to load richmond individually and append its parcels/zoning. 
 
-###########Geospatial Data Outside Project Geodatabases
+#######Geospatial Data Outside Project Geodatabases
 
 These jurisdictions did not have feature classes in the source geodatabase:
 
@@ -181,6 +181,6 @@ We need to add these data using a parcel-to-parcel match as with update9.sql, ab
 
 ######Missing categories from Matchfields:
 * Napa (some RI categories)  
-	Does not have a Match field - It seems that zone_desg was used though, although in the general table the spaces are replaced with - that is, RS 4 IS RS-4
+  Does not have a Match field - It seems that zone_desg was used though, although in the general table the spaces are replaced with - that is, RS 4 IS RS-4
 * public space in san jose
 * https://github.com/MetropolitanTransportationCommission/zoning-qa/blob/master/process/richmondmatchcodes.sql###L31
