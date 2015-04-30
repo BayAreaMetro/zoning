@@ -1,12 +1,3 @@
-# if using the postgres/postgis development vm, https://github.com/buckleytom/pg-app-dev-vm, 
-# the user will need to create a file called ~/.pgpass with the following line:
-# localhost:25432:vagrant:vagrant:vagrant
-#need to add
-# parcels_zoning_santa_clara.sql
-# parcels_fairfield.sql: 
-
-#the following are just stubs and won't work right now
-
 get = perl s3-curl/s3curl.pl --id=company -- http://landuse.s3.amazonaws.com/zoning/
 DBUSERNAME=vagrant
 DBPASSWORD=vagrant
