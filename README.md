@@ -27,7 +27,7 @@ jurisdictional/*.shp | A directory of shapefiles, one for each jurisdiction in t
 zoning_codes_base2012.csv | from this [table](https://mtcdrive.app.box.com/login?redirect_url=%2Fs%2F9pkjbw1lvpd5qtpj1zpc2ccfbxfzly5t)
 PLU2008_Updated.shp	| From the Planned Land Use project by ABAG
 
-The makefile will fetch all the required data. It is hosted on MTC s3. Ask Kearey Smith for access to the s3 land use bucket if you do not have it already. You can also also just download the folder from the s3 web interface and put it in a folder called `data_source/` in the same directory as this Makefile. 
+The makefile will fetch all the required data. It is hosted on MTC s3. You can also also just download the folder from the s3 web interface and put it in a folder called `data_source/` in the same directory as this Makefile. 
 
 You can use your MTC s3 keys to authenticate. To set this up do:
 
