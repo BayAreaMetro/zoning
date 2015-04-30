@@ -10,10 +10,10 @@ You can use the vagrant scripts here to set up an environment on the MTC Land Us
 
 ###Usage
 
-The Makefile contains all the high level instructions on what data is needed, where to get it, pointers to scripts to load it into Postgres, and how parcel and zoning data are joined. 
+The Makefile contains all the necessary pointers to what data is needed, where to get it, scripts to load it into Postgres, and scripts to join source parcel and zoning data. 
 
 ####Data
-At a high level, the data required are: 
+The following are required: 
 
 filename|description
 ---------------|--------------
@@ -28,9 +28,9 @@ match_fields_tables_zoning_2012_source.csv | Names the column used in Zoning V2 
 Parcels2010_Update9.csv | an update to missing jurisdictions (see below) - from forensic analysis of received data
 
 
-The makefile will fetch all the required data. It is hosted on MTC s3. You can also also just download the folder from the s3 web interface and put it in a folder called `data_source/` in the same directory as this Makefile. 
+It is recommended to use the makefile to fetch the above. They are hosted on MTC s3. You will need MTC s3 keys to authenticate for fetching data with the Makefile. Alternatively, you can download landuse bucket zoning folder from the s3 web interface and put it in a folder called `data_source/` in the same directory as this Makefile, however this is not recommended given the number of files required. 
 
-You can use your MTC s3 keys to authenticate. To set this up do:
+To use the Makefile to fetch, you will need to store your s3 authentication in a hidden text file in your home directory. In a unix-based terminal (such as [Console](http://sourceforge.net/projects/console/) on Windows) or the basic OS X terminal, edit the following with your keys and then paste it into the terminal. 
 
 ```
 cat >/.s3curl <<EOL
@@ -45,13 +45,13 @@ cat >/.s3curl <<EOL
 EOL
 ```
 
-then `chmod 600 ~/.s3curl` to set this file's permissions to be for your user only. 
+Then `chmod 600 ~/.s3curl` to set this file's permissions to be for your user only. 
 
 Then run `make` in the repository directory.
 
 ####Loading/Processing
 
-If you already have the data, then run 'make' in the repository directory.
+If you already have the data, then run `make` in the repository directory.
 
 ### Outcome
 
