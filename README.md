@@ -31,7 +31,7 @@ Parcels2010_Update9.csv | an update to missing jurisdictions (see below) - from 
 
 It is recommended to use the makefile to fetch the above. They are hosted on MTC s3. You will need MTC s3 keys to authenticate for fetching data with the Makefile. Alternatively, you can download landuse bucket zoning folder from the s3 web interface and put it in a folder called `data_source/` in the same directory as this Makefile, however this is not recommended given the number of files required. 
 
-To use the Makefile to fetch, you will need to store your s3 authentication in a hidden text file in your home directory. In a unix-based terminal (such as [Git Bash](http://git-scm.com/downloads) on Windows) or the basic OS X terminal, edit the following with your keys and then paste it into the terminal. 
+To use the Makefile to fetch, you will need to store your s3 authentication in a hidden text file in your home directory. In a unix-based terminal, edit the following with your keys and then paste it into the terminal. On Windows, the recommended route is to use the environment configured through vagrant [here](https://github.com/buckleytom/pg-app-dev-vm/tree/master)
 
 ```
 cat >/.s3curl <<EOL
