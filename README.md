@@ -17,15 +17,16 @@ At a high level, the data required are:
 
 filename|description
 ---------------|--------------
-ba8parcels.sql | From feature class in source FileGDB 
+jurisdictional/*.shp | Zoning v2 A directory of shapefiles, one for each jurisdiction in the bay area for which we have data from the [6 Geodatabases](https://mtcdrive.box.com/s/9t14sb7ugnx24hrp84kmvku0aq5gdb27) discussed below.
+PLU2008_Updated.shp	| Zoning v1 From the Planned Land Use project by ABAG
+parcels_spandex.sql | Parcels v2 from [spandex](https://github.com/synthicity/spandex)
+ba8parcels.sql | Parcels v1 From [feature class ba8 of this File GDB](https://mtcdrive.box.com/s/uec9rjz6cimvpizlb2so3pupm22d56dq)
 city10_ba.shp | city boundaries (2010 census) MTC edits for water-features and others
 county10_ca.shp | county boundaries (2010 census) MTC edits for water-features and others
-match_fields_tables_zoning_2012_source.csv | From the [Project Management Spreadsheet](https://mtcdrive.box.com/shared/static/gz1azbpqrtj4icrm61yupwii3zl5y335.xlsx) - described below
-parcels_spandex.sql | from [spandex](https://github.com/synthicity/spandex)
-Parcels2010_Update9.csv | from forensic analysis of received data
-jurisdictional/*.shp | A directory of shapefiles, one for each jurisdiction in the bay area for which we have data from the [6 Geodatabases](https://mtcdrive.box.com/s/9t14sb7ugnx24hrp84kmvku0aq5gdb27) discussed below.
-zoning_codes_base2012.csv | from this [table](https://mtcdrive.app.box.com/login?redirect_url=%2Fs%2F9pkjbw1lvpd5qtpj1zpc2ccfbxfzly5t)
-PLU2008_Updated.shp	| From the Planned Land Use project by ABAG
+zoning_codes_base2012.csv | Use these to map specific jurisdictional zoning to a generic taxonomy-from this [table](https://mtcdrive.app.box.com/login?redirect_url=%2Fs%2F9pkjbw1lvpd5qtpj1zpc2ccfbxfzly5t)
+match_fields_tables_zoning_2012_source.csv | Names the column used in Zoning V2 which is used in the zoning taxonomy [Project Management Spreadsheet](https://mtcdrive.box.com/shared/static/gz1azbpqrtj4icrm61yupwii3zl5y335.xlsx) - described below
+Parcels2010_Update9.csv | an update to missing jurisdictions (see below) - from forensic analysis of received data
+
 
 The makefile will fetch all the required data. It is hosted on MTC s3. You can also also just download the folder from the s3 web interface and put it in a folder called `data_source/` in the same directory as this Makefile. 
 
