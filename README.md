@@ -24,7 +24,7 @@ ba8parcels.sql | Parcels v1 From [feature class ba8 of this File GDB](https://mt
 city10_ba.shp | city boundaries (2010 census) MTC edits for water-features and others
 county10_ca.shp | county boundaries (2010 census) MTC edits for water-features and others
 zoning_codes_base2012.csv | Use these to map specific jurisdictional zoning to a generic taxonomy-from this [table](https://mtcdrive.app.box.com/login?redirect_url=%2Fs%2F9pkjbw1lvpd5qtpj1zpc2ccfbxfzly5t)
-match_fields_tables_zoning_2012_source.csv | Names the column used in Zoning V2 which is used in the zoning taxonomy [Project Management Spreadsheet](https://mtcdrive.box.com/shared/static/gz1azbpqrtj4icrm61yupwii3zl5y335.xlsx) - described below
+match_fields_tables_zoning_2012_source.csv | Names the column used in Zoning V2 which is used in the zoning taxonomy - from the [Project Management Spreadsheet](https://mtcdrive.box.com/shared/static/gz1azbpqrtj4icrm61yupwii3zl5y335.xlsx) - described below
 Parcels2010_Update9.csv | an update to missing jurisdictions (see below) - from forensic analysis of received data
 
 
