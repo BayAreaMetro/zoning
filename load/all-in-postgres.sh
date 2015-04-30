@@ -21,19 +21,17 @@ PGPASSWORD=vagrant psql -p $DBPORT -h $DBHOST -U $DBUSERNAME $DBNAME -c "CREATE 
 #JURISDICTION-BASED ZONING SOURCE DATA
 ls data_source/jurisdictional/*.shp | cut -d "/" -f3 | xargs -I {} ogr2ogr -skipfailures -f "PostgreSQL" \
 PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" \
--nlt PROMOTE_TO_MULTI -lco SCHEMA=zoning_staging data_source/jurisdictional/{} > zoning_import_errors.log 2>&1
+-nlt PROMOTE_TO_MULTI -lco SCHEMA=zoning_staging data_source/jurisdictional/{} > source_zoning_import_errors.log 2>&1
 
 #FIX for Napa
-ogr2ogr -skipfailures -f "PostgreSQL" PG:"host=${DBHOST} port=${DBPORT} dbname
-=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" -select zoning \
--nlt PROMOTE_TO_MULTI -lco SCHEMA=zoning_staging -lco OVERWRITE=YES \ 
-data_source/jurisdictional/NapaCoZoning.shp
+ogr2ogr -skipfailures -f "PostgreSQL" \
+PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" -select zoning \
+-nlt PROMOTE_TO_MULTI -lco SCHEMA=zoning_staging -lco OVERWRITE=YES data_source/jurisdictional/NapaCoZoning.shp
 
 #FIX for Solano
 ogr2ogr -skipfailures -f "PostgreSQL" PG:"host=${DBHOST} port=${DBPORT} dbname
 =${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" -select full_name \
--nlt PROMOTE_TO_MULTI -lco SCHEMA=zoning_staging -lco OVERWRITE=YES \ 
-data_source/jurisdictional/SolCoGeneral_plan_unincorporated.shp
+-nlt PROMOTE_TO_MULTI -lco SCHEMA=zoning_staging -lco OVERWRITE=YES data_source/jurisdictional/SolCoGeneral_plan_unincorporated.shp
 
 #GENERIC ZONING CODE TABLE
 PGPASSWORD=vagrant psql -p $DBPORT -h $DBHOST -U $DBUSERNAME $DBNAME -f load/load-generic-zoning-code-table.sql
