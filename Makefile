@@ -44,6 +44,7 @@ zoningdb.sql: \
 	data_source/Parcels2010_Update9.csv \
 	data_source/jurisdictional/AlamedaCountyGP2006db.shp \
 	data_source/zoning_codes_base2012.csv \
+	data_source/zoning_codes_base2008.csv \
 	data_source/PLU2008_Updated.shp
 	bash load/all-in-postgres.sh
 
@@ -90,6 +91,10 @@ data_source/Parcels2010_Update9.csv: s3-curl/s3curl.pl
 data_source/zoning_codes_base2012.csv: s3-curl/s3curl.pl
 	$(get)zoning_codes_base2012.csv \
 	-o data_source/zoning_codes_base2012.csv
+
+data_source/zoning_codes_base2008.csv: s3-curl/s3curl.pl
+	$(get)zoning_codes_base2008.csv \
+	-o data_source/zoning_codes_base2008.csv
 
 data_archive/city10_ba.zip: s3-curl/s3curl.pl
 	$(get)city10_ba.zip \
