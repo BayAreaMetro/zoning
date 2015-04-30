@@ -1,6 +1,6 @@
 ###Intro 
 
-Use this repo to produce a CSV with a generic zoning code assigned to every parcel in the SF Bay Area in 2010. 
+Produce a CSV with a generic zoning code assigned to every parcel in the SF Bay Area in 2010. 
 
 ###Requirements
 
