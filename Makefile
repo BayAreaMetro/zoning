@@ -112,3 +112,24 @@ clean_db:
 
 clean_shapefiles:
 	rm -rf data_source/jurisdictional
+
+create_db:
+	sudo bash load/clean_db.sh
+
+clean_zoning_intersection:
+	PGPASSWORD=vagrant psql \
+	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
+	-f load/drop_intersection_tables.sql
+
+merge_source_zoning:
+	PGPASSWORD=vagrant psql \
+	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
+	-f process/merge_jurisdiction_zoning.sql
+
+zoning_parcel_intersection:
+	PGPASSWORD=vagrant psql \
+	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
+	-f process/parcel_zoning_intersection.sql
+
+clean_shapefiles:
+	rm -rf data_source/jurisdictional
