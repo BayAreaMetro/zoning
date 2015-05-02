@@ -13,7 +13,7 @@ CREATE TABLE zoning.merged_jurisdictions
 );
 
 CREATE OR REPLACE FUNCTION zoning.merge()
-  RETURNS text AS
+  RETURNS void AS
 $BODY$
 DECLARE
     	tables CURSOR FOR SELECT *
@@ -46,7 +46,7 @@ BEGIN
 			);
 	 	EXECUTE sql_string;
 	 END LOOP;
-END;
+	END;
 $BODY$
   LANGUAGE plpgsql VOLATILE;
 
