@@ -52,7 +52,27 @@ Then run `make` in the repository directory.
 
 ####Loading/Processing
 
-If you already have the data, then run `make` in the repository directory.
+If you already have the data and the postgis environment set up, then run:
+
+`make load_data`  
+
+This will load most of the above data into Postgres for processing. 
+
+Next run:  
+
+`make merge_source_zoning`
+
+This creates a postgres table with all of the geometries of the source jurisdictional zoning in /data_source/jurisdictional. See [#zoning-data-by-jurisdiction] for more information. 
+
+Next run:
+
+`make zoning_parcel_intersection`
+
+This make target assigns a zoning_id (as found in the data_source/zoning_codes_base2012.csv) to each parcel. Several rules are applied to overcome issues with parcels that within multiple jurisdictions, and/or within multiple zoning geometries. 
+
+###Zoning data by Jurisdiction
+The command `make load_data` extracts the source zoning File Geodatabases to shapefiles in a folder in /data_source/jurisdictional. You can edit inspect and change which data are used by jurisdiction here. Keep in mind that whatever changes you make, each jurisidictional zoning file must have a zoning column which maps to the generic zoning codes and match fields as specified by jurisidction in zoning_codes_base2012.csv and match_fields_tables_zoning_2012_source.csv. 
+Also, all source zoning jurisdiction files are in [EPSG 26910](http://epsg.io/26910). 
 
 ### Outcome
 
