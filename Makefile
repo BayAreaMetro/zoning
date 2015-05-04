@@ -142,3 +142,8 @@ zoning_parcel_intersection:
 
 clean_shapefiles:
 	rm -rf data_source/jurisdictional
+
+sql_dump:
+	pg_dump --table zoning.parcel_withdetails \
+	-f /mnt/bootstrap/zoning/data_out/zoning_parcel_withdetails.sql \
+	vagrant
