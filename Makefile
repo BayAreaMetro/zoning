@@ -11,6 +11,7 @@ DBNAME=vagrant
 #########################
 
 parcel_zoning.csv:
+	mkdir -p data_out
 	PGPASSWORD=vagrant psql \
 	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
 	-f process/merge_jurisdiction_zoning.sql
