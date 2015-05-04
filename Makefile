@@ -10,7 +10,7 @@ DBNAME=vagrant
 ##Join Parcels/Zoning####
 #########################
 
-parcel_zoning.csv: zoningdb.sql
+parcel_zoning.csv:
 	PGPASSWORD=vagrant psql \
 	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
 	-f process/merge_jurisdiction_zoning.sql
@@ -21,7 +21,7 @@ parcel_zoning.csv: zoningdb.sql
 ####LOAD IN POSTGRES#####
 #########################
 
-zoningdb.sql: \
+load_data: \
 	data_source/ba8parcels.sql \
 	data_source/city10_ba.shp \
 	data_source/county10_ca.shp \
