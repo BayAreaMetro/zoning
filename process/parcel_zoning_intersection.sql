@@ -457,3 +457,26 @@ FROM (
 GROUP BY 
 	geom_id,
 	origgplu;
+
+CREATE TABLE zoning.unmapped_parcels_with_generic_codes AS
+SELECT z.geom_id, z.origgplu, c.name as cname from 
+zoning.unmapped_parcel_zoning z,
+zoning.codes_dictionary c
+WHERE
+c.name LIKE '%' || z.origgplu || '%';
+
+--create table of PLU codes without generic zoning_id's
+DROP VIEW IF EXISTS zoning.plu_parcels_without_generic_codes;
+CREATE TABLE zoning.plu_parcels_without_generic_codes AS
+SELECT origgplu, plu_juris
+FROM zoning.unmapped_parcel_zoning
+WHERE geom_id NOT in (
+select geom_id from zoning.unmapped_parcels_with_generic_codes)
+GROUP BY 
+	plu_juris,
+	origgplu
+ORDER BY
+	plu_juris,
+	origgplu;
+
+\COPY zoning.plu_parcels_without_generic_codes TO '/mnt/bootstrap/zoning/data_out/plu_codes_without_zoning_ids.csv' DELIMITER ',' CSV HEADER;
