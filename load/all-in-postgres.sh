@@ -19,7 +19,7 @@ PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=$
 PGPASSWORD=vagrant psql -p $DBPORT -h $DBHOST -U $DBUSERNAME $DBNAME -c "CREATE SCHEMA zoning_staging"
 
 #JURISDICTION-BASED ZONING SOURCE DATA
-ls jurisdictional/*.shp | cut -d "/" -f3 | xargs -I {} ogr2ogr -skipfailures -f "PostgreSQL" \
+ls jurisdictional/*.shp | cut -d "/" -f2 | xargs -I {} ogr2ogr -skipfailures -f "PostgreSQL" \
 PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" \
 -nlt PROMOTE_TO_MULTI -lco SCHEMA=zoning_staging jurisdictional/{} > source_zoning_import_errors.log 2>&1
 
@@ -31,7 +31,7 @@ PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=$
 #FIX for Solano
 ogr2ogr -skipfailures -f "PostgreSQL" \
 PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" -select full_name \
--nlt PROMOTE_TO_MULTI -lco SCHEMA=zoning_staging -lco OVERWRITE=YES data_source/jurisdictional/SolCoGeneral_plan_unincorporated.shp
+-nlt PROMOTE_TO_MULTI -lco SCHEMA=zoning_staging -lco OVERWRITE=YES jurisdictional/SolCoGeneral_plan_unincorporated.shp
 
 #GENERIC ZONING CODE TABLE
 PGPASSWORD=vagrant psql -p $DBPORT -h $DBHOST -U $DBUSERNAME $DBNAME -f load/load-generic-zoning-code-table.sql
