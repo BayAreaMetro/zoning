@@ -400,6 +400,9 @@ zoning.codes_dictionary z,
 parcel p
 WHERE pz.zoning_id = z.id AND p.geom_id = pz.geom_id;
 
+CREATE INDEX zoning_parcel_withdetails_gidx ON zoning.parcel_withdetails using GIST (geom);
+CREATE INDEX zoning_parcel_withdetails_geom_idx ON zoning.parcel_withdetails using hash (geom_id);
+VACUUM (ANALYZE) zoning.parcel_withdetails;
 /*create INDEX zoning_parcel_two_max_lookup_geom_idx ON zoning.parcel_two_max using hash (geom_id);*/
 
 /*CREATE TABLE zoning.parcel_two_max_geo AS
