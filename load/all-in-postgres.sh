@@ -29,8 +29,9 @@ PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=$
 -nlt PROMOTE_TO_MULTI -lco SCHEMA=zoning_staging -lco OVERWRITE=YES jurisdictional/NapaCoZoning.shp
 
 #FIX for Solano
-ogr2ogr -skipfailures -f "PostgreSQL" PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" -select full_name \
--nlt PROMOTE_TO_MULTI -lco SCHEMA=zoning_staging -lco OVERWRITE=YES jurisdictional/SolCoGeneral_plan_unincorporated.shp
+ogr2ogr -skipfailures -f "PostgreSQL" \
+PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" -select full_name \
+-nlt PROMOTE_TO_MULTI -lco SCHEMA=zoning_staging -lco OVERWRITE=YES data_source/jurisdictional/SolCoGeneral_plan_unincorporated.shp
 
 #GENERIC ZONING CODE TABLE
 PGPASSWORD=vagrant psql -p $DBPORT -h $DBHOST -U $DBUSERNAME $DBNAME -f load/load-generic-zoning-code-table.sql
