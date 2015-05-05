@@ -119,6 +119,11 @@ clean: clean_db clean_shapefiles
 
 clean_db:
 	sudo bash load/clean_db.sh
+	
+clean_intersection_tables:
+	PGPASSWORD=vagrant psql \
+	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
+	-f load/drop_intersection_tables.sql
 
 clean_zoning_intersection:
 	PGPASSWORD=vagrant psql \
