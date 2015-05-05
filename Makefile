@@ -148,3 +148,15 @@ sql_dump:
 	pg_dump --table zoning.parcel_withdetails \
 	-f /mnt/bootstrap/zoning/data_out/zoning_parcel_withdetails.sql \
 	vagrant
+	
+remove_source_data:
+	rm ba8parcels.* 
+	rm city10_ba.* 
+	rm county10_ca.* 
+	rm match_fields_tables_zoning_2012_source.* 
+	rm parcels_spandex.* 
+	rm Parcels2010_Update9.* 
+	rm jurisdictional/*.* 
+	rm zoning_codes_base2012.* 
+	rm PLU2008_Updated.*
+	rm PlannedLandUsePhase*
