@@ -120,9 +120,6 @@ clean: clean_db clean_shapefiles
 clean_db:
 	sudo bash load/clean_db.sh
 
-create_db:
-	sudo bash load/clean_db.sh
-
 clean_zoning_intersection:
 	PGPASSWORD=vagrant psql \
 	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
