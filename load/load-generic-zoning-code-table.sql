@@ -35,7 +35,7 @@ CREATE TABLE zoning.codes_dictionary (
 	ME text 
 );
 
-\COPY zoning.codes_dictionary FROM 'data_source/zoning_codes_base2012.csv' WITH (FORMAT csv, DELIMITER ',', HEADER TRUE);
+\COPY zoning.codes_dictionary FROM 'zoning_codes_base2012.csv' WITH (FORMAT csv, DELIMITER ',', HEADER TRUE);
 
 UPDATE zoning.codes_dictionary SET HS = case when HS = 'x' then 'TRUE' else 'FALSE' end;
 UPDATE zoning.codes_dictionary SET HT = case when HT = 'x' then 'TRUE' else 'FALSE' end;
@@ -89,7 +89,7 @@ CREATE TABLE zoning.source_field_name (
 	city_name text 
 );
 
-\COPY zoning.source_field_name FROM 'data_source/match_fields_tables_zoning_2012_source.csv' WITH (FORMAT csv, HEADER TRUE);
+\COPY zoning.source_field_name FROM 'match_fields_tables_zoning_2012_source.csv' WITH (FORMAT csv, HEADER TRUE);
 
 ALTER TABLE zoning.source_field_name ALTER COLUMN juris SET NOT NULL;
 ALTER TABLE zoning.source_field_name ADD PRIMARY KEY (juris);
