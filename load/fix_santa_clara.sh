@@ -22,12 +22,15 @@ CREATE INDEX city_santa_clara_gidx ON zoning_staging.City_Santa_Clara_GP_LU_02 u
 
 VACUUM (ANALYZE) zoning_staging.City_Santa_Clara_GP_LU_02;
 
-SELECT c.zoning_id, scp.geom_id
+SELECT c.id as zoning_id, scp.geom_id
 FROM
-(select * from 
+(select geom_id, geom from 
+parcel where
+geom_id in 
+(select geom_id from
 zoning.parcel_cities_counties
-where cityname1 = "Santa Clara") scp,
-City_Santa_Clara_GP_LU_02 z,
+where cityname1 = 'Santa Clara') ) scp,
+zoning_staging.City_Santa_Clara_GP_LU_02 z,
 zoning.codes_dictionary c
 WHERE 
 ST_INTERSECTS(z.wkb_geometry,scp.geom) AND
