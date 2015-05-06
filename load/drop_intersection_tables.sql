@@ -5,6 +5,7 @@ DROP TABLE zoning.bay_area_generic;
 DROP TABLE parcel_invalid;
 DROP TABLE parcel_geometrycollection;
 DROP TABLE parcel_valid;
+DROP TABLE plu_updated2008;
 DROP TABLE zoning.lookup_valid; 
 DROP TABLE zoning.parcel_intersection_count;
 DROP TABLE zoning.parcels_with_multiple_zoning;

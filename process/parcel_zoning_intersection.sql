@@ -413,6 +413,14 @@ WHERE two.geom_id = p.geom_id;*/
 
 --USE PLU 2008 WHERE NO OTHER DATA AVAILABLE
 
+CREATE TABLE zoning.bay_area_generic_plu AS 
+SELECT c.id as zoning_id, z.wkb_geometry FROM
+zoning.codes_dictionary_plu c,
+plu2008_updated z
+WHERE 
+cast(left(z.origgplu,3) AS int)=c.lpscode AND
+right(z.origgplu,length(z.origgplu)-6) = c.name;
+
 CREATE TABLE zoning.unmapped_parcels AS
 select * from parcel 
 where geom_id not in (
@@ -421,10 +429,16 @@ SELECT geom_id from zoning.parcel);
 CREATE INDEX zoning_unmapped_parcel_gidx ON zoning.unmapped_parcels using GIST (geom);
 VACUUM (ANALYZE) zoning.unmapped_parcels;
 
-CREATE TABLE zoning.unmapped_parcel_zoning AS
-SELECT p.geom_id, z.origgplu, z.gengplu 
+CREATE TABLE zoning.unmapped_parcel_zoning_plu AS
+SELECT p.geom_id, p.geom
 FROM zoning.unmapped_parcels p,
 public.plu2008_updated z 
+WHERE ST_Intersects(z.wkb_geometry,p.geom);
+
+CREATE TABLE zoning.unmapped_parcel_zoning AS
+SELECT p.geom_id, z.zoning_id 
+FROM zoning.unmapped_parcels p,
+zoning.bay_area_generic_plu z 
 WHERE ST_Intersects(z.wkb_geometry,p.geom);
 
 CREATE TABLE zoning.unmapped_parcel_intersection_count AS

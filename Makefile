@@ -87,6 +87,10 @@ city10_ba.zip: s3curl.pl
 	-o $@.download
 	mv $@.download $@
 
+zoning_codes_base2008.csv: s3curl.pl
+	$(get)zoning_codes_base2008.csv \
+	-o zoning_codes_base2008.csv
+
 county10_ca.zip: s3curl.pl
 	$(get)county10_ca.zip \
 	-o $@.download
