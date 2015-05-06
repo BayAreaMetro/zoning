@@ -38,7 +38,7 @@ load_data: ba8parcels.sql \
 ##############
 
 City_Santa_Clara_GP_LU_02.shp: City_Santa_Clara_GP_LU_02.zip
-	unzip -o -d $@
+	unzip -o $<
 	touch $@
 
 jurisdictional/AlamedaCountyGP2006db.shp: PlannedLandUsePhase1.gdb
@@ -46,19 +46,19 @@ jurisdictional/AlamedaCountyGP2006db.shp: PlannedLandUsePhase1.gdb
 	touch jurisdictional/*
 
 PlannedLandUsePhase1.gdb: PlannedLandUse1Through6.gdb.zip
-	unzip -o -d  $@
+	unzip -o $<
 	touch $@
 
 county10_ca.shp: county10_ca.zip
-	unzip -o -d  $@
+	unzip -o $<
 	touch $@
 
 city10_ba.shp: city10_ba.zip
-	unzip -o -d  $@
+	unzip -o $<
 	touch $@
 
 PLU2008_Updated.shp: PLU2008_Updated.zip
-	unzip -o -d  $@
+	unzip -o $<
 	touch $@
 
 ##############
