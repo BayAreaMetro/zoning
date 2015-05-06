@@ -22,7 +22,7 @@ CREATE INDEX city_santa_clara_gidx ON zoning_staging.City_Santa_Clara_GP_LU_02 u
 
 VACUUM (ANALYZE) zoning_staging.City_Santa_Clara_GP_LU_02;
 
-SELECT c.zoning_id, scp.geom_id
+SELECT c.id as zoning_id, scp.geom_id
 FROM
 (select * from 
 zoning.parcel_cities_counties
