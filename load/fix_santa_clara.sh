@@ -27,7 +27,7 @@ FROM
 (select * from 
 zoning.parcel_cities_counties
 where cityname1 = 'Santa Clara') scp,
-City_Santa_Clara_GP_LU_02 z,
+zoning_staging.City_Santa_Clara_GP_LU_02 z,
 zoning.codes_dictionary c
 WHERE 
 ST_INTERSECTS(z.wkb_geometry,scp.geom) AND
