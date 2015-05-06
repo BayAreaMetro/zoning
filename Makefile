@@ -37,6 +37,10 @@ load_data: ba8parcels.sql \
 ###PREPARE####
 ##############
 
+City_Santa_Clara_GP_LU_02.shp: City_Santa_Clara_GP_LU_02.zip
+	unzip -o -d $@
+	touch $@
+
 jurisdictional/AlamedaCountyGP2006db.shp: PlannedLandUsePhase1.gdb
 	bash load/jurisdiction_shapefile_directory.sh
 	touch jurisdictional/*
@@ -60,6 +64,11 @@ PLU2008_Updated.shp: PLU2008_Updated.zip
 ##############
 ###DOWNLOAD###
 ##############
+
+City_Santa_Clara_GP_LU_02.zip: 
+	$(get)$@ \
+	-o $@.download
+	mv $@.download $@
 
 #where plu refers to the old "planned land use"/comprehensive plan project
 ba8parcels.sql: s3curl.pl
