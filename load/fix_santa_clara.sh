@@ -35,4 +35,7 @@ zoning.codes_dictionary c
 WHERE 
 ST_INTERSECTS(z.wkb_geometry,scp.geom) AND
 c.name=z.GP_DESIGNA ;
+
+--Mutiple intersections are a problem
+
 EOF
