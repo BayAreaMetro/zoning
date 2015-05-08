@@ -1,3 +1,5 @@
+--this function is based on the functions in this postgis add-ons repository: https://github.com/pedrogit/postgisaddons
+--and these plpgsql tutorials: https://wiki.postgresql.org/wiki/Return_more_than_one_row_of_data_from_PL/pgSQL_functions
 create or replace function GetOverlaps(_p text,_z text,_z_id text,_z_geom text) returns setof record as
 '
 declare
