@@ -160,7 +160,10 @@ sql_dump:
 	pg_dump --table zoning.parcel_withdetails \
 	-f /mnt/bootstrap/zoning/data_out/zoning_parcel_withdetails.sql \
 	vagrant
-	
+	pg_dump --table zoning.parcel_withdetails \
+	-f /mnt/bootstrap/zoning/data_out/zoning_parcel.sql \
+	vagrant
+
 remove_source_data:
 	rm ba8parcels.* 
 	rm city10_ba.* 
