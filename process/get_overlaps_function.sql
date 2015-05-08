@@ -1,5 +1,21 @@
 --this function is based on the functions in this postgis add-ons repository: https://github.com/pedrogit/postgisaddons
 --and these plpgsql tutorials: https://wiki.postgresql.org/wiki/Return_more_than_one_row_of_data_from_PL/pgSQL_functions
+
+/*
+Use this function to return a table with statistics on how 2 postgis polygon tables overlap. 
+The function returns rows with the unique id's of the tables passed to it where they intersect.
+It also returns the area of overlap, the proportion of overlap, and the geometry of their intersection. 
+
+EXAMPLE USAGE:
+select * from GetOverlaps('parcel','zoning_staging.santarosageneralplan','gp_landuse','wkb_geometry') as codes(
+		geom_id bigint, 
+  		zoning_id varchar(50),
+		area double precision,
+		prop double precision,
+		geom geometry);
+*/
+
+
 create or replace function GetOverlaps(_p text,_z text,_z_id text,_z_geom text) returns setof record as
 '
 declare
@@ -31,11 +47,3 @@ end
 '
 language 'plpgsql';
 
-/*
-select * from GetOverlaps('parcel','zoning_staging.santarosageneralplan','gp_landuse','wkb_geometry') as codes(
-		geom_id bigint, 
-  		zoning_id varchar(50),
-		area double precision,
-		prop double precision,
-		geom geometry);
-*/
