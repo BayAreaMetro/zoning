@@ -42,16 +42,17 @@ SELECT geom_id, count(*) as countof FROM
 			zoning.parcel_intersection_santa_clara
 			GROUP BY geom_id;
 
-CREATE INDEX zoning_parcel_intersection_count ON zoning.parcel_intersection_count (countof);
-VACUUM (ANALYZE) zoning.parcel_intersection_count;
+CREATE INDEX zoning_parcel_intersection_count ON zoning.parcel_intersection_count_santa_clara (countof);
+VACUUM (ANALYZE) zoning.parcel_intersection_count_santa_clara;
 
 DROP VIEW IF EXISTS zoning.parcels_with_multiple_zoning_santa_clara;
 CREATE VIEW zoning.parcels_with_multiple_zoning_santa_clara AS
 SELECT geom_id, geom from parcel where geom_id
 IN (SELECT geom_id FROM zoning.parcel_intersection_count WHERE countof>1);
---Query returned successfully: 462655 rows affected, 6854 ms execution time.
 
+--read in overlaps function
 \i ../process/get_overlaps_function.sql
+
 CREATE TABLE zoning.parcel_overlaps_santa_clara AS
 select * from GetOverlaps('zoning.parcels_with_multiple_zoning_santa_clara','zoning_staging.City_Santa_Clara_GP_LU_02','GP_DESIGNA','wkb_geometry') as overlaps(
 		geom_id bigint, 
@@ -59,5 +60,19 @@ select * from GetOverlaps('zoning.parcels_with_multiple_zoning_santa_clara','zon
 		area double precision,
 		prop double precision,
 		geom geometry);
+
+DROP TABLE IF EXISTS zoning.parcel_overlaps_maxonly_santa_clara;
+CREATE TABLE zoning.parcel_overlaps_maxonly_santa_clara AS
+SELECT geom_id, zoning_id, prop 
+FROM zoning.parcel_overlaps_santa_clara WHERE (geom_id,prop) IN 
+( SELECT geom_id, MAX(prop)
+  FROM zoning.parcel_overlaps_santa_clara
+  GROUP BY geom_id
+);
+
+
+EOF
+
+
 
 
