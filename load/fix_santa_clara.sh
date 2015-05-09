@@ -77,11 +77,51 @@ SELECT geom_id, zoning_id from zoning.parcel_intersection_santa_clara where geom
 IN (SELECT geom_id FROM zoning.parcel_intersection_count_santa_clara WHERE countof=1);
 
 INSERT INTO zoning.parcel 
-SELECT pz.geom_id, c.id as zoning_id 
+SELECT count(*) 
 from zoning.parcel_overlaps_maxonly_santa_clara pz,
 zoning.codes_dictionary c
 WHERE 
-c.name=pz.zoning_string;
+c.name=pz.zoning_string AND
+c.juris=27;
+
+--the above doesn't work because the string matching doesn't work. here are the strings in santa clara source:
+
+# -------------------------------
+#  MODERATE DENSITY RESIDENTIAL
+#  EDUCATION
+#  OFFICE/RESEARCH & DEVELOPMENT
+#  TRANSIT-ORIENTED MIXED USE
+#  INSTITUTIONAL
+#  OPEN SPACE
+#  SINGLE FAMILY DETACHED
+#  THOROUGHFARE
+#  SINGLE FAMILY ATTACHED
+#  PARKS & RECREATION
+#  MEDIUM DENSITY RESIDENTIAL
+#  GATEWAY THOROUGHFARE
+#  MIXED USE
+
+
+# here are the strings for santa clara in the codes_base2012.csv spreadsheet
+
+# Very Low Density Residential
+# Low Density Residential
+# Medium Density Residential
+# High Density Residential
+# Neighborhood Commercial
+# Community Commercial
+# Regional Commercial
+# Neighborhood Mixed Use
+# Community Mixed Use
+# Regional Mixed Use
+# High Intensity Office/R&D
+# Low Intensity Office/R&D
+# Light Industrial
+# Heavy Industrial
+# Public/Quasi Public
+# Parks/Open Space
+# Downtown Core
+
 
 
 
