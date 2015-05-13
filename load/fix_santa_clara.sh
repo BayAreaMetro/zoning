@@ -72,12 +72,9 @@ FROM zoning.parcel_overlaps_santa_clara WHERE (geom_id,prop) IN
   GROUP BY geom_id
 );
 
-INSERT INTO zoning.parcel 
-SELECT geom_id, zoning_id from zoning.parcel_intersection_santa_clara where geom_id
-IN (SELECT geom_id FROM zoning.parcel_intersection_count_santa_clara WHERE countof=1);
 
 INSERT INTO zoning.parcel 
-SELECT pz.geom_id, c.zoning_id 
+SELECT pz.geom_id, c.id as zoning_id 
 from zoning.parcel_overlaps_maxonly_santa_clara pz,
 zoning.codes_dictionary c
 WHERE 

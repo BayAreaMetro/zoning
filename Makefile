@@ -30,7 +30,8 @@ load_data: ba8parcels.sql \
 	Parcels2010_Update9.csv \
 	jurisdictional/AlamedaCountyGP2006db.shp \
 	zoning_codes_base2012.csv \
-	PLU2008_Updated.shp
+	PLU2008_Updated.shp \
+	plu06_may2015estimate.shp \
 	bash load/all-in-postgres.sh
 
 ##############
@@ -117,6 +118,11 @@ PlannedLandUse1Through6.gdb.zip: s3curl.pl
 
 PLU2008_Updated.zip: s3curl.pl
 	$(get)PLU2008_Updated.zip \
+	-o $@.download
+	mv $@.download $@
+
+plu06_may2015estimate.zip: s3curl.pl
+	$(get)plu06_may2015estimate.zip \
 	-o $@.download
 	mv $@.download $@
 
