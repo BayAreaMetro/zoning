@@ -47,3 +47,6 @@ PGPASSWORD=vagrant psql -p $DBPORT -h $DBHOST -U $DBUSERNAME $DBNAME < parcels_s
 
 #UPDATE9 TABLE (joinnuma, zoning_id)
 PGPASSWORD=vagrant psql -p $DBPORT -h $DBHOST -U $DBUSERNAME $DBNAME -f load/update9.sql
+
+#PLU-2006 Zoning Data 
+ogr2ogr -f "PostgreSQL" PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" plu06_may2015estimate.shp

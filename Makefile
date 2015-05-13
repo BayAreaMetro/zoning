@@ -159,6 +159,12 @@ zoning_parcel_intersection:
 	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
 	-f process/parcel_zoning_intersection.sql
 
+add_plu_2006: plu06_may2015estimate.shp
+	ogr2ogr -f "PostgreSQL" PG:"host=$(DBHOST) port=$(DBPORT) dbname=$(DBNAME) user=$(DBUSERNAME) password=$(DBPASSWORD)" plu06_may2015estimate.shp
+	PGPASSWORD=vagrant psql \
+	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
+	-f load/add-plu-2006.sql
+
 clean_shapefiles:
 	rm -rf jurisdictional
 

@@ -394,7 +394,7 @@ create INDEX zoning_parcel_lookup_geom_idx ON zoning.parcel using hash (geom_id)
 
 --output a table with geographic information and generic code info for review
 CREATE TABLE zoning.parcel_withdetails AS
-SELECT z.*, p.geom
+SELECT z.*, p.geom_id, p.geom
 FROM zoning.parcel pz,
 zoning.codes_dictionary z,
 parcel p
@@ -403,94 +403,11 @@ WHERE pz.zoning_id = z.id AND p.geom_id = pz.geom_id;
 CREATE INDEX zoning_parcel_withdetails_gidx ON zoning.parcel_withdetails using GIST (geom);
 CREATE INDEX zoning_parcel_withdetails_geom_idx ON zoning.parcel_withdetails using hash (geom_id);
 VACUUM (ANALYZE) zoning.parcel_withdetails;
-/*create INDEX zoning_parcel_two_max_lookup_geom_idx ON zoning.parcel_two_max using hash (geom_id);*/
-
-/*CREATE TABLE zoning.parcel_two_max_geo AS
-SELECT p.geom,p.geom_id, two.id as zoning_id, two.prop FROM 
-zoning.parcel_two_max two,
-parcel p
-WHERE two.geom_id = p.geom_id;*/
-
---USE PLU 2008 WHERE NO OTHER DATA AVAILABLE
-
-CREATE TABLE zoning.bay_area_generic_plu AS 
-SELECT c.id as zoning_id, z.wkb_geometry FROM
-zoning.codes_dictionary_plu c,
-plu2008_updated z
-WHERE 
-cast(left(z.origgplu,3) AS int)=c.lpscode AND
-right(z.origgplu,length(z.origgplu)-6) = c.name;
 
 CREATE TABLE zoning.unmapped_parcels AS
 select * from parcel 
 where geom_id not in (
-SELECT geom_id from zoning.parcel);
+SELECT geom_id from zoning.parcel_withdetails);
 
 CREATE INDEX zoning_unmapped_parcel_gidx ON zoning.unmapped_parcels using GIST (geom);
 VACUUM (ANALYZE) zoning.unmapped_parcels;
-
-CREATE TABLE zoning.unmapped_parcel_zoning_plu AS
-SELECT p.geom_id, p.geom
-FROM zoning.unmapped_parcels p,
-public.plu2008_updated z 
-WHERE ST_Intersects(z.wkb_geometry,p.geom);
-
-CREATE TABLE zoning.unmapped_parcel_zoning AS
-SELECT p.geom_id, z.zoning_id 
-FROM zoning.unmapped_parcels p,
-zoning.bay_area_generic_plu z 
-WHERE ST_Intersects(z.wkb_geometry,p.geom);
-
-CREATE TABLE zoning.unmapped_parcel_intersection_count AS
-SELECT geom_id, count(*) as countof FROM
-			zoning.unmapped_parcel_zoning
-			GROUP BY geom_id;
-
-CREATE TABLE zoning.parcel_overlaps_plu AS
-SELECT 
-	geom_id,
-	origgplu,
-	sum(ST_Area(geom)) area,
-	round(sum(ST_Area(geom))/min(parcelarea) * 1000) / 10 prop,
-	ST_Union(geom) geom
-FROM (
-	SELECT p.geom_id, 
-		z.origgplu, 
-	 	ST_Area(p.geom) parcelarea, 
-	 	ST_Intersection(p.geom, z.wkb_geometry) geom 
-	FROM 
-		(select geom_id, geom 
-			FROM zoning.unmapped_parcels
-			WHERE geom_id in 
-				(select geom_id 
-					from zoning.unmapped_parcel_intersection_count 
-					WHERE countof>1)) as p,
-				(select origgplu, wkb_geometry from plu2008_updated) as z
-		WHERE ST_Intersects(z.wkb_geometry, p.geom)
-		) f
-GROUP BY 
-	geom_id,
-	origgplu;
-
-CREATE TABLE zoning.unmapped_parcels_with_generic_codes AS
-SELECT z.geom_id, z.origgplu, c.name as cname from 
-zoning.unmapped_parcel_zoning z,
-zoning.codes_dictionary c
-WHERE
-c.name LIKE '%' || z.origgplu || '%';
-
---create table of PLU codes without generic zoning_id's
-DROP VIEW IF EXISTS zoning.plu_parcels_without_generic_codes;
-CREATE TABLE zoning.plu_parcels_without_generic_codes AS
-SELECT origgplu, plu_juris
-FROM zoning.unmapped_parcel_zoning
-WHERE geom_id NOT in (
-select geom_id from zoning.unmapped_parcels_with_generic_codes)
-GROUP BY 
-	plu_juris,
-	origgplu
-ORDER BY
-	plu_juris,
-	origgplu;
-
-\COPY zoning.plu_parcels_without_generic_codes TO '/mnt/bootstrap/zoning/data_out/plu_codes_without_zoning_ids.csv' DELIMITER ',' CSV HEADER;
