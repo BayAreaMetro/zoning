@@ -1,4 +1,5 @@
-
+create INDEX plu06_may2015estimate_gidx ON plu06_may2015estimate using GIST (wkb_geometry);
+VACUUM (ANALYZE) plu06_may2015estimate;
 --USE PLU 2006 WHERE NO OTHER DATA AVAILABLE
 
 DROP TABLE IF EXISTS zoning.unmapped_parcel_zoning_plu;
