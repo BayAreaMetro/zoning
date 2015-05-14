@@ -140,5 +140,40 @@ from (select p2.*
 plu06_may2015estimate z
 WHERE p.plu06_objectid=z.objectid;
 
-
-
+--EXPORT pg_dump --table zoning.parcel_withdetails > /mnt/bootstrap/zoning/parcel_withdetails05142015.sql
+CREATE TABLE zoning.parcel_withdetails_nogeom AS
+SELECT
+id,                
+juris,             
+city,              
+name,              
+min_far,           
+max_far,           
+max_height,        
+min_front_setback, 
+max_front_setback, 
+side_setback,      
+rear_setback,      
+min_dua,           
+max_dua,           
+coverage,          
+max_du_per_parcel, 
+min_lot_size,      
+hs,                
+ht,                
+hm,                
+of,                
+ho,                
+sc,                
+il,                
+iw,                
+ih,                
+rs,                
+rb,                
+mr,                
+mt,                
+me,                
+geom_id
+FROM zoning.parcel_withdetails;
+\COPY zoning.parcel_withdetails_nogeom TO '/mnt/bootstrap/zoning/zoning_parcels_with_details.csv' DELIMITER ',' CSV HEADER;
+DROP TABLE zoning.parcel_withdetails_nogeom;

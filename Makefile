@@ -160,10 +160,10 @@ zoning_parcel_intersection:
 	-f process/parcel_zoning_intersection.sql
 
 add_plu_2006: plu06_may2015estimate.shp
-	# ogr2ogr -f "PostgreSQL" -nlt PROMOTE_TO_MULTI \
-	# -select juris,county,lpscode,plandate,gengplu,objectid,hs,ht,hm,of_ as of,ho,sc,il,iw,ih,rs,rb,mr,mt,me,max_far,max_height,max_dua,max_du_per \
-	# PG:"host=$(DBHOST) port=$(DBPORT) dbname=$(DBNAME) user=$(DBUSERNAME) password=$(DBPASSWORD)" \
-	# plu06_may2015estimate.shp
+	ogr2ogr -f "PostgreSQL" -nlt PROMOTE_TO_MULTI \
+	-select juris,county,lpscode,plandate,gengplu,objectid,hs,ht,hm,of_ as of,ho,sc,il,iw,ih,rs,rb,mr,mt,me,max_far,max_height,max_dua,max_du_per \
+	PG:"host=$(DBHOST) port=$(DBPORT) dbname=$(DBNAME) user=$(DBUSERNAME) password=$(DBPASSWORD)" \
+	plu06_may2015estimate.shp
 	PGPASSWORD=vagrant psql \
 	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
 	-f load/add-plu-2006.sql

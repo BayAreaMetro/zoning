@@ -27,6 +27,7 @@ county10_ca.shp | county boundaries (2010 census) MTC edits for water-features a
 zoning_codes_base2012.csv | Use these to map specific jurisdictional zoning to a generic taxonomy-from this [table](http://landuse.s3.amazonaws.com/zoning/zoning_codes_base2012.csv)
 match_fields_tables_zoning_2012_source.csv | Names the column used in Zoning V2 which is used in the zoning taxonomy - from the [Project Management Spreadsheet](http://landuse.s3.amazonaws.com/zoning/CityAssignments_Nov3_2014.xlsx) - described below
 Parcels2010_Update9.csv | an update to missing jurisdictions (see below) - from forensic analysis of received data
+plu06_may2015estimate.shp | PLU 2006 data from ABAG
 
 It is recommended to use the makefile to fetch the above. They are hosted on MTC s3. You will need MTC s3 keys to authenticate for fetching data with the Makefile. Alternatively, you can download landuse bucket zoning folder from the s3 web interface and put it in a folder called `data_source/` in the same directory as this Makefile, however this is not recommended given the number of files required. 
 
@@ -68,6 +69,12 @@ Next run:
 `make zoning_parcel_intersection`
 
 This make target assigns a zoning_id (as found in the data_source/zoning_codes_base2012.csv) to each parcel. Several rules are applied to overcome issues with parcels that within multiple jurisdictions, and/or within multiple zoning geometries. 
+
+Then run:
+
+'make add_plu_2006'
+
+To fill in parcels not yet filled with data from the '06 ABAG PLU project. 
 
 ###Zoning data by Jurisdiction
 The command `make load_data` extracts the source zoning File Geodatabases to shapefiles in a folder in /data_source/jurisdictional. You can edit inspect and change which data are used by jurisdiction here. Keep in mind that whatever changes you make, each jurisidictional zoning file must have a zoning column which maps to the generic zoning codes and match fields as specified by jurisidction in zoning_codes_base2012.csv and match_fields_tables_zoning_2012_source.csv. 
