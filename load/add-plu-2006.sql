@@ -1,4 +1,3 @@
-/*
 create INDEX plu06_may2015estimate_gidx ON plu06_may2015estimate using GIST (wkb_geometry);
 create INDEX plu06_may2015estimate_idx ON plu06_may2015estimate using hash (objectid);
 VACUUM (ANALYZE) plu06_may2015estimate;
@@ -66,12 +65,21 @@ GROUP BY
 	geom_id,
 	plu06_objectid;
 
-DROP TABLE IF EXISTS zoning.parcel_withdetails_test
-CREATE TABLE zoning.parcel_withdetails_test
-AS SELECT * from zoning.parcel_withdetails;
+DROP TABLE IF EXISTS zoning.parcel_overlaps_maxonly_plu;
+CREATE TABLE zoning.parcel_overlaps_maxonly_plu AS
+SELECT geom_id, plu06_objectid, prop 
+FROM zoning.parcel_overlaps_plu WHERE (geom_id,prop) IN 
+( SELECT geom_id, MAX(prop)
+  FROM zoning.parcel_overlaps_plu
+  GROUP BY geom_id
+);
 
-*/
-
+delete from zoning.parcel_overlaps_maxonly_plu 
+	where geom_id in 
+	( select p.geom_id from 
+		(SELECT geom_id, count(*) as countof 
+			FROM zoning.parcel_overlaps_maxonly_plu GROUP BY geom_id) p 
+		WHERE p.countof>1); 
 
 INSERT INTO zoning.parcel_withdetails
 SELECT 
@@ -102,4 +110,35 @@ from zoning.unmapped_parcel_intersection_count
 WHERE countof=1)) as p,
 plu06_may2015estimate z
 WHERE p.plu06_objectid=z.objectid;
+
+INSERT INTO zoning.parcel_withdetails
+SELECT 
+9999 as id, 
+juris as juris, 
+'NA' as city, 
+gengplu as name,
+-9999 as min_far, 
+z.max_height as max_height,
+z.max_far as max_far, 
+-9999 as min_front_setback,
+-9999 as max_front_setback,
+-9999 as side_setback,
+-9999 as rear_setback,
+-9999 as min_dua,
+z.max_dua as max_dua,           
+-9999 as coverage,          
+z.max_du_per as max_du_per_parcel,
+-9999 as min_lot_size,      
+z.hs,z.ht,z.hm,z.of,z.ho,z.sc,z.il,z.iw,z.ih,z.rs,z.rb,z.mr,z.mt,z.me,
+p.geom_id as geom_id,
+p.geom as geom
+from (select p2.* 
+	from zoning.unmapped_parcel_zoning_plu p2,
+	zoning.parcel_overlaps_maxonly_plu pmax
+	where pmax.geom_id=p2.geom_id AND
+	p2.plu06_objectid=pmax.plu06_objectid) as p,
+plu06_may2015estimate z
+WHERE p.plu06_objectid=z.objectid;
+
+
 
