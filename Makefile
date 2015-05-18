@@ -18,6 +18,7 @@ parcel_zoning.csv:
 	PGPASSWORD=vagrant psql \
 	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
 	-f process/parcel_zoning_intersection.sql
+
 #########################
 ####LOAD IN POSTGRES#####
 #########################
@@ -61,6 +62,12 @@ city10_ba.shp: city10_ba.zip
 PLU2008_Updated.shp: PLU2008_Updated.zip
 	unzip -o $<
 	touch $@
+
+no_dev_array.csv: no_dev1.txt
+	ogr2ogr -f csv \
+	-select geom_id \
+	nodev_array.csv \
+	no_dev1.txt
 
 ##############
 ###DOWNLOAD###
@@ -126,6 +133,11 @@ plu06_may2015estimate.zip: s3curl.pl
 	-o $@.download
 	mv $@.download $@
 
+no_dev1.txt: s3curl.pl
+	$(get)$@ \
+	-o $@.download
+	mv $@.download $@
+
 s3curl.pl: s3-curl.zip
 	unzip -o \s3-curl.zip
 	touch s3curl.pl
@@ -133,6 +145,10 @@ s3curl.pl: s3-curl.zip
 s3-curl.zip:
 	curl -o $@ http://s3.amazonaws.com/doc/s3-example-code/s3-curl.zip
 	mv $@.download $@
+
+###################
+##General Targets##
+###################
 
 clean: clean_db clean_shapefiles
 
