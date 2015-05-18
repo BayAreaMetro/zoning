@@ -72,7 +72,7 @@ This make target assigns a zoning_id (as found in the data_source/zoning_codes_b
 
 Then run:
 
-'make add_plu_2006'
+`make add_plu_2006`
 
 To fill in parcels not yet filled with data from the '06 ABAG PLU project. 
 
@@ -82,17 +82,49 @@ Also, all source zoning jurisdiction files are in [EPSG 26910](http://epsg.io/26
 
 ### Outcome
 
-The outcome of this process is a table with three rows: parcel_id, zoning_id, prop
+####The Current Table:
+Can be found [here](https://mtcdrive.box.com/s/4ytig75parn4mur4nci707kwlxxila4t)
 
-We expect that this table will change as we improve on our methods for mapping zoning data to parcels. 
+The outcome of Loading/Processing is ~~a table with three rows: parcel_id, zoning_id, prop~~ a table with the following columns:
 
-###The Current Table:
-Can be found [here](http://landuse.s3.amazonaws.com/zoning/zoning_parcels05_05_2015.csv)
+Where 'NA' and -9999 represent values that don't exist. 
 
-####Field Names
-* 'geom_id' is the unique id of a parcel from [spandex](https://github.com/synthicity/spandex)
-* 'prop' is the 'proportion of the parcel in the given zone'  
-* 'zoning_id' is the id of a generic interpretation of the allowed use of a site as defined in this [table](https://mtcdrive.app.box.com/login?redirect_url=%2Fs%2F9pkjbw1lvpd5qtpj1zpc2ccfbxfzly5t)
+column name|description|source (if applicable)
+----|----------------|------------------
+id|generic zoning id|zoning_codes_base2012
+juris|jurisdiction id|zoning_codes_base2012
+city|city name|zoning_codes_base2012
+name|string of zoning type from source data|zoning_codes_base2012
+min_far|minimum floor-to-area ratio
+max_far|maximum floor-to-area ratio
+max_height|maximum height
+min_front_setback|
+max_front_setback|
+side_setback|
+rear_setback|
+min_dua|minimum dwelling units per acre
+max_dua|maximum dwelling units per acre
+coverage|
+max_du_per_parcel|maximum dwelling units per parcel
+min_lot_size|
+hs|single-family detached
+ht|single-family attached
+hm|multi-family
+of|office
+ho|hotel
+sc|school
+il|light industrial
+iw|warehouse industrial
+ih|heavy industrial
+rs|strip mall retail
+rb|big-box retail
+mr|residential-focus mixed
+mt|retail-focus mixed
+me|employment-focus mixed
+
+We expect that this table will change as we improve on our methods and data sources. 
+
+####Notes/Appendix
 
 ######Project Management Spreadsheet
 
@@ -100,7 +132,7 @@ Our starting point for this work is a spreadsheet that was used to manage this p
 
 According to the above spreadsheet, [6 Geodatabases](http://landuse.s3.amazonaws.com/zoning/PlannedLandUse1Through6.gdb.zip) were used to manage the geographic data for this project, each containing feature classes for the various jurisdictions in the Bay Area. Our first step was to load the geometries from all of these feature classes into one table so that we could relate it to a table of geometries for parcel data. 
 
-Still left to look at:
+Potential Places and categories needing improvement in source data:
 ######Santa Clara City
 The feature class for Santa Clara City in the base Geodatabases mentioned in [Project Management Spreadsheet] did not have a "match field" corresponding to the spreadsheet. That is, in the spreadsheet, the indicated "matchfield" was 'gp_designa'. However, that field does exist the feature class in the Geodatabase. We found a shapefile in the Santa Clara city folder that does have that matchfield which seems to be dated '02', so we use that, assuming that the feature class in the GDB was improperly added. However, there is also another shapefile in that folder that seems to match the feature class in the Geodatabases. This file may be more recent, since it seems to have a date in the name that is '05', however it was not part of the original process and has no generic zoning assignment. 
 
