@@ -77,7 +77,7 @@ Then run:
 To fill in parcels not yet filled with data from the '06 ABAG PLU project. 
 
 ###Zoning data by Jurisdiction
-The command `make load_data` extracts the source zoning File Geodatabases to shapefiles in a folder in /data_source/jurisdictional. You can edit inspect and change which data are used by jurisdiction here. Keep in mind that whatever changes you make, each jurisidictional zoning file must have a zoning column which maps to the generic zoning codes and match fields as specified by jurisidction in zoning_codes_base2012.csv and match_fields_tables_zoning_2012_source.csv. 
+The command `make load_data` extracts the source zoning File Geodatabases to shapefiles in a folder in /jurisdictional. You can edit, inspect and change which data are used by jurisdiction here. Keep in mind that whatever changes you make, each jurisidictional zoning file must have a zoning column which maps to the generic zoning codes and match fields as specified by jurisidction in zoning_codes_base2012.csv and match_fields_tables_zoning_2012_source.csv. 
 Also, all source zoning jurisdiction files are in [EPSG 26910](http://epsg.io/26910). 
 
 ### Outcome
