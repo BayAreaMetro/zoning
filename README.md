@@ -85,9 +85,11 @@ Also, all source zoning jurisdiction files are in [EPSG 26910](http://epsg.io/26
 ####The Current Table:
 Can be found [here](https://mtcdrive.box.com/s/4ytig75parn4mur4nci707kwlxxila4t)
 
-The outcome of Loading/Processing is ~~a table with three rows: parcel_id, zoning_id, prop~~ a table with the following columns:
+The outcome of Loading/Processing is ~~a table with three rows: parcel_id, zoning_id, prop~~ a table with columns as specific in the "Fields in the Main Zoning Table" section of this README. 
 
 Where 'NA' and -9999 represent values that don't exist. 
+
+####Fields in the Main Zoning Table
 
 column name|description|source (if applicable)
 ----|----------------|------------------
