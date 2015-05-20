@@ -64,10 +64,9 @@ PLU2008_Updated.shp: PLU2008_Updated.zip
 	touch $@
 
 no_dev_array.csv: no_dev1.txt
-	ogr2ogr -f csv \
-	-select geom_id \
-	nodev_array.csv \
-	no_dev1.txt
+	cp no_dev1.txt no_dev1.csv
+	ogr2ogr -f csv -overwrite -select GEOM_ID no_dev_array.csv no_dev1.csv
+
 
 ##############
 ###DOWNLOAD###
@@ -137,6 +136,7 @@ no_dev1.txt: s3curl.pl
 	$(get)$@ \
 	-o $@.download
 	mv $@.download $@
+	touch $@
 
 s3curl.pl: s3-curl.zip
 	unzip -o \s3-curl.zip
