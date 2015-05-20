@@ -77,7 +77,7 @@ Then run:
 To fill in parcels not yet filled with data from the '06 ABAG PLU project. 
 
 ###Zoning data by Jurisdiction
-The command `make load_data` extracts the source zoning File Geodatabases to shapefiles in a folder in /data_source/jurisdictional. You can edit inspect and change which data are used by jurisdiction here. Keep in mind that whatever changes you make, each jurisidictional zoning file must have a zoning column which maps to the generic zoning codes and match fields as specified by jurisidction in zoning_codes_base2012.csv and match_fields_tables_zoning_2012_source.csv. 
+The command `make load_data` extracts the source zoning File Geodatabases to shapefiles in a folder in /jurisdictional. You can edit, inspect and change which data are used by jurisdiction here. Keep in mind that whatever changes you make, each jurisidictional zoning file must have a zoning column which maps to the generic zoning codes and match fields as specified by jurisidction in zoning_codes_base2012.csv and match_fields_tables_zoning_2012_source.csv. 
 Also, all source zoning jurisdiction files are in [EPSG 26910](http://epsg.io/26910). 
 
 ### Outcome
@@ -85,9 +85,11 @@ Also, all source zoning jurisdiction files are in [EPSG 26910](http://epsg.io/26
 ####The Current Table:
 Can be found [here](https://mtcdrive.box.com/s/4ytig75parn4mur4nci707kwlxxila4t)
 
-The outcome of Loading/Processing is ~~a table with three rows: parcel_id, zoning_id, prop~~ a table with the following columns:
+The outcome of Loading/Processing is ~~a table with three rows: parcel_id, zoning_id, prop~~ a table with columns as specific in the "Fields in the Main Zoning Table" section of this README. 
 
 Where 'NA' and -9999 represent values that don't exist. 
+
+####Fields in the Main Zoning Table
 
 column name|description|source (if applicable)
 ----|----------------|------------------
