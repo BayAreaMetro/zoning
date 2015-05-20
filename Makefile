@@ -18,6 +18,7 @@ parcel_zoning.csv:
 	PGPASSWORD=vagrant psql \
 	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
 	-f process/parcel_zoning_intersection.sql
+
 #########################
 ####LOAD IN POSTGRES#####
 #########################
@@ -30,7 +31,8 @@ load_data: ba8parcels.sql \
 	Parcels2010_Update9.csv \
 	jurisdictional/AlamedaCountyGP2006db.shp \
 	zoning_codes_base2012.csv \
-	PLU2008_Updated.shp
+	PLU2008_Updated.shp \
+	plu06_may2015estimate.shp \
 	bash load/all-in-postgres.sh
 
 ##############
@@ -60,6 +62,12 @@ city10_ba.shp: city10_ba.zip
 PLU2008_Updated.shp: PLU2008_Updated.zip
 	unzip -o $<
 	touch $@
+
+no_dev_array.csv: no_dev1.txt
+	ogr2ogr -f csv \
+	-select geom_id \
+	nodev_array.csv \
+	no_dev1.txt
 
 ##############
 ###DOWNLOAD###
@@ -120,6 +128,16 @@ PLU2008_Updated.zip: s3curl.pl
 	-o $@.download
 	mv $@.download $@
 
+plu06_may2015estimate.zip: s3curl.pl
+	$(get)plu06_may2015estimate.zip \
+	-o $@.download
+	mv $@.download $@
+
+no_dev1.txt: s3curl.pl
+	$(get)$@ \
+	-o $@.download
+	mv $@.download $@
+
 s3curl.pl: s3-curl.zip
 	unzip -o \s3-curl.zip
 	touch s3curl.pl
@@ -127,6 +145,10 @@ s3curl.pl: s3-curl.zip
 s3-curl.zip:
 	curl -o $@ http://s3.amazonaws.com/doc/s3-example-code/s3-curl.zip
 	mv $@.download $@
+
+###################
+##General Targets##
+###################
 
 clean: clean_db clean_shapefiles
 
@@ -152,6 +174,15 @@ zoning_parcel_intersection:
 	PGPASSWORD=vagrant psql \
 	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
 	-f process/parcel_zoning_intersection.sql
+
+add_plu_2006: plu06_may2015estimate.shp
+	ogr2ogr -f "PostgreSQL" -nlt PROMOTE_TO_MULTI \
+	-select juris,county,lpscode,plandate,gengplu,objectid,hs,ht,hm,of_ as of,ho,sc,il,iw,ih,rs,rb,mr,mt,me,max_far,max_height,max_dua,max_du_per \
+	PG:"host=$(DBHOST) port=$(DBPORT) dbname=$(DBNAME) user=$(DBUSERNAME) password=$(DBPASSWORD)" \
+	plu06_may2015estimate.shp
+	PGPASSWORD=vagrant psql \
+	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
+	-f load/add-plu-2006.sql
 
 clean_shapefiles:
 	rm -rf jurisdictional
