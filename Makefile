@@ -160,11 +160,6 @@ clean_intersection_tables:
 	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
 	-f load/drop_intersection_tables.sql
 
-clean_zoning_intersection:
-	PGPASSWORD=vagrant psql \
-	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
-	-f load/drop_intersection_tables.sql
-
 merge_source_zoning:
 	PGPASSWORD=vagrant psql \
 	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
