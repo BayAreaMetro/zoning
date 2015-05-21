@@ -1,11 +1,11 @@
 San Jose,198499
-NA,117234
-San Francisco,80293
+San Francisco,74842
 Santa Rosa,48634
 Oakland,43663
 Fremont,9134
 Unincorporated Napa,8210
 Brentwood,6240
+NA,5829
 Richmond,3354
 Vallejo,3308
 Antioch,3243
@@ -31,7 +31,6 @@ Hercules,1157
 Gilroy,1102
 Palo Alto,1067
 Alameda,1038
-Petaluma,1031
 Novato,1018
 Daly City,1015
 Walnut Creek,978
@@ -41,6 +40,7 @@ Pittsburg,868
 Campbell,846
 Union City,845
 Burlingame,831
+Petaluma,743
 Pleasanton,701
 Milpitas,692
 Cupertino,686
