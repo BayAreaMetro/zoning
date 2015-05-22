@@ -13,6 +13,10 @@ https://github.com/buckleytom/pg-app-dev-vm/tree/master
 
 The Makefile contains all the necessary pointers to what data is needed, where to get it, scripts to load it into Postgres, and scripts to join source parcel and zoning data. 
 
+If you're using this repository, you probably need to change something: the zoning file for a particular jurisdiction, or the parcel data that are being used. You may be working on the Land Use server at MTC, where there is a VM at NAPA/D/VMs/salter that contains a postgres database loaded with the most recent tables of the run of this script. If you are concerned about whether that VM is up to date, check the git log of the /zoning folder in there to see whether it is up to date with this repository. 
+
+There are more make targets than are documented in this readme, which may be useful to you for whatever you are doing. Generic ones are at the bottom of the Makefile (e.g. `make clean_database`). Look at Loading/Processing for more on where you might need to start. 
+
 ####Data
 The following are required: 
 
@@ -56,25 +60,27 @@ If you already have the data and the postgis environment set up, then run:
 
 `make load_data`  
 
-This will load most of the above data into Postgres for processing. 
+This will load the necessary data into Postgres for processing. 
 
-Next run:  
+If you are updating a single city's zoning table, you will need to update it (see Zoning Data by Jurisdiction) and then run 
 
 `make merge_source_zoning`
 
 This creates a postgres table with all of the geometries of the source jurisdictional zoning in /data_source/jurisdictional. See [#zoning-data-by-jurisdiction] for more information. 
 
 Next run:
+(NOTE: this task takes 3 to 6 hours on a machine with A LOT of resources)
 
 `make zoning_parcel_intersection`
 
 This make target assigns a zoning_id (as found in the data_source/zoning_codes_base2012.csv) to each parcel. Several rules are applied to overcome issues with parcels that within multiple jurisdictions, and/or within multiple zoning geometries. 
 
 Then run:
+(NOTE: takes 45 minutes on a machine with A LOT of resources)
 
 `make add_plu_2006`
 
-To fill in parcels not yet filled with data from the '06 ABAG PLU project. 
+To fill in parcels not yet filled with data from the '06 ABAG PLU project. Note that this last step resulted in a change in deliverable, from a two table system [(zoning id's, characteristics);(zoning_id's,geom_ids)] to a single table system [geom_id's, characteristics]. This change was to achieve approximately 200k in additional zoning assignments to parcels. 
 
 ###Zoning data by Jurisdiction
 The command `make load_data` extracts the source zoning File Geodatabases to shapefiles in a folder in /jurisdictional. You can edit, inspect and change which data are used by jurisdiction here. Keep in mind that whatever changes you make, each jurisidictional zoning file must have a zoning column which maps to the generic zoning codes and match fields as specified by jurisidction in zoning_codes_base2012.csv and match_fields_tables_zoning_2012_source.csv. 
