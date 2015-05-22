@@ -134,11 +134,17 @@ We expect that this table will change as we improve on our methods and data sour
 
 ####Notes/Appendix
 
+######Stats on the output
+you can use the branch at https://github.com/MetropolitanTransportationCommission/zoning/tree/qa-stats to run stats on the tables output by the above process. 
+
 ######Project Management Spreadsheet
 
 Our starting point for this work is a spreadsheet that was used to manage this project originally. It is available [here](http://landuse.s3.amazonaws.com/zoning/CityAssignments_Nov3_2014.xlsx). While this spreadsheet did not represent the zoning data project in its entirety, it offers a high level summary that we took as authoritative. In the process below it will be clear where the spreadsheet was missing information that we will add into the process as part of the final product. 
 
 According to the above spreadsheet, [6 Geodatabases](http://landuse.s3.amazonaws.com/zoning/PlannedLandUse1Through6.gdb.zip) were used to manage the geographic data for this project, each containing feature classes for the various jurisdictions in the Bay Area. Our first step was to load the geometries from all of these feature classes into one table so that we could relate it to a table of geometries for parcel data. 
+
+
+
 
 Potential Places and categories needing improvement in source data:
 ######Santa Clara City
