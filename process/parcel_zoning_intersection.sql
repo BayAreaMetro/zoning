@@ -1,3 +1,4 @@
+--ON a 100 GB VM this takes more than 3 hours, less than 6
 --fix GEOMS
 
 --SET UP PARCELS, SELECT VALID GEOMS ONLY, PUT THEM IN EPSG USED FOR ZONING

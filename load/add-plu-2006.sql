@@ -1,3 +1,4 @@
+--on a 100GB VM this takes about 40 minutes
 create INDEX plu06_may2015estimate_gidx ON plu06_may2015estimate using GIST (wkb_geometry);
 create INDEX plu06_may2015estimate_idx ON plu06_may2015estimate using hash (objectid);
 VACUUM (ANALYZE) plu06_may2015estimate;
