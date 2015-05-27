@@ -5,7 +5,7 @@ var projectionExtent = projection.getExtent();
 function init(){
 
 var map = L.map('map').setView([37.7, -122.4], 11);
-
+map._layersMaxZoom=15
 // replace "toner" here with "terrain" or "watercolor"
 var toner = new L.StamenTileLayer("toner");
 map.addLayer(toner);
