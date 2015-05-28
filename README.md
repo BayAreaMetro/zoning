@@ -39,8 +39,6 @@ To use the Makefile to get data, you will need Amazon's Command Line Interface:
 
 https://aws.amazon.com/cli/
 
-Then run `make` in the repository directory.
-
 ####Loading/Processing
 
 If you already have the data and the postgis environment set up, then run:
