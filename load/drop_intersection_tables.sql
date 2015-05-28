@@ -46,5 +46,5 @@ DROP TABLE zoning.source_field_name;
 DROP TABLE zoning.unmapped_parcel_intersection_count;
 DROP TABLE zoning.unmapped_parcel_zoning_plu;
 DROP TABLE zoning.unmapped_parcels_with_generic_codes;
-DROP VIEW parcels_with_multiple_zoning;
-DROP VIEW parcels_with_multiple_zoning_santa_clara;
+DROP VIEW zoning.parcels_with_multiple_zoning;
+DROP VIEW zoning.parcels_with_multiple_zoning_santa_clara;
