@@ -38,7 +38,7 @@ It is recommended to use the makefile to fetch the above. They are hosted on MTC
 To use the Makefile to fetch, you will need to store your s3 authentication in a hidden text file in your home directory. In a unix-based terminal, edit the following with your keys and then paste it into the terminal. On Windows, you will need to ssh to the the environment configured through vagrant [here](https://github.com/buckleytom/pg-app-dev-vm/tree/master)
 
 ```
-cat >/.s3curl <<EOL
+cat >~/.s3curl <<EOL
 %awsSecretAccessKeys = (
     ### corporate account
     company => {
