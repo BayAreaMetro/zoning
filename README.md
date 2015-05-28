@@ -41,11 +41,11 @@ https://aws.amazon.com/cli/
 
 ####Loading/Processing
 
-If you already have the data and the postgis environment set up, then run:
+If you already have the environment set up, then run:
 
 `make load_data`  
 
-This will load the necessary data into Postgres for processing. 
+This will download and load the necessary data into Postgres for processing. 
 
 If you are updating a single city's zoning table, you will need to update it (see Zoning Data by Jurisdiction) and then run 
 
