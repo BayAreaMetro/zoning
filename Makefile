@@ -1,5 +1,6 @@
 #$@ is the file name of the target of the rule. 
-get = perl s3curl.pl --id=company -- http://landuse.s3.amazonaws.com/zoning/
+#example get from s3:aws s3 cp s3://landuse/zoning/match_fields_tables_zoning_2012_source.csv match_fields_tables_zoning_2012_source.csv
+get = aws s3 cp s3://landuse/zoning/
 DBUSERNAME=vagrant
 DBPASSWORD=vagrant
 DBHOST=localhost
@@ -74,33 +75,33 @@ no_dev_array.csv: no_dev1.txt
 
 City_Santa_Clara_GP_LU_02.zip: 
 	$(get)$@ \
-	-o $@.download
+	$@.download
 	mv $@.download $@
 
 #where plu refers to the old "planned land use"/comprehensive plan project
 ba8parcels.sql: s3curl.pl
 	$(get)ba8parcels.sql \
-	-o $@.download
+	$@.download
 	mv $@.download $@
 
 parcels_spandex.sql: s3curl.pl
 	$(get)parcels_spandex.sql \
-	-o $@.download
+	$@.download
 	mv $@.download $@
 
 Parcels2010_Update9.csv: s3curl.pl
 	$(get)Parcels2010_Update9.csv \
-	-o $@.download
+	$@.download
 	mv $@.download $@
 
 zoning_codes_base2012.csv: s3curl.pl
 	$(get)zoning_codes_base2012.csv \
-	-o $@.download
+	$@.download
 	mv $@.download $@
 
 city10_ba.zip: s3curl.pl
 	$(get)city10_ba.zip \
-	-o $@.download
+	$@.download
 	mv $@.download $@
 
 zoning_codes_base2008.csv: s3curl.pl
@@ -109,32 +110,32 @@ zoning_codes_base2008.csv: s3curl.pl
 
 county10_ca.zip: s3curl.pl
 	$(get)county10_ca.zip \
-	-o $@.download
+	$@.download
 	mv $@.download $@
 
 match_fields_tables_zoning_2012_source.csv: s3curl.pl
 	$(get)match_fields_tables_zoning_2012_source.csv \
-	-o $@.download
+	$@.download
 	mv $@.download $@
 
 PlannedLandUse1Through6.gdb.zip: s3curl.pl
 	$(get)PlannedLandUse1Through6.gdb.zip \
-	-o $@.download
+	$@.download
 	mv $@.download $@
 
 PLU2008_Updated.zip: s3curl.pl
 	$(get)PLU2008_Updated.zip \
-	-o $@.download
+	$@.download
 	mv $@.download $@
 
 plu06_may2015estimate.zip: s3curl.pl
 	$(get)plu06_may2015estimate.zip \
-	-o $@.download
+	$@.download
 	mv $@.download $@
 
 no_dev1.txt: s3curl.pl
 	$(get)$@ \
-	-o $@.download
+	$@.download
 	mv $@.download $@
 	touch $@
 

@@ -4,7 +4,7 @@ Produce a CSV with a generic zoning code assigned to every parcel in the SF Bay 
 
 ###Requirements
 
-[GNU Make](http://bost.ocks.org/mike/make/), PostGIS 2.1, Postgres 9.3, GDAL 1.11 or > (with both FileGDB driver and Postgres driver)
+[GNU Make](http://bost.ocks.org/mike/make/), PostGIS 2.1, Postgres 9.3, GDAL 1.11 or > (with both FileGDB driver and Postgres driver), [Amazon CLI](https://aws.amazon.com/cli/)
 
 You can use the vagrant scripts here to set up an environment:  
 https://github.com/buckleytom/postgis-gdal-ubuntu
@@ -35,22 +35,9 @@ plu06_may2015estimate.shp | PLU 2006 data from ABAG
 
 It is recommended to use the makefile to fetch the above. They are hosted on MTC s3. You will need MTC s3 keys to authenticate for fetching data with the Makefile. Alternatively, you can download landuse bucket zoning folder from the s3 web interface and put it in a folder called `data_source/` in the same directory as this Makefile, however this is not recommended given the number of files required. 
 
-To use the Makefile to fetch, you will need to store your s3 authentication in a hidden text file in your home directory. In a unix-based terminal, edit the following with your keys and then paste it into the terminal. On Windows, you will need to ssh to the the environment configured through vagrant [here](https://github.com/buckleytom/pg-app-dev-vm/tree/master)
+To use the Makefile to get data, you will need Amazon's Command Line Interface:
 
-```
-cat >~/.s3curl <<EOL
-%awsSecretAccessKeys = (
-    ### corporate account
-    company => {
-        id => 'REPLACE_ME_WITH_YOUR_KEY_ID(THE SHORTER ONE)',
-        key => 'REPLACE_ME_WITH_YOUR_SECRET_KEY',
-    },
-);
-... 
-EOL
-```
-
-Then `chmod 600 ~/.s3curl` to set this file's permissions to be for your user only. 
+https://aws.amazon.com/cli/
 
 Then run `make` in the repository directory.
 
