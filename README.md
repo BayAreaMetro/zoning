@@ -7,7 +7,7 @@ Produce a CSV with a generic zoning code assigned to every parcel in the SF Bay 
 [GNU Make](http://bost.ocks.org/mike/make/), PostGIS 2.1, Postgres 9.3, GDAL 1.11 or > (with both FileGDB driver and Postgres driver)
 
 You can use the vagrant scripts here to set up an environment:  
-https://github.com/buckleytom/pg-app-dev-vm/tree/master
+https://github.com/buckleytom/postgis-gdal-ubuntu
 
 ###Usage
 
