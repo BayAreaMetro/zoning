@@ -2,7 +2,7 @@ DBUSERNAME=vagrant
 DBPASSWORD=vagrant
 DBHOST=localhost
 DBPORT=5432
-DBNAME=vagrant 
+DBNAME=mtc 
 
 #CITY BOUNDARIES
 ogr2ogr -f "PostgreSQL" \
