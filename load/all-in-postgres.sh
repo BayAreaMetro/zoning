@@ -19,9 +19,9 @@ PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=$
 PGPASSWORD=vagrant psql -p $DBPORT -h $DBHOST -U $DBUSERNAME $DBNAME -c "CREATE SCHEMA zoning_staging"
 
 #JURISDICTION-BASED ZONING SOURCE DATA
-ls jurisdictional/*.shp | cut -d "/" -f2 | xargs -I {} ogr2ogr -skipfailures -f "PostgreSQL" \
-PG:"host=${DBHOST} port=${DBPORT} dbname=${DBNAME} user=${DBUSERNAME} password=${DBPASSWORD}" \
--nlt PROMOTE_TO_MULTI -lco SCHEMA=zoning_staging jurisdictional/{} > source_zoning_import_errors.log 2>&1
+ls jurisdictional/*.shp | cut -d "/" -f2 | \
+xargs -I {} shp2pgsql jurisdictional/{} zoning_staging.{} | PGPASSWORD=vagrant \
+psql --host=${DBHOST} --port=${DBPORT} --dbname=${DBNAME} --user=${DBUSERNAME}
 
 #FIX for Napa
 ogr2ogr -skipfailures -f "PostgreSQL" \
