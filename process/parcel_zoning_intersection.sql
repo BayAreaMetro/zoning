@@ -413,3 +413,12 @@ SELECT geom_id from zoning.parcel_withdetails);
 
 CREATE INDEX zoning_unmapped_parcel_gidx ON zoning.unmapped_parcels using GIST (geom);
 VACUUM (ANALYZE) zoning.unmapped_parcels;
+
+#add table to inspect errors in overlapping areas
+CREATE INDEX zoning_parcel_intersection_count_geom_id ON zoning.parcel_intersection_count (geom_id);
+VACUUM (ANALYZE) zoning.parcel_intersection_count;
+
+CREATE TABLE zoning.parcel_intersection_count_geo AS
+SELECT c.countof, p.geom_id, p.geom from parcel2 p, zoning.parcel_intersection_count c  where p.geom_id=c.geom_id
+
+ALTER TABLE zoning.parcel_intersection_count_geo ADD primary_key(geom_id);
