@@ -35,16 +35,46 @@ load_data: ba8parcels.sql \
 	zoning_codes_base2012.csv \
 	PLU2008_Updated.shp \
 	plu06_may2015estimate.shp \
-	bash load/all-in-postgres.sh
+	load_zoning_by_jursidiction
+	fix_errors_in_source_zoning
+	load_admin_boundaries
+	add_update9
+	add_plu06
 
-load_zoning_data:
-	PGPASSWORD=vagrant psql \
-	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
-	-c "CREATE SCHEMA zoning_staging"
+load_admin_boundaries:
+	$(psql) -c "CREATE SCHEMA admin"
+	shp2pgsql city10_ba.shp admin.city10_ba | $(psql)
+	#for city10_ba had to delete columns: sqmi, aland, awater b/c stored as numeric(17,17) 
+	#which was beyond capabilities of shapefile, latter 2 replaced with INT, former easy to make w/PostGIS
+	#old file saved here: http://landuse.s3.amazonaws.com/zoning/city10_ba_original.zip
+	shp2pgsql county10_ca.shp admin.county10_ca | $(psql)
+
+load_zoning_by_jursidiction:
+	$(psql) -c "CREATE SCHEMA zoning_staging"
 	#JURISDICTION-BASED ZONING SOURCE DATA
 	ls jurisdictional/*.shp | cut -d "/" -f2 | sed 's/.shp//' | \
-	xargs -I {} shp2pgsql jurisdictional/{} zoning_staging.{} | PGPASSWORD=vagrant \
-	psql -p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME)
+	xargs -I {} shp2pgsql jurisdictional/{}.shp zoning_staging.{} | \
+	$(psql)
+
+load_zoning_codes:
+	$(psql) -f load/load-generic-zoning-code-table.sql
+
+fix_errors_in_source_zoning:
+	#FIX for Napa
+	#Can't SELECT with shp2pgsql--trying this:
+	$(psql) -c "CREATE TABLE zoning_staging.napacozoning_temp AS SELECT zoning from zoning_staging.napacozoning;"
+	$(psql) -c "DROP TABLE zoning_staging.napacozoning;"
+	$(psql) -c "CREATE TABLE zoning_staging.napacozoning AS SELECT * from zoning_staging.napacozoning_temp;"
+	$(psql) -c "DROP TABLE zoning_staging.napacozoning_temp;"
+
+	#FIX for Solano
+	$(psql) -c "CREATE TABLE zoning_staging.solcogeneral_plan_unincorporated_temp AS SELECT full_name from zoning_staging.solcogeneral_plan_unincorporated;"
+	$(psql) -c "DROP TABLE zoning_staging.solcogeneral_plan_unincorporated;"
+	$(psql) -c "CREATE TABLE zoning_staging.solcogeneral_plan_unincorporated AS SELECT * from zoning_staging.solcogeneral_plan_unincorporated_temp;"
+	$(psql) -c "DROP TABLE zoning_staging.solcogeneral_plan_unincorporated_temp;"
+
+load_plu06:
+	shp2pgsql plu06_may2015estimate.shp zoning.plu06_may2015estimate | $(psql)
 
 ##############
 ###PREPARE####
