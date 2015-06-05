@@ -5,7 +5,6 @@ DROP TABLE IF EXISTS zoning_staging.santaclaracity_zoningfeb05;
 DROP TABLE IF EXISTS zoning.merged_jurisdictions;
 CREATE TABLE zoning.merged_jurisdictions
 (
-  ogc_fid integer,
   tablename text,
   zoning text,
   juris integer,
@@ -28,14 +27,14 @@ BEGIN
 	 FOR table_record IN tables LOOP
 	 sql_string := (SELECT '
 		 insert into zoning.merged_jurisdictions 
-		 select ogc_fid, ' ||
+		 select ' ||
 		 quote_LITERAL(table_record."table_name") || 
 		 ', CAST(' ||
 		 qry.matchfield ||    
 		 ' as text) as zoning, ' ||
 	 	 qry.juris ||
 		 ' as juris,' ||
-		 'ST_Force2D(wkb_geometry) as the_geom ' ||
+		 'ST_Force2D(geom) as the_geom ' ||
 		 'from zoning_staging.' ||
 		 table_record."table_name"		 
 		FROM

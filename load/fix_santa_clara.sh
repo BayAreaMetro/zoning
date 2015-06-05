@@ -18,7 +18,7 @@ update zoning.source_field_name
 set matchfield='GP_DESIGNA' 
 where juris=27;
 
-CREATE INDEX city_santa_clara_gidx ON zoning_staging.City_Santa_Clara_GP_LU_02 using GIST (wkb_geometry);
+CREATE INDEX city_santa_clara_gidx ON zoning_staging.City_Santa_Clara_GP_LU_02 using GIST (geom);
 
 VACUUM (ANALYZE) zoning_staging.City_Santa_Clara_GP_LU_02;
 
@@ -34,7 +34,7 @@ where cityname1 = 'Santa Clara') ) scp,
 zoning_staging.City_Santa_Clara_GP_LU_02 z,
 zoning.codes_dictionary c
 WHERE 
-ST_INTERSECTS(z.wkb_geometry,scp.geom) AND
+ST_INTERSECTS(z.geom,scp.geom) AND
 c.name=z.GP_DESIGNA;
 
 DROP TABLE IF EXISTS zoning.parcel_intersection_count_santa_clara;
@@ -56,7 +56,7 @@ IN (SELECT geom_id FROM zoning.parcel_intersection_count_santa_clara WHERE count
 
 DROP TABLE IF EXISTS zoning.parcel_overlaps_santa_clara;
 CREATE TABLE zoning.parcel_overlaps_santa_clara AS
-select * from GetOverlaps('zoning.parcels_with_multiple_zoning_santa_clara','zoning_staging.City_Santa_Clara_GP_LU_02','GP_DESIGNA','wkb_geometry') as codes(
+select * from GetOverlaps('zoning.parcels_with_multiple_zoning_santa_clara','zoning_staging.City_Santa_Clara_GP_LU_02','GP_DESIGNA','geom') as codes(
 		geom_id bigint, 
   		zoning_string varchar(42),
 		area double precision,

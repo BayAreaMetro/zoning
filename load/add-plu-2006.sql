@@ -1,5 +1,5 @@
 --on a 100GB VM this takes about 40 minutes
-create INDEX plu06_may2015estimate_gidx ON zoning.plu06_may2015estimate using GIST (wkb_geometry);
+create INDEX plu06_may2015estimate_gidx ON zoning.plu06_may2015estimate using GIST (geom);
 create INDEX plu06_may2015estimate_idx ON zoning.plu06_may2015estimate using hash (objectid);
 VACUUM (ANALYZE) zoning.plu06_may2015estimate;
 
@@ -31,7 +31,7 @@ CREATE TABLE zoning.unmapped_parcel_zoning_plu AS
 SELECT p.geom_id, p.geom, z.OBJECTID as plu06_objectid
 FROM zoning.unmapped_parcels p,
 zoning.plu06_may2015estimate z 
-WHERE ST_Intersects(z.wkb_geometry,p.geom);
+WHERE ST_Intersects(z.geom,p.geom);
 
 DROP TABLE IF EXISTS zoning.unmapped_parcel_intersection_count;
 CREATE TABLE zoning.unmapped_parcel_intersection_count AS
@@ -51,7 +51,7 @@ FROM (
 	SELECT p.geom_id, 
 		z.OBJECTID as plu06_objectid, 
 	 	ST_Area(p.geom) parcelarea, 
-	 	ST_Intersection(p.geom, z.wkb_geometry) geom 
+	 	ST_Intersection(p.geom, z.geom) geom 
 	FROM 
 		(select geom_id, geom 
 			FROM zoning.unmapped_parcels
@@ -59,8 +59,8 @@ FROM (
 				(select geom_id 
 					from zoning.unmapped_parcel_intersection_count 
 					WHERE countof>1)) as p,
-				(select objectid, wkb_geometry from zoning.plu06_may2015estimate) as z
-		WHERE ST_Intersects(z.wkb_geometry, p.geom)
+				(select objectid, geom from zoning.plu06_may2015estimate) as z
+		WHERE ST_Intersects(z.geom, p.geom)
 		) f
 GROUP BY 
 	geom_id,

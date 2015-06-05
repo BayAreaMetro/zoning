@@ -7,7 +7,7 @@ The function returns rows with the unique id's of the tables passed to it where 
 It also returns the area of overlap, the proportion of overlap, and the geometry of their intersection. 
 
 EXAMPLE USAGE:
-select * from GetOverlaps('parcel','zoning_staging.santarosageneralplan','gp_landuse','wkb_geometry') as codes(
+select * from GetOverlaps('parcel','zoning_staging.santarosageneralplan','gp_landuse','geom') as codes(
 		geom_id bigint, 
   		zoning_id varchar(50),
 		area double precision,

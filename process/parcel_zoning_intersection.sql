@@ -32,7 +32,7 @@ VACUUM (ANALYZE) parcel;
 
 CREATE TABLE zoning.bay_area AS
 SELECT 
-	ogc_fid, tablename, juris, zoning, ST_MakeValid(the_geom) geom
+	tablename, juris, zoning, ST_MakeValid(the_geom) geom
 FROM
 	zoning.merged_jurisdictions;
 
@@ -71,7 +71,7 @@ CREATE TABLE zoning.parcel_counties AS
 SELECT county.name10 as countyname1, county.namelsad10 as countyname2, county.geoid10 countygeoid,p.geom_id, p.geom FROM
 			admin.county10_ca county,
 			parcel p
-			WHERE ST_Intersects(county.wkb_geometry, p.geom);
+			WHERE ST_Intersects(county.geom, p.geom);
 --Query returned successfully: 1954393 rows affected, 142212 ms execution time.
 
 DROP INDEX IF EXISTS zoning_parcel_counties_gidx;
@@ -84,7 +84,7 @@ SELECT city.name10 as cityname1, city.namelsad10 as cityname2, city.geoid10 city
 FROM 
 admin.city10_ba city,
 zoning.parcel_counties p 
-WHERE ST_Intersects(city.wkb_geometry, p.geom);
+WHERE ST_Intersects(city.geom, p.geom);
 
 DROP INDEX IF EXISTS zoning_parcel_cities_counties_geomid_idx;
 CREATE INDEX zoning_parcel_cities_counties_geomid_idx ON zoning.parcel_cities_counties using hash (geom_id);
@@ -263,7 +263,7 @@ FROM
 	zoning.parcel_two_max_not_in_cities p2
 	WHERE c.id = p2.zoning_id) p2n,
 	admin.county10_ca cb
-WHERE ST_Intersects(cb.wkb_geometry,p2n.geom);
+WHERE ST_Intersects(cb.geom,p2n.geom);
 --Query returned successfully: 50561 rows affected, 2052 ms execution time.
 
 DROP TABLE IF EXISTS zoning.temp_parcel_county_table;

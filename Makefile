@@ -7,6 +7,8 @@ DBHOST=localhost
 DBPORT=5432
 DBNAME=mtc 
 psql = PGPASSWORD=vagrant psql -p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME)
+shp2pgsql = shp2pgsql -t 2D -s 26910 -I
+
 
 #########################
 ##Join Parcels/Zoning####
@@ -25,21 +27,12 @@ add_plu06:
 ####LOAD IN POSTGRES#####
 #########################
 
-load_data: ba8parcels.sql \
-	city10_ba.shp \
-	county10_ca.shp \
-	match_fields_tables_zoning_2012_source.csv \
-	parcels_spandex.sql \
-	Parcels2010_Update9.csv \
-	jurisdictional/AlamedaCountyGP2006db.shp \
-	zoning_codes_base2012.csv \
-	PLU2008_Updated.shp \
-	plu06_may2015estimate.shp \
-	load_zoning_by_jursidiction
-	fix_errors_in_source_zoning
-	load_admin_boundaries
-	add_update9
-	add_plu06
+load_zoning_data: load_zoning_by_jurisdiction \
+	fix_errors_in_source_zoning \
+	load_admin_boundaries \
+	add_update9 \
+	add_plu06 \
+	load_zoning_codes
 
 load_admin_boundaries:
 	$(psql) -c "CREATE SCHEMA admin"
@@ -49,11 +42,11 @@ load_admin_boundaries:
 	#old file saved here: http://landuse.s3.amazonaws.com/zoning/city10_ba_original.zip
 	shp2pgsql county10_ca.shp admin.county10_ca | $(psql)
 
-load_zoning_by_jursidiction:
+load_zoning_by_jurisdiction:
 	$(psql) -c "CREATE SCHEMA zoning_staging"
 	#JURISDICTION-BASED ZONING SOURCE DATA
 	ls jurisdictional/*.shp | cut -d "/" -f2 | sed 's/.shp//' | \
-	xargs -I {} shp2pgsql jurisdictional/{}.shp zoning_staging.{} | \
+	xargs -I {} $(shp2pgsql) jurisdictional/{} zoning_staging.{} | \
 	$(psql)
 
 load_zoning_codes:
@@ -74,7 +67,7 @@ fix_errors_in_source_zoning:
 	$(psql) -c "DROP TABLE zoning_staging.solcogeneral_plan_unincorporated_temp;"
 
 load_plu06:
-	shp2pgsql plu06_may2015estimate.shp zoning.plu06_may2015estimate | $(psql)
+	$(shp2pgsql) plu06_may2015estimate.shp zoning.plu06_may2015estimate | $(psql)
 
 ##############
 ###PREPARE####
@@ -178,18 +171,18 @@ no_dev1.txt:
 ##General Targets##
 ###################
 
-clean: clean_db clean_shapefiles
+clean_zoning_data: 
+	$(psql) -c "DROP SCHEMA zoning CASCADE;"
+	$(psql) -c "DROP SCHEMA zoning_staging CASCADE;"
 
 clean_db:
 	sudo bash load/clean_db.sh
 	
 clean_intersection_tables:
-	$(psql) \
-	-f load/drop_intersection_tables.sql
+	$(psql)	-f load/drop_intersection_tables.sql
 
 merge_source_zoning:
-	$(psql) \
-	-f process/merge_jurisdiction_zoning.sql
+	$(psql) -f process/merge_jurisdiction_zoning.sql
 
 zoning_parcel_intersection:
 	$(psql) \
