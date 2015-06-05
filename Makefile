@@ -23,6 +23,19 @@ add_plu06:
 	$(psql) \
 	-f load/add-plu-2006.sql
 
+assign_zoning_to_parcels:
+	$(psql) -f process/prepare_parcels.sql
+	$(psql) -f process/prepare_zoning.sql
+	$(psql) -f process/assign_admin_to_parcels.sql
+	$(psql) -f process/create_intersection_table.sql
+	$(psql) -f process/get_stats_on_intersection.sql
+	$(psql) -f process/create_zoning_parcel_overlaps_table.sql
+
+	$(psql) -f process/fill_in_zoning_parcel_table.sql
+	$(psql) -f process/check_zoning_parcel_table.sql
+
+	$(psql) -f process/stats_on_overlaps.sql
+
 #########################
 ####LOAD IN POSTGRES#####
 #########################
