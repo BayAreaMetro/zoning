@@ -69,7 +69,7 @@ VACUUM (ANALYZE) zoning.bay_area_generic;
 DROP TABLE IF EXISTS zoning.parcel_counties;
 CREATE TABLE zoning.parcel_counties AS
 SELECT county.name10 as countyname1, county.namelsad10 as countyname2, county.geoid10 countygeoid,p.geom_id, p.geom FROM
-			county10_ca county,
+			admin.county10_ca county,
 			parcel p
 			WHERE ST_Intersects(county.wkb_geometry, p.geom);
 --Query returned successfully: 1954393 rows affected, 142212 ms execution time.
@@ -82,7 +82,7 @@ DROP TABLE IF EXISTS zoning_parcel_counties_gidx;
 CREATE TABLE zoning.parcel_cities_counties AS
 SELECT city.name10 as cityname1, city.namelsad10 as cityname2, city.geoid10 citygeoid, p.geom_id
 FROM 
-city10_ba city,
+admin.city10_ba city,
 zoning.parcel_counties p 
 WHERE ST_Intersects(city.wkb_geometry, p.geom);
 
@@ -262,7 +262,7 @@ FROM
 	zoning.codes_dictionary c,
 	zoning.parcel_two_max_not_in_cities p2
 	WHERE c.id = p2.zoning_id) p2n,
-	county10_ca cb
+	admin.county10_ca cb
 WHERE ST_Intersects(cb.wkb_geometry,p2n.geom);
 --Query returned successfully: 50561 rows affected, 2052 ms execution time.
 

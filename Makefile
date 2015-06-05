@@ -36,6 +36,15 @@ load_data: ba8parcels.sql \
 	plu06_may2015estimate.shp \
 	bash load/all-in-postgres.sh
 
+load_zoning_data:
+	PGPASSWORD=vagrant psql \
+	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
+	-c "CREATE SCHEMA zoning_staging"
+	#JURISDICTION-BASED ZONING SOURCE DATA
+	ls jurisdictional/*.shp | cut -d "/" -f2 | sed 's/.shp//' | \
+	xargs -I {} shp2pgsql jurisdictional/{} zoning_staging.{} | PGPASSWORD=vagrant \
+	psql -p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME)
+
 ##############
 ###PREPARE####
 ##############
