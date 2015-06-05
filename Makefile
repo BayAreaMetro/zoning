@@ -30,11 +30,15 @@ assign_zoning_to_parcels:
 	$(psql) -f process/create_intersection_table.sql
 	$(psql) -f process/get_stats_on_intersection.sql
 	$(psql) -f process/create_zoning_parcel_overlaps_table.sql
+	$(psql) -f process/assign_zoning_to_parcels_in_cities.sql
+	$(psql) -f process/assign_zoning_to_parcels_in_unincoroporated.sql
 
 	$(psql) -f process/fill_in_zoning_parcel_table.sql
 	$(psql) -f process/check_zoning_parcel_table.sql
 
 	$(psql) -f process/stats_on_overlaps.sql
+	$(psql) -f process/output_maps_and_tables.sql
+
 
 #########################
 ####LOAD IN POSTGRES#####
