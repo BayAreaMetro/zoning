@@ -129,11 +129,6 @@ parcels_spandex.sql: s3curl.pl
 	$@.download
 	mv $@.download $@
 
-Parcels2010_Update9.csv: s3curl.pl
-	$(get)Parcels2010_Update9.csv \
-	$@.download
-	mv $@.download $@
-
 zoning_codes_base2012.csv: s3curl.pl
 	$(get)zoning_codes_base2012.csv \
 	$@.download
