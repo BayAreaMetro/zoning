@@ -5,7 +5,8 @@ DBUSERNAME=vagrant
 DBPASSWORD=vagrant
 DBHOST=localhost
 DBPORT=5432
-DBNAME=vagrant 
+DBNAME=mtc 
+psql = PGPASSWORD=vagrant psql -p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME)
 
 #########################
 ##Join Parcels/Zoning####
@@ -13,12 +14,12 @@ DBNAME=vagrant
 
 parcel_zoning.csv:
 	mkdir -p data_out
-	PGPASSWORD=vagrant psql \
-	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
-	-f process/merge_jurisdiction_zoning.sql
-	PGPASSWORD=vagrant psql \
-	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
-	-f process/parcel_zoning_intersection.sql
+	$(psql) -f process/merge_jurisdiction_zoning.sql
+	$(psql) -f process/parcel_zoning_intersection.sql
+
+add_plu06:
+	$(psql) \
+	-f load/add-plu-2006.sql
 
 #########################
 ####LOAD IN POSTGRES#####
@@ -166,28 +167,16 @@ clean_db:
 	sudo bash load/clean_db.sh
 	
 clean_intersection_tables:
-	PGPASSWORD=vagrant psql \
-	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
+	PGPASSWORD=vagrant $(psql) \
 	-f load/drop_intersection_tables.sql
 
 merge_source_zoning:
-	PGPASSWORD=vagrant psql \
-	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
+	PGPASSWORD=vagrant $(psql) \
 	-f process/merge_jurisdiction_zoning.sql
 
 zoning_parcel_intersection:
-	PGPASSWORD=vagrant psql \
-	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
+	PGPASSWORD=vagrant $(psql) \
 	-f process/parcel_zoning_intersection.sql
-
-add_plu_2006: plu06_may2015estimate.shp
-	ogr2ogr -f "PostgreSQL" -nlt PROMOTE_TO_MULTI \
-	-select juris,county,lpscode,plandate,gengplu,objectid,hs,ht,hm,of_,ho,sc,il,iw,ih,rs,rb,mr,mt,me,max_far,max_height,max_dua,max_du_per \
-	PG:"host=$(DBHOST) port=$(DBPORT) dbname=$(DBNAME) user=$(DBUSERNAME) password=$(DBPASSWORD)" \
-	plu06_may2015estimate.shp
-	PGPASSWORD=vagrant psql \
-	-p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME) \
-	-f load/add-plu-2006.sql
 
 clean_shapefiles:
 	rm -rf jurisdictional
