@@ -119,68 +119,60 @@ City_Santa_Clara_GP_LU_02.zip:
 	mv $@.download $@
 
 #where plu refers to the old "planned land use"/comprehensive plan project
-ba8parcels.sql: s3curl.pl
+ba8parcels.sql:
 	$(get)ba8parcels.sql \
 	$@.download
 	mv $@.download $@
 
-parcels_spandex.sql: s3curl.pl
+parcels_spandex.sql:
 	$(get)parcels_spandex.sql \
 	$@.download
 	mv $@.download $@
 
-zoning_codes_base2012.csv: s3curl.pl
+zoning_codes_base2012.csv:
 	$(get)zoning_codes_base2012.csv \
 	$@.download
 	mv $@.download $@
 
-city10_ba.zip: s3curl.pl
+city10_ba.zip:
 	$(get)city10_ba.zip \
 	$@.download
 	mv $@.download $@
 
-zoning_codes_base2008.csv: s3curl.pl
+zoning_codes_base2008.csv:
 	$(get)zoning_codes_base2008.csv \
 	-o zoning_codes_base2008.csv
 
-county10_ca.zip: s3curl.pl
+county10_ca.zip:
 	$(get)county10_ca.zip \
 	$@.download
 	mv $@.download $@
 
-match_fields_tables_zoning_2012_source.csv: s3curl.pl
+match_fields_tables_zoning_2012_source.csv:
 	$(get)match_fields_tables_zoning_2012_source.csv \
 	$@.download
 	mv $@.download $@
 
-PlannedLandUse1Through6.gdb.zip: s3curl.pl
+PlannedLandUse1Through6.gdb.zip:
 	$(get)PlannedLandUse1Through6.gdb.zip \
 	$@.download
 	mv $@.download $@
 
-PLU2008_Updated.zip: s3curl.pl
+PLU2008_Updated.zip:
 	$(get)PLU2008_Updated.zip \
 	$@.download
 	mv $@.download $@
 
-plu06_may2015estimate.zip: s3curl.pl
+plu06_may2015estimate.zip:
 	$(get)plu06_may2015estimate.zip \
 	$@.download
 	mv $@.download $@
 
-no_dev1.txt: s3curl.pl
+no_dev1.txt:
 	$(get)$@ \
 	$@.download
 	mv $@.download $@
 	touch $@
-
-s3curl.pl: s3-curl.zip
-	unzip -o \s3-curl.zip
-	touch s3curl.pl
-
-s3-curl.zip:
-	curl -o $@ http://s3.amazonaws.com/doc/s3-example-code/s3-curl.zip
-	mv $@.download $@
 
 ###################
 ##General Targets##
