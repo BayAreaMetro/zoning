@@ -184,15 +184,15 @@ clean_db:
 	sudo bash load/clean_db.sh
 	
 clean_intersection_tables:
-	PGPASSWORD=vagrant $(psql) \
+	$(psql) \
 	-f load/drop_intersection_tables.sql
 
 merge_source_zoning:
-	PGPASSWORD=vagrant $(psql) \
+	$(psql) \
 	-f process/merge_jurisdiction_zoning.sql
 
 zoning_parcel_intersection:
-	PGPASSWORD=vagrant $(psql) \
+	$(psql) \
 	-f process/parcel_zoning_intersection.sql
 
 clean_shapefiles:
