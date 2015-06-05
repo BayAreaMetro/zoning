@@ -30,7 +30,6 @@ add_plu06:
 load_zoning_data: load_zoning_by_jurisdiction \
 	fix_errors_in_source_zoning \
 	load_admin_boundaries \
-	add_update9 \
 	add_plu06 \
 	load_zoning_codes
 
@@ -55,13 +54,13 @@ load_zoning_codes:
 fix_errors_in_source_zoning:
 	#FIX for Napa
 	#Can't SELECT with shp2pgsql--trying this:
-	$(psql) -c "CREATE TABLE zoning_staging.napacozoning_temp AS SELECT zoning from zoning_staging.napacozoning;"
+	$(psql) -c "CREATE TABLE zoning_staging.napacozoning_temp AS SELECT zoning, geom from zoning_staging.napacozoning;"
 	$(psql) -c "DROP TABLE zoning_staging.napacozoning;"
 	$(psql) -c "CREATE TABLE zoning_staging.napacozoning AS SELECT * from zoning_staging.napacozoning_temp;"
 	$(psql) -c "DROP TABLE zoning_staging.napacozoning_temp;"
 
 	#FIX for Solano
-	$(psql) -c "CREATE TABLE zoning_staging.solcogeneral_plan_unincorporated_temp AS SELECT full_name from zoning_staging.solcogeneral_plan_unincorporated;"
+	$(psql) -c "CREATE TABLE zoning_staging.solcogeneral_plan_unincorporated_temp AS SELECT full_name, geom from zoning_staging.solcogeneral_plan_unincorporated;"
 	$(psql) -c "DROP TABLE zoning_staging.solcogeneral_plan_unincorporated;"
 	$(psql) -c "CREATE TABLE zoning_staging.solcogeneral_plan_unincorporated AS SELECT * from zoning_staging.solcogeneral_plan_unincorporated_temp;"
 	$(psql) -c "DROP TABLE zoning_staging.solcogeneral_plan_unincorporated_temp;"
