@@ -23,26 +23,37 @@ add_plu06:
 	$(psql) \
 	-f load/add-plu-2006.sql
 
-assign_zoning_to_parcels:
-	prepare
-	intersect
-	assign
-	check_output
+assign_zoning_to_parcels: \
+	prepare \
+	intersect \
+	assign \
+	check_output \
 
-prepare:
+prepare: \
+	prepare_parcels \
+	prepare_zoning \
+	assign_admin 
+
+prepare_parcels:
 	$(psql) -f process/prepare_parcels.sql
+
+prepare_zoning:
 	$(psql) -f process/prepare_zoning.sql
+
+assign_admin:
 	$(psql) -f process/assign_admin_to_parcels.sql
 
 intersect:
-	$(psql) -f process/create_intersection_table.sql
+	$(psql) -c "SET enable_seqscan TO off;"
+	$(psql) -f process/create_intersection_table.sql #22m in 100GB VM
 	$(psql) -f process/get_stats_on_intersection.sql
 	$(psql) -f process/create_zoning_parcel_overlaps_table.sql
 	$(psql) -f process/get_stats_on_overlaps.sql
 
 assign:
+	$(psql) -f process/assign_zoning_to_parcels_with_one_zone.sql
 	$(psql) -f process/assign_zoning_to_parcels_in_cities.sql
-	$(psql) -f process/assign_zoning_to_parcels_in_unincorporated.sql
+	$(psql) -f process/assign_zoning_to_parcels_in_unincorporated.sql	
 	$(psql) -f process/fill_in_zoning_parcel_table.sql
 
 check_output:
@@ -60,12 +71,13 @@ load_zoning_data: load_zoning_by_jurisdiction \
 	load_zoning_codes
 
 load_admin_boundaries:
+	$(psql) -c "DROP SCHEMA admin CASCADE"
 	$(psql) -c "CREATE SCHEMA admin"
-	shp2pgsql city10_ba.shp admin.city10_ba | $(psql)
+	$(shp2pgsql) city10_ba.shp admin.city10_ba | $(psql)
 	#for city10_ba had to delete columns: sqmi, aland, awater b/c stored as numeric(17,17) 
 	#which was beyond capabilities of shapefile, latter 2 replaced with INT, former easy to make w/PostGIS
 	#old file saved here: http://landuse.s3.amazonaws.com/zoning/city10_ba_original.zip
-	shp2pgsql county10_ca.shp admin.county10_ca | $(psql)
+	$(shp2pgsql) county10_ca.shp admin.county10_ca | $(psql)
 
 load_zoning_by_jurisdiction:
 	$(psql) -c "CREATE SCHEMA zoning_staging"

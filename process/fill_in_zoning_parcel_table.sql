@@ -7,11 +7,7 @@
 -------
 --FILL IN ZONING.PARCEL TABLE
 -------
-CREATE TABLE zoning.parcel AS
-SELECT geom_id, zoning_id, 100 AS prop
-FROM zoning.parcel_intersection
-WHERE geom_id
-IN (SELECT geom_id FROM zoning.parcel_intersection_count WHERE countof=1);
+
 
 --same for 1 max, except insert those into the parcel table
 INSERT INTO zoning.parcel

@@ -11,7 +11,7 @@ DROP INDEX IF EXISTS zoning_parcel_counties_gidx;
 CREATE INDEX zoning_parcel_counties_geomid_idx ON zoning.parcel_counties using GIST (geom);
 VACUUM (ANALYZE) zoning.parcel_counties;
 
-DROP TABLE IF EXISTS zoning_parcel_counties_gidx;
+DROP TABLE IF EXISTS zoning_parcel_counties;
 CREATE TABLE zoning.parcel_cities_counties AS
 SELECT city.name10 as cityname1, city.namelsad10 as cityname2, city.geoid10 citygeoid, p.geom_id
 FROM 
