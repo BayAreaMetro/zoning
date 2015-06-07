@@ -28,3 +28,5 @@ CREATE INDEX zoning_parcel_cities_counties_geomid_idx ON zoning.parcel_cities_co
 DROP INDEX IF EXISTS zoning_codes_dictionary_idx;
 CREATE INDEX zoning_parcel_cities_counties_cityname_idx ON zoning.parcel_cities_counties using hash (cityname1);
 VACUUM (ANALYZE) zoning.parcel_cities_counties;
+COMMENT ON TABLE zoning.parcel is 'parcels st_intersect with census 2010 city boundaries';
+
