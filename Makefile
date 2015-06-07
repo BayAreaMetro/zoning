@@ -71,7 +71,7 @@ load_zoning_data: load_zoning_by_jurisdiction \
 	load_zoning_codes
 
 load_admin_boundaries:
-	$(psql) -c "DROP SCHEMA admin CASCADE"
+	$(psql) -c "DROP SCHEMA if exists admin CASCADE"
 	$(psql) -c "CREATE SCHEMA admin"
 	$(shp2pgsql) city10_ba.shp admin.city10_ba | $(psql)
 	#for city10_ba had to delete columns: sqmi, aland, awater b/c stored as numeric(17,17) 
