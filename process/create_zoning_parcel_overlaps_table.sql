@@ -17,7 +17,7 @@ WHERE ST_Intersects(z.geom, p.geom)
 ) f
 GROUP BY 
 	geom_id,
-	tablename
+	tablename,
 	zoning_id;
 COMMENT ON TABLE zoning.parcel_overlaps is 'st_intersects with area of parcel/zoning for parcels in multiple zones';
 
