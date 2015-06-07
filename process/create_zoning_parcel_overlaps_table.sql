@@ -2,6 +2,7 @@ CREATE TABLE zoning.parcel_overlaps AS
 SELECT 
 	geom_id,
 	zoning_id,
+	tablename,
 	sum(ST_Area(geom)) area,
 	round(sum(ST_Area(geom))/min(parcelarea) * 1000) / 10 prop,
 	ST_Union(geom) geom
@@ -11,11 +12,12 @@ SELECT p.geom_id,
  	ST_Area(p.geom) parcelarea, 
  	ST_Intersection(p.geom, z.geom) geom 
 FROM (select geom_id, geom FROM zoning.parcels_with_multiple_zoning) as p,
-(select zoning_id, geom from zoning.bay_area_generic) as z
+(select zoning_id, tablename, geom from zoning.bay_area_generic) as z
 WHERE ST_Intersects(z.geom, p.geom)
 ) f
 GROUP BY 
 	geom_id,
+	tablename
 	zoning_id;
 COMMENT ON TABLE zoning.parcel_overlaps is 'st_intersects with area of parcel/zoning for parcels in multiple zones';
 

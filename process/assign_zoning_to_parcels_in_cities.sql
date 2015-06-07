@@ -1,8 +1,8 @@
 CREATE TABLE zoning.parcel_in_cities AS
-SELECT p2n.geom_id, p2n.zoning_id 
+SELECT p2n.geom_id, p2n.zoning_id, p2n.tablename 
 FROM 
 zoning.parcel_cities_counties pcc,
-(SELECT c.city, p2.geom_id, p2.zoning_id 
+(SELECT c.city, p2.geom_id, p2.zoning_id, p2.tablename 
 FROM
 zoning.codes_dictionary c,
 zoning.parcel_overlaps p2 --parcel_two_max is a twice derived view on zoning.parcel_overlaps
