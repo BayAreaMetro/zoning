@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS zoning.parcel_intersection;
 CREATE TABLE zoning.parcel_intersection AS
 SELECT p.geom_id,z.zoning_id, 100 as prop, z.tablename as tablename FROM
 	(select zoning_id, tablename, geom from zoning.bay_area_generic) AS z, 

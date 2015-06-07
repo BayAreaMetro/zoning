@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS zoning.parcel_overlaps;
 CREATE TABLE zoning.parcel_overlaps AS
 SELECT 
 	geom_id,
