@@ -1,13 +1,6 @@
 COMMENT ON TABLE parcel is 'spandex parcels';
-COMMENT ON TABLE parcel_invalid is 'spandex parcels-invalid geometries';
-COMMENT ON TABLE parcel_geometrycollection is 'spandex parcels-geometrycollection type';
-COMMENT ON TABLE parcel_valid is 'spandex parcels-valid geometries';
-COMMENT ON TABLE zoning.lookup_valid is 'subset of zoning.merged_jurisdictions with valid geometries';
-COMMENT ON TABLE zoning.parcel_intersection_count is 'count by geom_id of st_intersects of parcel and zoning';
 COMMENT ON TABLE zoning.parcels_with_multiple_zoning is 'spandex parcels-subset that intersects with >1 zoning geometries';
 COMMENT ON TABLE zoning.parcels_with_one_zone is 'spandex parcels-subset that intersects with 1 zoning geometry';
-COMMENT ON TABLE zoning.parcel is 'parcel/zoning intersection output table';
-COMMENT ON TABLE zoning.parcel_overlaps is 'st_intersection of parcel/zoning for parcels in multiple zones';
 COMMENT ON TABLE zoning.parcel_overlaps_maxonly  is 'subset of zoning.parcel_overlaps-parcel/zoning pair with highest % area';
 COMMENT ON TABLE zoning.parcel_two_max is 'subset of zoning.parcel_overlaps_maxonly->1 parcel/zoning pair with highest % area (equal max values). this is probably due to two jurisdictional claims';
 COMMENT ON TABLE zoning.parcel_counties is 'spandex parcels with their county name (2010 census)';

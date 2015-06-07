@@ -17,6 +17,7 @@ WHERE ST_Intersects(z.geom, p.geom)
 GROUP BY 
 	geom_id,
 	zoning_id;
+COMMENT ON TABLE zoning.parcel_overlaps is 'st_intersects with area of parcel/zoning for parcels in multiple zones';
 
 CREATE INDEX zoning_parcel_overlaps_gidx ON zoning.parcel_overlaps USING GIST (geom);
 CREATE INDEX zoning_parcel_overlaps_geom_id_idx ON zoning.parcel_overlaps USING hash (geom_id);
