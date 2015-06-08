@@ -9,7 +9,8 @@ SELECT
 	ST_Union(geom) geom
 FROM (
 SELECT p.geom_id, 
-	z.zoning_id, 
+	z.zoning_id,
+	z.tablename,
  	ST_Area(p.geom) parcelarea, 
  	ST_Intersection(p.geom, z.geom) geom 
 FROM (select geom_id, geom FROM zoning.parcels_with_multiple_zoning) as p,
