@@ -9,7 +9,7 @@ FROM
 admin.county10_ca county,
 parcel p
 WHERE ST_Intersects(county.geom, p.geom);
-COMMENT ON TABLE zoning.parcel is 'parcels st_intersect with census 2010 county boundaries';
+COMMENT ON TABLE admin.parcel is 'parcels st_intersect with census 2010 county boundaries';
 
 DROP TABLE IF EXISTS admin.parcel_cities;
 CREATE TABLE admin.parcel_cities AS
@@ -20,13 +20,13 @@ p.geom_id,
 p.geom
 FROM 
 admin.city10_ba city,
-zoning.parcel_counties p 
+zoning.parcel p 
 WHERE ST_Intersects(city.geom, p.geom);
 
-DROP INDEX IF EXISTS zoning_parcel_cities_counties_geomid_idx;
-CREATE INDEX zoning_parcel_cities_counties_geomid_idx ON zoning.parcel_cities_counties using hash (geom_id);
+DROP INDEX IF EXISTS zoning_parcels_counties_geomid_idx;
+CREATE INDEX zoning_parcels_counties_geomid_idx ON zoning.parcel_cities_counties using hash (geom_id);
 DROP INDEX IF EXISTS zoning_codes_dictionary_idx;
-CREATE INDEX zoning_parcel_cities_counties_cityname_idx ON zoning.parcel_cities_counties using hash (cityname1);
+CREATE INDEX zoning_parcel_cities_cityname_idx ON zoning.parcel_cities_counties using hash (cityname1);
 VACUUM (ANALYZE) zoning.parcel_cities_counties;
 COMMENT ON TABLE zoning.parcel is 'parcels st_intersect with census 2010 city boundaries';
 

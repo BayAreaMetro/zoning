@@ -27,12 +27,15 @@ assign_zoning_to_parcels: \
 	prepare \
 	intersect \
 	assign \
-	check_output \
+	check_output 
 
-prepare: \
+prepare: merge_source_zoning \
 	prepare_parcels \
 	prepare_zoning \
 	assign_admin 
+
+merge_source_zoning:
+	$(psql) -f process/merge_jurisdiction_zoning.sql
 
 prepare_parcels:
 	$(psql) -f process/prepare_parcels.sql
@@ -67,7 +70,6 @@ check_output:
 load_zoning_data: load_zoning_by_jurisdiction \
 	fix_errors_in_source_zoning \
 	load_admin_boundaries \
-	add_plu06 \
 	load_zoning_codes
 
 load_admin_boundaries:
@@ -218,8 +220,7 @@ clean_db:
 clean_intersection_tables:
 	$(psql)	-f load/drop_intersection_tables.sql
 
-merge_source_zoning:
-	$(psql) -f process/merge_jurisdiction_zoning.sql
+
 
 zoning_parcel_intersection:
 	$(psql) \
