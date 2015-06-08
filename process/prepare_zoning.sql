@@ -12,6 +12,7 @@ SELECT *
 FROM zoning.bay_area
 WHERE ST_IsValid(geom) = false;
 COMMENT ON TABLE zoning.lookup_valid is 'subset of zoning.merged_jurisdictions with invalid geometries only';
+SELECT UpdateGeometrySRID('zoning.bay_area_generic','geom',26910);
 
 DELETE FROM zoning.bay_area 
 WHERE ST_IsValid(geom) = false;
@@ -35,6 +36,7 @@ zoning.bay_area z
 WHERE c.juris=z.juris 
 AND c.name = z.zoning;
 COMMENT ON TABLE zoning.lookup_valid is 'merged bay area zoning joined with generic code table';
+SELECT UpdateGeometrySRID('zoning.bay_area_generic','geom',26910);
 
 CREATE INDEX zoning_bay_area_generic_gidx ON zoning.bay_area_generic USING GIST (geom);
 CREATE INDEX zoning_bay_area_zoning_id_gidx ON zoning.bay_area_generic USING HASH (zoning_id);
