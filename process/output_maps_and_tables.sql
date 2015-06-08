@@ -16,9 +16,6 @@ BELOW WE CREATE TABLES WITH GEOGRAPHIC DATA
 FOR VISUAL INSPECTION OF OF THE ABOVE
 */
 
---create indexes for the query below
-create INDEX zoning_parcel_lookup_geom_idx ON zoning.parcel using hash (geom_id);
-
 --output a table with geographic information and generic code info for review
 DROP TABLE IF EXISTS zoning.parcel_withdetails;
 CREATE TABLE zoning.parcel_withdetails AS

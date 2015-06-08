@@ -11,6 +11,7 @@ WHERE p2n.geom_id = pcc.geom_id
 AND pcc.cityname1 = p2n.city;
 --Query returned successfully: 48928 rows affected, 3750 ms execution time.
 
+DROP TABLE IF EXISTS zoning.parcel_in_cities_doubles; 
 CREATE TABLE zoning.parcel_in_cities_doubles AS 
 SELECT geom_id
 FROM
@@ -19,12 +20,20 @@ FROM zoning.parcel_in_cities
 GROUP BY geom_id) p
 WHERE p.countof>1;
 
-drop table zoning.parcel_in_cities_doubles_geo;
+DROP TABLE IF EXISTS zoning.parcel_in_cities_geo;
 CREATE TABLE zoning.parcel_in_cities_doubles_geo AS 
 SELECT z.geom_id, p.geom
 FROM
 parcel p,
 zoning.parcel_in_cities z
+WHERE z.geom_id=p.geom_id;
+
+DROP TABLE IF EXISTS zoning.parcel_in_cities_doubles_geo;
+CREATE TABLE zoning.parcel_in_cities_doubles_geo AS 
+SELECT z.geom_id, p.geom
+FROM
+parcel p,
+zoning.parcel_in_cities_doubles z
 WHERE z.geom_id=p.geom_id;
 
 ALTER TABLE zoning.parcel_in_cities_doubles_geo ADD primary key(geom_id);
@@ -55,6 +64,7 @@ CREATE INDEX zoning_parcel_two_max_zoningid_idx ON zoning.parcel_two_max USING h
 CREATE INDEX zoning_parcel_two_max_geomid_idx ON zoning.parcel_two_max USING hash (geom_id);
 VACUUM (ANALYZE) zoning.parcel_two_max;
 
+DROP TABLE IF EXISTS zoning.parcel_two_max_geo; 
 CREATE TABLE zoning.parcel_two_max_geo AS
 SELECT two.zoning_id,p.geom_id,two.prop,p.geom 
 FROM 
@@ -76,10 +86,10 @@ zoning.parcel_in_cities);
 
 CREATE INDEX zoning_parcel_two_max_not_in_cities_gidx ON zoning.parcel_two_max_not_in_cities USING GIST (geom);
 
-INSERT INTO zoning.parcel
+/*INSERT INTO zoning.parcel
 SELECT z.geom_id, z.zoning_id, zo.prop
 FROM
 zoning.parcel_overlaps_maxonly zo,
 zoning.parcel_in_cities z
 WHERE z.geom_id = zo.geom_id
-AND zo.zoning_id = z.zoning_id;
+AND zo.zoning_id = z.zoning_id;*/
