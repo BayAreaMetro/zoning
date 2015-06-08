@@ -46,11 +46,22 @@ prepare_zoning:
 assign_admin:
 	$(psql) -f process/assign_admin_to_parcels.sql
 
-intersect:
+intersect: create_intersection_table \ #22m in 100GB VM
+	get_stats_on_intersection \
+	create_zoning_parcel_overlaps_table \
+	get_stats_on_overlaps
+
+create_intersection_table:
 	$(psql) -c "SET enable_seqscan TO off;"
 	$(psql) -f process/create_intersection_table.sql #22m in 100GB VM
+
+get_stats_on_intersection:
 	$(psql) -f process/get_stats_on_intersection.sql
+
+create_zoning_parcel_overlaps_table:
 	$(psql) -f process/create_zoning_parcel_overlaps_table.sql
+
+get_stats_on_overlaps:
 	$(psql) -f process/get_stats_on_overlaps.sql
 
 assign:
