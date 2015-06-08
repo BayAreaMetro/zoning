@@ -2,6 +2,7 @@ DROP SCHEMA IF EXISTS zoning;
 CREATE SCHEMA zoning;
 ----- Load legacy code to generic type and information lookup table
 
+DROP TABLE IF EXISTS zoning.codes_dictionary;
 CREATE TABLE zoning.codes_dictionary (
 	id integer,
 	juris integer, 
@@ -81,6 +82,7 @@ ALTER TABLE zoning.codes_dictionary ALTER COLUMN MR TYPE INTEGER USING MR::INTEG
 ALTER TABLE zoning.codes_dictionary ALTER COLUMN MT TYPE INTEGER USING MT::INTEGER;
 ALTER TABLE zoning.codes_dictionary ALTER COLUMN ME TYPE INTEGER USING ME::INTEGER;
 
+DROP TABLE IF EXISTS zoning.source_field_name;
 CREATE TABLE zoning.source_field_name (
 	juris integer, 
 	matchfield text, 
