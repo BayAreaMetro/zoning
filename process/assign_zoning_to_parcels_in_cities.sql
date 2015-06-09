@@ -1,14 +1,15 @@
+DROP TABLE IF EXISTS zoning.parcel_in_cities;
 CREATE TABLE zoning.parcel_in_cities AS
 SELECT p2n.geom_id, p2n.zoning_id, p2n.tablename 
 FROM 
-zoning.parcel_cities_counties pcc,
+admin.parcel_cities pcc,
 (SELECT c.city, p2.geom_id, p2.zoning_id, p2.tablename 
 FROM
 zoning.codes_dictionary c,
 zoning.parcel_overlaps p2 --parcel_two_max is a twice derived view on zoning.parcel_overlaps
 WHERE c.id = p2.zoning_id) p2n
 WHERE p2n.geom_id = pcc.geom_id
-AND pcc.cityname1 = p2n.city;
+AND pcc.name1 = p2n.city;
 --Query returned successfully: 48928 rows affected, 3750 ms execution time.
 
 DROP TABLE IF EXISTS zoning.parcel_in_cities_doubles; 
@@ -21,7 +22,7 @@ GROUP BY geom_id) p
 WHERE p.countof>1;
 
 DROP TABLE IF EXISTS zoning.parcel_in_cities_geo;
-CREATE TABLE zoning.parcel_in_cities_doubles_geo AS 
+CREATE TABLE zoning.parcel_in_cities_geo AS 
 SELECT z.geom_id, p.geom
 FROM
 parcel p,
