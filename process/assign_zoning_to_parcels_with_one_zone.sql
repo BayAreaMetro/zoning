@@ -13,3 +13,13 @@ FROM zoning.parcel z, parcel p
 WHERE p.geom_id = z.geom_id;
 COMMENT ON TABLE zoning.parcel_geo1 is 'A geo-table of parcels with 1 intersection'
 
+CREATE TABLE zoning.parcel_contested AS
+SELECT *
+FROM parcel
+WHERE geom_id NOT IN (SELECT geom_id FROM zoning.parcel);
+COMMENT ON TABLE zoning.parcel_contested is 'A geo-table of parcels with more than 1 intersection';
+
+CREATE INDEX zoning_parcel_contested_gidx ON zoning.parcel_contested using GIST (geom);
+
+vacuum (analyze) zoning.parcel_contested;
+vacuum (analyze) zoning.parcel_geo1;
