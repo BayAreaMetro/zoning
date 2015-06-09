@@ -95,8 +95,11 @@ load_admin_boundaries:
 load_zoning_by_jurisdiction:
 	$(psql) -c "CREATE SCHEMA zoning_staging"
 	#JURISDICTION-BASED ZONING SOURCE DATA
-	ls jurisdictional/*.shp | cut -d "/" -f2 | sed 's/.shp//' | \
-	xargs -I {} $(shp2pgsql) jurisdictional/{} zoning_staging.{} | \
+	ls cities_towns/*.shp | cut -d "/" -f2 | sed 's/.shp//' | \
+	xargs -I {} $(shp2pgsql) jurisdictional/{} zoning_cities_towns.{} | \
+	$(psql)
+	ls unincorporated_counties/*.shp | cut -d "/" -f2 | sed 's/.shp//' | \
+	xargs -I {} $(shp2pgsql) jurisdictional/{} zoning_unincorporated_counties.{} | \
 	$(psql)
 
 load_zoning_codes:
@@ -127,7 +130,25 @@ City_Santa_Clara_GP_LU_02.shp: City_Santa_Clara_GP_LU_02.zip
 	unzip -o $<
 	touch $@
 
+cities_towns/sonomacountygeneralplan.shp: jurisdictional/AlamedaCountyGP2006db.shp
+	mv jurisdictional cities_towns
+
+unincorporated_counties/sonomacountygeneralplan.shp: jurisdictional/AlamedaCountyGP2006db.shp
+	mkdir -p unincorporated_counties
+	cd jurisdictional
+	mv -t ../unincorporated_counties SonomaCountyGeneralPlan.* \
+				   SolCoGeneral_plan_unincorporated.* \
+				   SanMateoCountyZoning.* \
+				   SantaClaraCountyGenPlan.* \
+				   NapaCoZoning.* \
+				   MarinCountyGenPlan.* \
+				   CCCountyGPLandUse.* \
+				   AlamedaCountyGP2006db.*
+	cd ..
+	touch unincorporated_counties/*
+
 jurisdictional/AlamedaCountyGP2006db.shp: PlannedLandUsePhase1.gdb
+	mkdir -p jurisdictional
 	bash load/jurisdiction_shapefile_directory.sh
 	touch jurisdictional/*
 
