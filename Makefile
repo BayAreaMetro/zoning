@@ -35,7 +35,9 @@ prepare: merge_source_zoning \
 	assign_admin 
 
 merge_source_zoning:
-	$(psql) -f process/merge_jurisdiction_zoning.sql
+	$(psql) -f process/function_spatial_merge_schema.sql
+	$(psql) -f process/merge_county_zoning.sql
+	$(psql) -f process/merge_city_zoning.sql
 
 prepare_parcels:
 	$(psql) -f process/prepare_parcels.sql
@@ -92,8 +94,15 @@ load_admin_boundaries:
 	#old file saved here: http://landuse.s3.amazonaws.com/zoning/city10_ba_original.zip
 	$(shp2pgsql) county10_ca.shp admin.county10_ca | $(psql)
 
-load_zoning_by_jurisdiction:
-	$(psql) -c "CREATE SCHEMA zoning_staging"
+load_zoning_by_jurisdiction: 
+	#required files: cities_towns/AlamedaGeneralPlan.shp unincorporated_counties/SonomaCountyGeneralPlan.shp
+	#need to better understand make dependency tree for generating these
+	#make goes to make jurisdictional/SonomaCountyGeneralPlan.shp
+	#and then errors out on some detail there
+	#however, the file that depends on already exists
+	#perhaps need to touch the files within FileGDBs?
+	$(psql) -c "CREATE SCHEMA zoning_unincorporated_counties"
+	$(psql) -c "CREATE SCHEMA zoning_cities_towns"
 	#JURISDICTION-BASED ZONING SOURCE DATA
 	ls cities_towns/*.shp | cut -d "/" -f2 | sed 's/.shp//' | \
 	xargs -I {} $(shp2pgsql) jurisdictional/{} zoning_cities_towns.{} | \
@@ -130,13 +139,15 @@ City_Santa_Clara_GP_LU_02.shp: City_Santa_Clara_GP_LU_02.zip
 	unzip -o $<
 	touch $@
 
-cities_towns/sonomacountygeneralplan.shp: jurisdictional/AlamedaCountyGP2006db.shp
-	mv jurisdictional cities_towns
+cities_towns/AlamedaGeneralPlan.shp: jurisdictional/AlamedaGeneralPlan.shp
+	mkdir -p cities_towns
+	mv jurisdictional/* cities_towns/
+	rm -rf jurisdictional
+	touch cities_towns/*
 
-unincorporated_counties/sonomacountygeneralplan.shp: jurisdictional/AlamedaCountyGP2006db.shp
+unincorporated_counties/SonomaCountyGeneralPlan.shp: jurisdictional/SonomaCountyGeneralPlan.shp
 	mkdir -p unincorporated_counties
-	cd jurisdictional
-	mv -t ../unincorporated_counties SonomaCountyGeneralPlan.* \
+	cd jurisdictional; mv -t ../unincorporated_counties SonomaCountyGeneralPlan.* \
 				   SolCoGeneral_plan_unincorporated.* \
 				   SanMateoCountyZoning.* \
 				   SantaClaraCountyGenPlan.* \
@@ -147,14 +158,14 @@ unincorporated_counties/sonomacountygeneralplan.shp: jurisdictional/AlamedaCount
 	cd ..
 	touch unincorporated_counties/*
 
-jurisdictional/AlamedaCountyGP2006db.shp: PlannedLandUsePhase1.gdb
+jurisdictional/SonomaCountyGeneralPlan.shp: PlannedLandUsePhase1.gdb/a00000001.freelist
 	mkdir -p jurisdictional
 	bash load/jurisdiction_shapefile_directory.sh
 	touch jurisdictional/*
 
 PlannedLandUsePhase1.gdb: PlannedLandUse1Through6.gdb.zip
 	unzip -o $<
-	touch $@
+	touch $@/*
 
 county10_ca.shp: county10_ca.zip
 	unzip -o $<
@@ -251,8 +262,6 @@ clean_db:
 	
 clean_intersection_tables:
 	$(psql)	-f load/drop_intersection_tables.sql
-
-
 
 zoning_parcel_intersection:
 	$(psql) \
