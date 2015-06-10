@@ -9,6 +9,11 @@ DBNAME=mtc
 psql = PGPASSWORD=vagrant psql -p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME)
 shp2pgsql = shp2pgsql -t 2D -s 26910 -I
 
+#########################
+########Outputs##########
+#########################
+backup_db:
+	bash output/backup_db.sh
 
 #########################
 ##Join Parcels/Zoning####
