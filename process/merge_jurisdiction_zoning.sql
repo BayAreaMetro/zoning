@@ -11,17 +11,17 @@ CREATE TABLE zoning.merged_jurisdictions
   the_geom geometry(Multipolygon,26910)
 );
 
-CREATE OR REPLACE FUNCTION zoning.merge()
+CREATE OR REPLACE FUNCTION zoning.merge(schema_name text)
   RETURNS void AS
 $BODY$
 DECLARE
     	tables CURSOR FOR SELECT *
 	      FROM information_schema.tables
-	      WHERE table_schema = 'zoning_staging'
+	      WHERE table_schema = schema_name
 	      ORDER BY "table_name" ASC
 	      LIMIT ((SELECT count(*)
 		  FROM information_schema.tables
-		  WHERE table_schema = 'zoning_staging')-1);
+		  WHERE table_schema = schema_name)-1);
 		sql_string text := '';
 BEGIN
 	 FOR table_record IN tables LOOP

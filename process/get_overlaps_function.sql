@@ -15,7 +15,6 @@ select * from GetOverlaps('parcel','zoning_staging.santarosageneralplan','gp_lan
 		geom geometry);
 */
 
-
 create or replace function GetOverlaps(_p text,_z text,_z_id text,_z_geom text) returns setof record as
 '
 declare

@@ -60,6 +60,12 @@ create_intersection_table:
 get_stats_on_intersection:
 	$(psql) -f process/get_stats_on_intersection.sql
 
+overlaps_counties:
+	$(psql) -f process/overlaps_county_zoning_parcels.sql
+
+overlaps_cities:
+	$(psql) -f process/overlaps_city_zoning_parcels.sql
+
 create_zoning_parcel_overlaps_table:
 	$(psql) -f process/create_zoning_parcel_overlaps_table.sql
 

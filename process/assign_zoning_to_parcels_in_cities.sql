@@ -1,3 +1,18 @@
+INSERT INTO zoning.parcel
+SELECT geom_id, zoning_id, prop FROM 
+zoning.parcel_overlaps_maxonly where (geom_id) IN
+	(
+	SELECT geom_id from 
+	(
+	select geom_id, count(*) as countof from 
+	zoning.parcel_overlaps_maxonly
+	GROUP BY geom_id
+	) b
+	WHERE b.countof=1
+	);
+
+/*
+
 DROP TABLE IF EXISTS zoning.parcel_in_cities;
 CREATE TABLE zoning.parcel_in_cities AS
 SELECT p2n.geom_id, p2n.zoning_id, p2n.tablename 
@@ -61,6 +76,7 @@ WHERE p.countof>1);
 --Query returned successfully: 3121 rows affected, 87 ms execution time.
 */
 
+/*
 CREATE INDEX zoning_parcel_two_max_zoningid_idx ON zoning.parcel_two_max USING hash (zoning_id);
 CREATE INDEX zoning_parcel_two_max_geomid_idx ON zoning.parcel_two_max USING hash (geom_id);
 VACUUM (ANALYZE) zoning.parcel_two_max;
@@ -87,7 +103,7 @@ zoning.parcel_in_cities);
 
 CREATE INDEX zoning_parcel_two_max_not_in_cities_gidx ON zoning.parcel_two_max_not_in_cities USING GIST (geom);
 
-/*INSERT INTO zoning.parcel
+INSERT INTO zoning.parcel
 SELECT z.geom_id, z.zoning_id, zo.prop
 FROM
 zoning.parcel_overlaps_maxonly zo,
