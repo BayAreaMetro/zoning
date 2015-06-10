@@ -10,7 +10,7 @@ pg_dump -Fc -v -f /vm_project_dir/full.dump -U postgres mtc
 
 #to restore:
 
-# psql -f globals.sql
+# sudo -u postgres psql -f globals.sql
 # psql -f schema.sql dbname
 # pg_restore -a -d dbname -Fc full.dump
 
