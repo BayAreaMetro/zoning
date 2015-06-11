@@ -1,112 +1,39 @@
-INSERT INTO zoning.parcel
-SELECT geom_id, zoning_id, prop FROM 
-zoning.parcel_overlaps_maxonly where (geom_id) IN
+DROP TABLE IF EXISTS zoning.contested_parcel_in_cities_single_max;
+CREATE TABLE zoning.contested_parcel_in_cities_single_max
+AS 
+SELECT z.geom_id, z.zoning_id, z.prop, z.tablename, p.geom 
+FROM
+parcel p, 
+zoning.cities_parcel_overlaps_maxonly z
+ where (z.geom_id) IN
 	(
 	SELECT geom_id from 
 	(
 	select geom_id, count(*) as countof from 
-	zoning.parcel_overlaps_maxonly
+	zoning.cities_parcel_overlaps_maxonly
 	GROUP BY geom_id
 	) b
 	WHERE b.countof=1
-	);
+	)
+ AND p.geom_id = z.geom_id;
+ COMMENT ON TABLE zoning.contested_parcel_in_cities_multiple_max is 'derived from parcels/zoning overlaps for parcels intersecting cities-one max value'
 
-/*
-
-DROP TABLE IF EXISTS zoning.parcel_in_cities;
-CREATE TABLE zoning.parcel_in_cities AS
-SELECT p2n.geom_id, p2n.zoning_id, p2n.tablename 
-FROM 
-admin.parcel_cities pcc,
-(SELECT c.city, p2.geom_id, p2.zoning_id, p2.tablename 
+DROP TABLE IF EXISTS zoning.contested_parcel_in_cities_multiple_max;
+CREATE TABLE zoning.contested_parcel_in_cities_multiple_max
+AS 
+SELECT z.geom_id, z.zoning_id, z.prop, z.tablename, p.geom 
 FROM
-zoning.codes_dictionary c,
-zoning.parcel_overlaps p2 --parcel_two_max is a twice derived view on zoning.parcel_overlaps
-WHERE c.id = p2.zoning_id) p2n
-WHERE p2n.geom_id = pcc.geom_id
-AND pcc.name1 = p2n.city;
---Query returned successfully: 48928 rows affected, 3750 ms execution time.
-
-DROP TABLE IF EXISTS zoning.parcel_in_cities_doubles; 
-CREATE TABLE zoning.parcel_in_cities_doubles AS 
-SELECT geom_id
-FROM
-(SELECT geom_id, count(*) AS countof
-FROM zoning.parcel_in_cities
-GROUP BY geom_id) p
-WHERE p.countof>1;
-
-DROP TABLE IF EXISTS zoning.parcel_in_cities_geo;
-CREATE TABLE zoning.parcel_in_cities_geo AS 
-SELECT z.geom_id, p.geom
-FROM
-parcel p,
-zoning.parcel_in_cities z
-WHERE z.geom_id=p.geom_id;
-
-DROP TABLE IF EXISTS zoning.parcel_in_cities_doubles_geo;
-CREATE TABLE zoning.parcel_in_cities_doubles_geo AS 
-SELECT z.geom_id, p.geom
-FROM
-parcel p,
-zoning.parcel_in_cities_doubles z
-WHERE z.geom_id=p.geom_id;
-
-ALTER TABLE zoning.parcel_in_cities_doubles_geo ADD primary key(geom_id);
-vacuum analyze zoning.parcel_in_cities_doubles_geo;
-
-SELECT geom_id, zoning_id, prop 
-FROM zoning.parcel_overlaps WHERE (geom_id,prop) IN 
-( SELECT geom_id, MAX(prop)
-  FROM zoning.parcel_overlaps
-  WHERE geom_id IN (
-  	SElECT geom_id from zoning.parcel_in_cities_doubles
-  	)
-  GROUP BY geom_id
-);
-
-/*DELETE FROM zoning.parcel_in_cities WHERE geom_id IN
-(
-SELECT geom_id
-FROM
-(SELECT geom_id, count(*) AS countof
-FROM zoning.parcel_in_cities
-GROUP BY geom_id) p
-WHERE p.countof>1);
---Query returned successfully: 3121 rows affected, 87 ms execution time.
-*/
-
-/*
-CREATE INDEX zoning_parcel_two_max_zoningid_idx ON zoning.parcel_two_max USING hash (zoning_id);
-CREATE INDEX zoning_parcel_two_max_geomid_idx ON zoning.parcel_two_max USING hash (geom_id);
-VACUUM (ANALYZE) zoning.parcel_two_max;
-
-DROP TABLE IF EXISTS zoning.parcel_two_max_geo; 
-CREATE TABLE zoning.parcel_two_max_geo AS
-SELECT two.zoning_id,p.geom_id,two.prop,p.geom 
-FROM 
-	(select zoning_id, geom_id, prop from zoning.parcel_two_max) as two,
-	(select geom_id, geom from parcel) as p
-WHERE two.geom_id = p.geom_id;
-
-create INDEX zoning_parcel_in_cities_geomid_idx ON zoning.parcel_in_cities using hash (geom_id);
-VACUUM (ANALYZE) zoning.parcel_in_cities;
-
---select parcels that have multiple overlaps that are not in cities
-DROP VIEW IF EXISTS zoning.parcel_two_max_not_in_cities;
-CREATE TABLE zoning.parcel_two_max_not_in_cities AS
-SELECT * from zoning.parcel_two_max_geo WHERE geom_id 
-NOT IN (
-SELECT geom_id 
-FROM
-zoning.parcel_in_cities);
-
-CREATE INDEX zoning_parcel_two_max_not_in_cities_gidx ON zoning.parcel_two_max_not_in_cities USING GIST (geom);
-
-INSERT INTO zoning.parcel
-SELECT z.geom_id, z.zoning_id, zo.prop
-FROM
-zoning.parcel_overlaps_maxonly zo,
-zoning.parcel_in_cities z
-WHERE z.geom_id = zo.geom_id
-AND zo.zoning_id = z.zoning_id;*/
+parcel p, 
+zoning.cities_parcel_overlaps_maxonly z
+ where (z.geom_id) IN
+	(
+	SELECT geom_id from 
+	(
+	select geom_id, count(*) as countof from 
+	zoning.cities_parcel_overlaps_maxonly
+	GROUP BY geom_id
+	) b
+	WHERE b.countof>1
+	)
+ AND p.geom_id = z.geom_id;
+ COMMENT ON TABLE zoning.contested_parcel_in_cities_multiple_max is 'derived from parcels/zoning overlaps for parcels intersecting cities-multiple max values'
