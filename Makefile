@@ -21,7 +21,7 @@ backup_db:
 
 parcel_zoning.csv:
 	mkdir -p data_out
-	$(psql) -f process/merge_jurisdiction_zoning.sql
+	$(psql) -f process/merge_all_zoning.sql
 	$(psql) -f process/parcel_zoning_intersection.sql
 
 add_plu06:
@@ -31,32 +31,58 @@ add_plu06:
 assign_zoning_to_parcels: \
 	prepare \
 	intersect \
+	overlaps \
+	get_stats_on_overlaps \
 	assign \
 	check_output 
 
-prepare: merge_source_zoning \
-	prepare_parcels \
-	prepare_zoning \
+prepare: merge_zoning \
+	clean_geoms \
 	assign_admin 
 
-merge_source_zoning:
-	$(psql) -f process/function_spatial_merge_schema.sql
+merge_zoning:
+	$(psql) -f function/merge_schema.sql #load merge function
+	merge_all_zoning
+	merge_city_zoning
+	merge_county_zoning
+
+clean_geoms: \
+	clean_bayarea_zoning_geoms \
+	clean_county_zoning_geoms \
+	clean_city_zoning_geoms \
+	clean_parcel_geoms
+
+##
+merge_all_zoning:
+	$(psql) -f process/merge_all_zoning.sql
+
+merge_county_zoning:
 	$(psql) -f process/merge_county_zoning.sql
+
+merge_city_zoning:
 	$(psql) -f process/merge_city_zoning.sql
 
-prepare_parcels:
-	$(psql) -f process/prepare_parcels.sql
+##
+clean_parcel_geoms:
+	$(psql) -f process/clean_parcel_geoms.sql
 
-prepare_zoning:
-	$(psql) -f process/prepare_zoning.sql
+clean_bayarea_zoning_geoms:
+	$(psql) -f process/clean_zoning_geoms.sql
 
+clean_city_zoning_geoms:
+	$(psql) -f process/clean_city_zoning_geoms.sql
+
+clean_county_zoning_geoms:
+	$(psql) -f process/clean_county_zoning_geoms.sql
+
+##
 assign_admin:
 	$(psql) -f process/assign_admin_to_parcels.sql
 
+##
 intersect: create_intersection_table \ #22m in 100GB VM
 	get_stats_on_intersection \
-	create_zoning_parcel_overlaps_table \
-	get_stats_on_overlaps
+	overlaps_all
 
 create_intersection_table:
 	$(psql) -c "SET enable_seqscan TO off;"
@@ -65,23 +91,48 @@ create_intersection_table:
 get_stats_on_intersection:
 	$(psql) -f process/get_stats_on_intersection.sql
 
+overlaps_all:
+	$(psql) -f process/create_zoning_parcel_overlaps_table.sql
+
+singleintersection: \
+	get_stats_on_overlaps_all \
+	assign_zoning_to_parcels_with_one_zone \
+
+get_stats_on_overlaps_all:
+	$(psql) -f process/get_stats_on_overlaps_all.sql
+
+assign_zoning_to_parcels_with_one_zone:
+	$(psql) -f process/assign_zoning_to_parcels_with_one_zone.sql
+
+cities: \
+	assign_zoning_to_parcels_in_cities \
+	overlaps_cities \
+	get_stats_on_overlaps_cities \
+	assign_zoning_to_parcels_in_cities
+
+get_stats_on_overlaps_cities:
+	$(psql) -f process/get_stats_on_overlaps_cities.sql
+
+overlaps_cities:
+	$(psql) -f functions/get_zoning_id.sql
+	$(psql) -f process/overlaps_city_zoning_parcels.sql
+
+assign_zoning_to_parcels_in_cities:
+	$(psql) -f process/assign_zoning_to_parcels_in_cities.sql
+
+counties: \
+	overlaps_counties \
+	get_stats_on_overlaps_counties \
+	assign_zoning_to_parcels_in_unincorporated
+
 overlaps_counties:
 	$(psql) -f process/overlaps_county_zoning_parcels.sql
 
-overlaps_cities:
-	$(psql) -f process/overlaps_city_zoning_parcels.sql
+get_stats_on_overlaps_counties:
+	$(psql) -f process/get_stats_on_overlaps_counties.sql
 
-create_zoning_parcel_overlaps_table:
-	$(psql) -f process/create_zoning_parcel_overlaps_table.sql
-
-get_stats_on_overlaps:
-	$(psql) -f process/get_stats_on_overlaps.sql
-
-assign:
-	$(psql) -f process/assign_zoning_to_parcels_with_one_zone.sql
-	$(psql) -f process/assign_zoning_to_parcels_in_cities.sql
+assign_zoning_to_parcels_in_unincorporated:
 	$(psql) -f process/assign_zoning_to_parcels_in_unincorporated.sql	
-	$(psql) -f process/fill_in_zoning_parcel_table.sql
 
 check_output:
 	$(psql) -f process/check_zoning_parcel_table.sql
