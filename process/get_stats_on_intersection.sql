@@ -18,10 +18,3 @@ ALTER TABLE zoning.parcel_intersection_count_geo ADD PRIMARY KEY (geom_id);
 
 CREATE INDEX zoning_parcel_intersection_count ON zoning.parcel_intersection_count (countof);
 VACUUM (ANALYZE) zoning.parcel_intersection_count;
-
-DROP VIEW IF EXISTS zoning.parcels_with_multiple_zoning;
-CREATE VIEW zoning.parcels_with_multiple_zoning AS
-SELECT geom_id, geom from parcel where geom_id
-IN (SELECT geom_id FROM zoning.parcel_intersection_count WHERE countof>1);
-COMMENT ON VIEW zoning.parcels_with_multiple_zoning is 'parcels that have more than 1 intersecting zoning multipolygon';
-

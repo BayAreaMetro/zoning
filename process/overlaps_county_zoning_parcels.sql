@@ -16,10 +16,10 @@ SELECT p.geom_id,
 FROM (select geom_id, geom 
 		FROM parcel where geom_id in 
 			(select p1.geom_id from 
-				zoning.parcel_contested p1, 
+				zoning.parcel_contested2 p1, 
 				admin.parcel_counties p2
 				where p1.geom_id=p2.geom_id)) as p,
-(select zoning_id, tablename, geom from zoning.bay_area_generic) as z
+(select zoning.get_id(zoning,juris) as zoning_id, tablename, geom from zoning.unincorporated_counties_valid) as z
 WHERE ST_Intersects(z.geom, p.geom)
 ) f
 GROUP BY 

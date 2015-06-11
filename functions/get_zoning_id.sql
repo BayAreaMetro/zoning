@@ -1,5 +1,5 @@
 CREATE OR REPLACE FUNCTION zoning.get_id(name text,juris int)
-   RETURNS record AS
+   RETURNS int AS
 $$
   SELECT id 
   from zoning.codes_dictionary 
