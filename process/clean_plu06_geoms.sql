@@ -23,11 +23,10 @@ AS
 SELECT *
 FROM zoning.plu06_may2015estimate
 WHERE GeometryType(geom) <> 'MULTIPOLYGON';
-COMMENT ON TABLE zoning.geometry_collection is 'subset of zoning.plu06_may2015estimate_source with non multipolygon geometries produced by makevalid';
+COMMENT ON TABLE zoning.geometry_collection is 'subset of zoning.plu06_may2015estimate with non multipolygon geometries produced by makevalid';
 
 DELETE FROM zoning.plu06_may2015estimate
 WHERE GeometryType(geom) <> 'MULTIPOLYGON';
 
-SELECT UpdateGeometrySRID('zoning','plu06_may2015estimate_valid','geom',26910);
 ALTER TABLE zoning.plu06_may2015estimate
  ALTER COLUMN geom TYPE geometry(MULTIPOLYGON, 26910);

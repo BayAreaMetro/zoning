@@ -23,7 +23,8 @@ zoning_parcels_with_details.csv: \
 
 assign: assign_simple \
 	assign_cities \
-	assign_counties 
+	assign_counties \
+	assign_plu06
 
 prepare: merge_zoning \
 	clean_geoms \
@@ -39,7 +40,8 @@ clean_geoms: \
 	clean_bayarea_zoning_geoms \
 	clean_county_zoning_geoms \
 	clean_city_zoning_geoms \
-	clean_parcel_geoms
+	clean_parcel_geoms \
+	clean_city_plu06_geoms
 
 ##
 merge_all_zoning:
@@ -63,6 +65,9 @@ clean_city_zoning_geoms:
 
 clean_county_zoning_geoms:
 	$(psql) -f process/clean_county_zoning_geoms.sql
+
+clean_plu06_geoms:
+	$(psql) -f process/clean_plu06_geoms.sql
 
 ##
 assign_admin:
@@ -123,14 +128,17 @@ get_stats_on_overlaps_counties:
 assign_zoning_to_parcels_in_unincorporated:
 	$(psql) -f process/assign_zoning_to_parcels_in_unincorporated.sql	
 
-finalize: \
-	make load_plu06 \
-	make check_output \
-	make add_plu06
+assign_plu06:
+	$(psql) -f process/assign_plu06_to_parcels.sql		
 
-add_plu06:
-	$(psql) -f process/clean_plu06_geoms.sql
-	$(psql) -f load/add-plu-2006.sql
+# finalize: \
+# 	make load_plu06 \
+# 	make check_output \
+# 	make add_plu06
+
+# add_plu06:
+# 	$(psql) -f process/clean_plu06_geoms.sql
+# 	$(psql) -f load/add-plu-2006.sql
 
 check_output:
 	$(psql) -f process/check_zoning_parcel_table.sql

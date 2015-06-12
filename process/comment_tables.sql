@@ -17,5 +17,4 @@ COMMENT ON TABLE zoning.parcel_two_max_geo_overlaps is 'for cartography';
 --output a table with geographic information and generic code info for review
 COMMENT ON TABLE zoning.parcel_withdetails is 'spandex parcels with all the generic zoning columns';
 COMMENT ON TABLE zoning.parcel_two_max_geo is 'for cartography';
-COMMENT ON TABLE zoning.unmapped_parcels is 'spandex parcels not yet assigned zoning';
 COMMENT ON TABLE zoning.unmapped_parcel_zoning is 'spandex parcels not yet assigned zoning--filled in from 2008 plu data';
