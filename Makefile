@@ -129,7 +129,7 @@ finalize: \
 	make add_plu06
 
 add_plu06:
-	$(psql) -f load/clean_plu06_geoms.sql
+	$(psql) -f process/clean_plu06_geoms.sql
 	$(psql) -f load/add-plu-2006.sql
 
 check_output:

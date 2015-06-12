@@ -1,7 +1,7 @@
 DROP TABLE zoning.plu06_may2015estimate_valid;
 CREATE TABLE zoning.plu06_may2015estimate_valid AS
 SELECT 
-	tablename, juris, zoning, ST_MakeValid(the_geom) geom
+	tablename, juris, zoning, ST_MakeValid(geom) geom
 FROM
 	zoning.plu06_may2015estimate;
 COMMENT ON TABLE zoning.plu06_may2015estimate_valid is 'subset of zoning.plu06_may2015estimate_source with valid geometries only';
@@ -10,7 +10,7 @@ DROP TABLE zoning.plu06_may2015estimate_invalid;
 CREATE TABLE zoning.plu06_may2015estimate_invalid AS
 SELECT *
 FROM zoning.plu06_may2015estimate
-WHERE ST_IsValid(the_geom) = false;
+WHERE ST_IsValid(geom) = false;
 COMMENT ON TABLE zoning.plu06_may2015estimate_invalid is 'subset of zoning.plu06_may2015estimate_source with invalid geometries only';
 
 DROP TABLE zoning.plu06_may2015estimate_geometry_collection;
