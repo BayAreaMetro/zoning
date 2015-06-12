@@ -1,36 +1,38 @@
 --on a 100GB VM this takes about 40 minutes
-create INDEX plu06_may2015estimate_gidx ON zoning.plu06_may2015estimate using GIST (geom);
-create INDEX plu06_may2015estimate_idx ON zoning.plu06_may2015estimate using hash (objectid);
-VACUUM (ANALYZE) zoning.plu06_may2015estimate;
+create INDEX plu06_may2015estimate_valid_gidx ON zoning.plu06_may2015estimate_valid using GIST (geom);
+create INDEX plu06_may2015estimate_valid_idx ON zoning.plu06_may2015estimate_valid using hash (objectid);
+VACUUM (ANALYZE) zoning.plu06_may2015estimate_valid;
 
-alter table zoning.plu06_may2015estimate rename column of_ to of;
+alter table zoning.plu06_may2015estimate_valid rename column of_ to of;
 
-UPDATE zoning.plu06_may2015estimate SET IH = case when IH = '1' then '1' else '0' end;
-ALTER TABLE zoning.plu06_may2015estimate ALTER COLUMN IH TYPE INTEGER USING IH::INTEGER;
+UPDATE zoning.plu06_may2015estimate_valid SET IH = case when IH = '1' then '1' else '0' end;
+ALTER TABLE zoning.plu06_may2015estimate_valid ALTER COLUMN IH TYPE INTEGER USING IH::INTEGER;
 
-ALTER TABLE zoning.plu06_may2015estimate ALTER COLUMN juris TYPE INTEGER USING HS::INTEGER;
+ALTER TABLE zoning.plu06_may2015estimate_valid ALTER COLUMN juris TYPE INTEGER USING HS::INTEGER;
 
-ALTER TABLE zoning.plu06_may2015estimate ALTER COLUMN HS TYPE INTEGER USING HS::INTEGER;
-ALTER TABLE zoning.plu06_may2015estimate ALTER COLUMN HT TYPE INTEGER USING HT::INTEGER;
-ALTER TABLE zoning.plu06_may2015estimate ALTER COLUMN HM TYPE INTEGER USING HM::INTEGER;
-ALTER TABLE zoning.plu06_may2015estimate ALTER COLUMN of TYPE INTEGER USING of::INTEGER;
-ALTER TABLE zoning.plu06_may2015estimate ALTER COLUMN HO TYPE INTEGER USING HO::INTEGER;
-ALTER TABLE zoning.plu06_may2015estimate ALTER COLUMN SC TYPE INTEGER USING SC::INTEGER;
-ALTER TABLE zoning.plu06_may2015estimate ALTER COLUMN IL TYPE INTEGER USING IL::INTEGER;
-ALTER TABLE zoning.plu06_may2015estimate ALTER COLUMN IW TYPE INTEGER USING IW::INTEGER;
-ALTER TABLE zoning.plu06_may2015estimate ALTER COLUMN RS TYPE INTEGER USING RS::INTEGER;
-ALTER TABLE zoning.plu06_may2015estimate ALTER COLUMN RB TYPE INTEGER USING RB::INTEGER;
-ALTER TABLE zoning.plu06_may2015estimate ALTER COLUMN MR TYPE INTEGER USING MR::INTEGER;
-ALTER TABLE zoning.plu06_may2015estimate ALTER COLUMN MT TYPE INTEGER USING MT::INTEGER;
-ALTER TABLE zoning.plu06_may2015estimate ALTER COLUMN ME TYPE INTEGER USING ME::INTEGER;
+ALTER TABLE zoning.plu06_may2015estimate_valid ALTER COLUMN HS TYPE INTEGER USING HS::INTEGER;
+ALTER TABLE zoning.plu06_may2015estimate_valid ALTER COLUMN HT TYPE INTEGER USING HT::INTEGER;
+ALTER TABLE zoning.plu06_may2015estimate_valid ALTER COLUMN HM TYPE INTEGER USING HM::INTEGER;
+ALTER TABLE zoning.plu06_may2015estimate_valid ALTER COLUMN of TYPE INTEGER USING of::INTEGER;
+ALTER TABLE zoning.plu06_may2015estimate_valid ALTER COLUMN HO TYPE INTEGER USING HO::INTEGER;
+ALTER TABLE zoning.plu06_may2015estimate_valid ALTER COLUMN SC TYPE INTEGER USING SC::INTEGER;
+ALTER TABLE zoning.plu06_may2015estimate_valid ALTER COLUMN IL TYPE INTEGER USING IL::INTEGER;
+ALTER TABLE zoning.plu06_may2015estimate_valid ALTER COLUMN IW TYPE INTEGER USING IW::INTEGER;
+ALTER TABLE zoning.plu06_may2015estimate_valid ALTER COLUMN RS TYPE INTEGER USING RS::INTEGER;
+ALTER TABLE zoning.plu06_may2015estimate_valid ALTER COLUMN RB TYPE INTEGER USING RB::INTEGER;
+ALTER TABLE zoning.plu06_may2015estimate_valid ALTER COLUMN MR TYPE INTEGER USING MR::INTEGER;
+ALTER TABLE zoning.plu06_may2015estimate_valid ALTER COLUMN MT TYPE INTEGER USING MT::INTEGER;
+ALTER TABLE zoning.plu06_may2015estimate_valid ALTER COLUMN ME TYPE INTEGER USING ME::INTEGER;
 
 --USE PLU 2006 WHERE NO OTHER DATA AVAILABLE
+
+
 
 DROP TABLE IF EXISTS zoning.unmapped_parcel_zoning_plu;
 CREATE TABLE zoning.unmapped_parcel_zoning_plu AS
 SELECT p.geom_id, p.geom, z.OBJECTID as plu06_objectid
 FROM zoning.unmapped_parcels p,
-zoning.plu06_may2015estimate z 
+zoning.plu06_may2015estimate_valid z 
 WHERE ST_Intersects(z.geom,p.geom);
 
 DROP TABLE IF EXISTS zoning.unmapped_parcel_intersection_count;
@@ -59,7 +61,7 @@ FROM (
 				(select geom_id 
 					from zoning.unmapped_parcel_intersection_count 
 					WHERE countof>1)) as p,
-				(select objectid, geom from zoning.plu06_may2015estimate) as z
+				(select objectid, geom from zoning.plu06_may2015estimate_valid) as z
 		WHERE ST_Intersects(z.geom, p.geom)
 		) f
 GROUP BY 
@@ -109,7 +111,7 @@ where geom_id in
 (select geom_id 
 from zoning.unmapped_parcel_intersection_count 
 WHERE countof=1)) as p,
-zoning.plu06_may2015estimate z
+zoning.plu06_may2015estimate_valid z
 WHERE p.plu06_objectid=z.objectid;
 
 INSERT INTO zoning.parcel_withdetails
@@ -138,7 +140,7 @@ from (select p2.*
 	zoning.parcel_overlaps_maxonly_plu pmax
 	where pmax.geom_id=p2.geom_id AND
 	p2.plu06_objectid=pmax.plu06_objectid) as p,
-zoning.plu06_may2015estimate z
+zoning.plu06_may2015estimate_valid z
 WHERE p.plu06_objectid=z.objectid;
 
 --EXPORT pg_dump --table zoning.parcel_withdetails > /mnt/bootstrap/zoning/parcel_withdetails05142015.sql

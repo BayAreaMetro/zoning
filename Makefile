@@ -129,8 +129,8 @@ finalize: \
 	make add_plu06
 
 add_plu06:
-	$(psql) \
-	-f load/add-plu-2006.sql
+	$(psql) -f load/clean_plu06_geoms.sql
+	$(psql) -f load/add-plu-2006.sql
 
 check_output:
 	$(psql) -f process/check_zoning_parcel_table.sql
