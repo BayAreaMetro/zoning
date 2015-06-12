@@ -41,7 +41,7 @@ zoning.counties_parcel_overlaps_maxonly z
 DROP INDEX zoning_contested_parcel_in_counties_multiple_max;
 CREATE INDEX zoning_contested_parcel_in_counties_multiple_max ON zoning.contested_parcel_in_counties_multiple_max using GIST (geom);
 
-vacuum (analyze) zoning.contested_parcel_in_counties_multiple_max
+vacuum (analyze) zoning.contested_parcel_in_counties_multiple_max;
 
 DROP TABLE IF EXISTS zoning.parcel_geo3;
 CREATE TABLE zoning.parcel_geo3 AS

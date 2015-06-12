@@ -9,32 +9,21 @@ DBNAME=mtc
 psql = PGPASSWORD=vagrant psql -p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME)
 shp2pgsql = shp2pgsql -t 2D -s 26910 -I
 
-#########################
-########Outputs##########
-#########################
-backup_db:
-	bash output/backup_db.sh
 
 #########################
 ##Join Parcels/Zoning####
 #########################
 
-parcel_zoning.csv:
-	mkdir -p data_out
-	$(psql) -f process/merge_all_zoning.sql
-	$(psql) -f process/parcel_zoning_intersection.sql
-
-add_plu06:
-	$(psql) \
-	-f load/add-plu-2006.sql
-
-assign_zoning_to_parcels: \
+zoning_parcels_with_details.csv: \
 	prepare \
 	intersect \
-	overlaps \
-	get_stats_on_overlaps \
 	assign \
-	check_output 
+	finalize \
+	backup_db
+
+assign: assign_simple \
+	assign_cities \
+	assign_counties 
 
 prepare: merge_zoning \
 	clean_geoms \
@@ -94,7 +83,7 @@ get_stats_on_intersection:
 overlaps_all:
 	$(psql) -f process/create_zoning_parcel_overlaps_table.sql
 
-singleintersection: \
+assign_simple: \
 	get_stats_on_overlaps_all \
 	assign_zoning_to_parcels_with_one_zone \
 
@@ -104,7 +93,7 @@ get_stats_on_overlaps_all:
 assign_zoning_to_parcels_with_one_zone:
 	$(psql) -f process/assign_zoning_to_parcels_with_one_zone.sql
 
-cities: \
+assign_cities: \
 	assign_zoning_to_parcels_in_cities \
 	overlaps_cities \
 	get_stats_on_overlaps_cities \
@@ -120,7 +109,7 @@ overlaps_cities:
 assign_zoning_to_parcels_in_cities:
 	$(psql) -f process/assign_zoning_to_parcels_in_cities.sql
 
-counties: \
+assign_counties: \
 	overlaps_counties \
 	get_stats_on_overlaps_counties \
 	assign_zoning_to_parcels_in_unincorporated
@@ -133,6 +122,15 @@ get_stats_on_overlaps_counties:
 
 assign_zoning_to_parcels_in_unincorporated:
 	$(psql) -f process/assign_zoning_to_parcels_in_unincorporated.sql	
+
+finalize: \
+	make load_plu06 \
+	make check_output \
+	make add_plu06
+
+add_plu06:
+	$(psql) \
+	-f load/add-plu-2006.sql
 
 check_output:
 	$(psql) -f process/check_zoning_parcel_table.sql
@@ -339,6 +337,9 @@ sql_dump:
 	pg_dump --table zoning.parcel_withdetails \
 	-f /mnt/bootstrap/zoning/data_out/zoning_parcel.sql \
 	vagrant
+
+backup_db:
+	bash output/backup_db.sh
 
 remove_source_data:
 	rm ba8parcels.* 
