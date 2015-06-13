@@ -128,6 +128,17 @@ get_stats_on_overlaps_counties:
 assign_zoning_to_parcels_in_unincorporated:
 	$(psql) -f process/assign_zoning_to_parcels_in_unincorporated.sql	
 
+plu06: \
+	create_intersection_table \
+	overlaps_plu06 \
+	assign_plu06
+
+create_intersection_table:
+	$(psql) -f process/create_intersection_table_plu06.sql #22m in 100GB VM
+
+overlaps_plu06:
+	$(psql) -f process/overlaps_plu06_missing_parcels.sql
+
 assign_plu06:
 	$(psql) -f process/assign_plu06_to_parcels.sql		
 
