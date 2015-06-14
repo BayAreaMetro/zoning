@@ -104,3 +104,42 @@ zoning.plu06_many_intersection where (geom_id) IN
 	) b
 	WHERE b.countof>1
 	);
+
+DROP TABLE IF EXISTS zoning.parcel_withdetails;
+CREATE TABLE zoning.parcel_withdetails AS
+z.id, 
+z.juris, 
+z.city,
+z.tablename,
+z.name,
+z.min_far, 
+z.max_height,
+z.max_far, 
+z.min_front_setback,
+z.max_front_setback,
+z.side_setback,
+z.rear_setback,
+z.min_dua,
+z.max_dua,           
+z.coverage,          
+z.max_du_per_parcel,
+z.min_lot_size,      
+z.hs,z.ht,z.hm,z.of,z.ho,z.sc,z.il,z.iw,z.ih,z.rs,z.rb,z.mr,z.mt,z.me,
+p.geom_id as geom_id,
+p.geom as geom
+FROM zoning.parcel pz,
+zoning.codes_dictionary z,
+parcel p
+WHERE pz.zoning_id = z.id AND p.geom_id = pz.geom_id;
+
+CREATE INDEX zoning_parcel_withdetails_gidx ON zoning.parcel_withdetails using GIST (geom);
+CREATE INDEX zoning_parcel_withdetails_geom_idx ON zoning.parcel_withdetails using hash (geom_id);
+VACUUM (ANALYZE) zoning.parcel_withdetails;
+
+INSERT INTO zoning.parcel_withdetails
+select * from zoning.plu06_one_intersection;
+SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel_withdetails;
+
+INSERT INTO zoning.parcel_withdetails
+select * from zoning.plu06_many_intersection;
+SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel_withdetails;
