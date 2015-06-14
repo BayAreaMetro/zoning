@@ -107,10 +107,10 @@ zoning.plu06_many_intersection where (geom_id) IN
 
 DROP TABLE IF EXISTS zoning.parcel_withdetails;
 CREATE TABLE zoning.parcel_withdetails AS
-z.id, 
+SELECT z.id, 
 z.juris, 
 z.city,
-z.tablename,
+pz.tablename,
 z.name,
 z.min_far, 
 z.max_height,

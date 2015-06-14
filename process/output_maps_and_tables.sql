@@ -49,4 +49,4 @@ me,
 geom_id
 FROM zoning.parcel_withdetails;
 \COPY zoning.parcel_withdetails_nogeom TO '/vm_project_dir/zoning/zoning_parcels.csv' DELIMITER ',' CSV HEADER;
-DROP TABLE zoning.parcel_withdetails_nogeom;*/
+DROP TABLE zoning.parcel_withdetails_nogeom;
