@@ -57,7 +57,7 @@ CREATE TABLE zoning.parcel_contested3 AS
 SELECT *
 FROM parcel
 WHERE geom_id NOT IN (SELECT geom_id FROM zoning.parcel);
-COMMENT ON TABLE zoning.parcel_contested2 is 'A geo-table of parcels with more than 1 intersection, and not in city intersection or county intersection based on 2011 data. ';
+COMMENT ON TABLE zoning.parcel_contested3 is 'A geo-table of parcels with more than 1 intersection, and not in city intersection or county intersection based on 2011 data. ';
 
 CREATE INDEX zoning_parcel_contested_gidx ON zoning.parcel_contested2 using GIST (geom);
 

@@ -13,7 +13,7 @@ FROM (
 	 	ST_Intersection(p.geom, z.geom) geom 
 	FROM 
 		(select geom_id, geom 
-			FROM zoning.contested3
+			FROM zoning.parcel_contested3
 			WHERE geom_id in 
 				(select geom_id 
 					from zoning.unmapped_parcel_intersection_count 

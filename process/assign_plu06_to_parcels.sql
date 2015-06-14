@@ -1,25 +1,19 @@
-/*DROP TABLE IF EXISTS zoning.parcel_overlaps_maxonly_plu;
+DROP TABLE IF EXISTS zoning.parcel_overlaps_maxonly_plu;
 CREATE TABLE zoning.parcel_overlaps_maxonly_plu AS
 SELECT geom_id, plu06_objectid, prop 
 FROM zoning.parcel_overlaps_plu WHERE (geom_id,prop) IN 
 ( SELECT geom_id, MAX(prop)
   FROM zoning.parcel_overlaps_plu
-  GROUP BY geom_id
+  GROUP BY geom_id 
 );
-
-delete from zoning.parcel_overlaps_maxonly_plu 
-	where geom_id in 
-	( select p.geom_id from 
-		(SELECT geom_id, count(*) as countof 
-			FROM zoning.parcel_overlaps_maxonly_plu GROUP BY geom_id) p 
-		WHERE p.countof>1); */
 
 DROP TABLE IF EXISTS zoning.plu06_one_intersection; 
 CREATE TABLE zoning.plu06_one_intersection AS
 SELECT 
 9999 as id, 
 juris as juris, 
-'NA' as city, 
+text 'NA' as city,
+text 'plu06' as tablename,
 gengplu as name,
 -9999 as min_far, 
 z.max_height as max_height,
@@ -53,7 +47,8 @@ CREATE TABLE zoning.plu06_many_intersection AS
 SELECT 
 9999 as id, 
 juris as juris, 
-'NA' as city, 
+text 'NA' as city,
+text 'PLU06' as tablename,
 gengplu as name,
 -9999 as min_far, 
 z.max_height as max_height,
@@ -77,44 +72,35 @@ from (select p2.*
 	p2.plu06_objectid=pmax.plu06_objectid) as p,
 zoning.plu06_may2015estimate z
 WHERE p.plu06_objectid=z.objectid;
+COMMENT ON TABLE zoning.plu06_many_intersection IS 'plu 06 intersection table with selected greatest max value of zoning'
 
 create INDEX plu06_many_intersection_gidx ON zoning.plu06_many_intersection using GIST (geom);
 vacuum (analyze) zoning.plu06_one_intersection;
-/*
+
+DROP TABLE IF EXISTS zoning.plu06_many_intersection_two_max;
+CREATE TABLE zoning.plu06_many_intersection_two_max AS
+SELECT * FROM 
+zoning.plu06_many_intersection where (geom_id) IN
+	(
+	SELECT geom_id from 
+	(
+	select geom_id, count(*) as countof from 
+	zoning.plu06_many_intersection
+	GROUP BY geom_id
+	) b
+	WHERE b.countof>1
+	);
+
 --EXPORT pg_dump --table zoning.parcel_withdetails > /mnt/bootstrap/zoning/parcel_withdetails05142015.sql
-CREATE TABLE zoning.parcel_withdetails_nogeom AS
-SELECT
-id,                
-juris,             
-city,              
-name,              
-min_far,           
-max_far,           
-max_height,        
-min_front_setback, 
-max_front_setback, 
-side_setback,      
-rear_setback,      
-min_dua,           
-max_dua,           
-coverage,          
-max_du_per_parcel, 
-min_lot_size,      
-hs,                
-ht,                
-hm,                
-of,                
-ho,                
-sc,                
-il,                
-iw,                
-ih,                
-rs,                
-rb,                
-mr,                
-mt,                
-me,                
-geom_id
-FROM zoning.parcel_withdetails;
-\COPY zoning.parcel_withdetails_nogeom TO '/mnt/bootstrap/zoning/zoning_parcels_with_details.csv' DELIMITER ',' CSV HEADER;
-DROP TABLE zoning.parcel_withdetails_nogeom;*/
+
+DELETE FROM 
+zoning.plu06_many_intersection where (geom_id) IN
+	(
+	SELECT geom_id from 
+	(
+	select geom_id, count(*) as countof from 
+	zoning.plu06_many_intersection
+	GROUP BY geom_id
+	) b
+	WHERE b.countof>1
+	);
