@@ -9,6 +9,12 @@ DBNAME=mtc
 psql = PGPASSWORD=vagrant psql -p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNAME)
 shp2pgsql = shp2pgsql -t 2D -s 26910 -I
 
+#########################
+###Join Parcels/PDAs#####
+#########################
+parcels_pdas.csv: 
+	load_pda \
+	$(psql) -f process/get_pda_for_parcels.sql
 
 #########################
 ##Join Parcels/Zoning####
@@ -159,6 +165,9 @@ check_output:
 ####LOAD IN POSTGRES#####
 #########################
 
+load_pda: pda.shp
+	$(shp2pgsql) pda.shp admin.pda | $(psql)
+
 load_zoning_data: load_zoning_by_jurisdiction \
 	fix_errors_in_source_zoning \
 	load_admin_boundaries \
@@ -214,6 +223,10 @@ load_plu06:
 ###PREPARE####
 ##############
 
+pda.shp: pda.shp.zip
+	unzip -o $<
+	touch $@
+
 City_Santa_Clara_GP_LU_02.shp: City_Santa_Clara_GP_LU_02.zip
 	unzip -o $<
 	touch $@
@@ -266,6 +279,11 @@ no_dev_array.csv: no_dev1.txt
 ##############
 ###DOWNLOAD###
 ##############
+
+pda.shp.zip: 
+	$(get)$@ \
+	$@.download
+	mv $@.download $@
 
 City_Santa_Clara_GP_LU_02.zip: 
 	$(get)$@ \
