@@ -200,7 +200,14 @@ load_zoning_by_jurisdiction:
 	$(psql)
 
 load_zoning_codes:
-	$(psql) -f load/load-generic-zoning-code-table.sql
+	$(psql) -f load/load-generic-zoning-code-table.sql \
+	load_zoning_code_additions
+
+load_zoning_code_additions:
+	$(psql) -f load/add_missing_codes.sql
+
+fix_string_matching_in_zoning_table:
+	$(psql) -f load/zoning_codes_fix_string_matching.sql
 
 fix_errors_in_source_zoning:
 	#FIX for Napa
