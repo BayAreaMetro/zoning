@@ -27,10 +27,10 @@ zoning_parcels_with_details.csv: \
 	finalize \
 	backup_db
 
-assign: assign_simple \
-	assign_cities \
-	assign_counties \
-	assign_plu06
+update_after_change_in_zoning_ids: \
+	intersect \
+	assign \
+	backup_db
 
 prepare: merge_zoning \
 	clean_geoms \
@@ -93,6 +93,11 @@ get_stats_on_intersection:
 
 overlaps_all:
 	$(psql) -f process/create_zoning_parcel_overlaps_table.sql
+
+assign: assign_simple \
+	assign_cities \
+	assign_counties \
+	assign_plu06
 
 assign_simple: \
 	get_stats_on_overlaps_all \
