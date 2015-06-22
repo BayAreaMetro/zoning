@@ -23,10 +23,3 @@ zoning.counties_parcel_overlaps_maxonly where (geom_id) IN
 	) b
 	WHERE b.countof>1
 	);
---Query returned successfully: 145309 rows affected, 817 ms execution time.
-
-/*n
-BELOW WE DEAL WITH THE PARCELS 
-THAT ARE CLAIMED BY 2 (OR MORE) 
-JURISDICTIONAL ZONING GEOMETRIES 
-*/

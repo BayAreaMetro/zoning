@@ -38,7 +38,7 @@ zoning.counties_parcel_overlaps_maxonly z
  AND p.geom_id = z.geom_id;
  COMMENT ON TABLE zoning.contested_parcel_in_counties_multiple_max is 'derived from parcels/zoning overlaps for parcels intersecting counties-multiple max values';
 
-DROP INDEX zoning_contested_parcel_in_counties_multiple_max;
+DROP INDEX IF EXISTS zoning_contested_parcel_in_counties_multiple_max;
 CREATE INDEX zoning_contested_parcel_in_counties_multiple_max ON zoning.contested_parcel_in_counties_multiple_max using GIST (geom);
 
 vacuum (analyze) zoning.contested_parcel_in_counties_multiple_max;

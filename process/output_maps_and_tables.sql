@@ -13,6 +13,7 @@
 
 --output a table with geographic information and generic code info for review
 
+DROP TABLE IF EXISTS zoning.parcel_withdetails_nogeom;
 CREATE TABLE zoning.parcel_withdetails_nogeom AS
 SELECT
 z.id,                

@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS zoning.contested_parcel_in_cities_single_max;
+DROP TABLE IF EXISTS zoning.contested_parcel_in_cities_single_max CASCADE;
 CREATE TABLE zoning.contested_parcel_in_cities_single_max
 AS 
 SELECT z.geom_id, z.zoning_id, z.prop, z.tablename, p.geom 
@@ -18,7 +18,7 @@ zoning.cities_parcel_overlaps_maxonly z
  AND p.geom_id = z.geom_id;
  COMMENT ON TABLE zoning.contested_parcel_in_cities_multiple_max is 'derived from parcels/zoning overlaps for parcels intersecting cities-one max value';
 
-DROP TABLE IF EXISTS zoning.contested_parcel_in_cities_multiple_max;
+DROP TABLE IF EXISTS zoning.contested_parcel_in_cities_multiple_max CASCADE;
 CREATE TABLE zoning.contested_parcel_in_cities_multiple_max
 AS 
 SELECT z.geom_id, z.zoning_id, z.prop, z.tablename, p.geom 
@@ -38,30 +38,34 @@ zoning.cities_parcel_overlaps_maxonly z
  AND p.geom_id = z.geom_id;
  COMMENT ON TABLE zoning.contested_parcel_in_cities_multiple_max is 'derived from parcels/zoning overlaps for parcels intersecting cities-multiple max values';
 
-DROP INDEX zoning_contested_parcel_in_cities_multiple_max;
+DROP INDEX IF EXISTS zoning_contested_parcel_in_cities_multiple_max;
 CREATE INDEX zoning_contested_parcel_in_cities_multiple_max ON zoning.contested_parcel_in_cities_multiple_max using GIST (geom);
 
 vacuum (analyze) zoning.contested_parcel_in_cities_multiple_max;
 
-DROP TABLE IF EXISTS zoning.parcel_geo2;
+DROP TABLE IF EXISTS zoning.parcel_geo2 CASCADE;
 CREATE TABLE zoning.parcel_geo2 AS
 SELECT *
 FROM zoning.contested_parcel_in_cities_single_max;
 COMMENT ON TABLE zoning.parcel_geo1 is 'A geo-table of parcel intersection from cities'
 
+DROP INDEX IF EXISTS zoning_parcel_geo2_gidx;
 CREATE INDEX zoning_parcel_geo2_gidx ON zoning.parcel_geo2 using GIST (geom);
 vacuum (analyze) zoning.parcel_geo2;
 
-DROP TABLE IF EXISTS zoning.parcel_contested2;
+DROP TABLE IF EXISTS zoning.parcel_contested2 CASCADE;
 CREATE TABLE zoning.parcel_contested2 AS
 SELECT *
 FROM parcel
 WHERE geom_id NOT IN (SELECT geom_id FROM zoning.parcel);
 COMMENT ON TABLE zoning.parcel_contested2 is 'A geo-table of parcels with more than 1 intersection not in city intersection';
+\echo 'there are this many parcels not in the zoning.parcel table:'
+select count(*) from zoning.parcel_contested2;
 
-CREATE INDEX zoning_parcel_contested_gidx ON zoning.parcel_contested2 using GIST (geom);
+DROP INDEX IF EXISTS zoning_parcel_contested2_gidx;
+CREATE INDEX zoning_parcel_contested2_gidx ON zoning.parcel_contested2 using GIST (geom);
 
-vacuum (analyze) zoning.parcel_contested;
+vacuum (analyze) zoning.parcel_contested2;
 vacuum (analyze) zoning.parcel_geo1;
 
 INSERT INTO zoning.parcel 

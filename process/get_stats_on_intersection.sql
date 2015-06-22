@@ -6,6 +6,7 @@ SELECT geom_id, count(*) as countof FROM
 COMMENT ON TABLE zoning.parcel_intersection_count is 'count by geom_id of st_intersects of parcel and zoning';
 
 --add table to inspect errors in overlapping areas
+DROP INDEX IF EXISTS zoning_parcel_intersection_count_geom_id;
 CREATE INDEX zoning_parcel_intersection_count_geom_id ON zoning.parcel_intersection_count (geom_id);
 VACUUM (ANALYZE) zoning.parcel_intersection_count;
 
