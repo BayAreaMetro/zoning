@@ -80,9 +80,8 @@ assign_admin:
 	$(psql) -f process/assign_admin_to_parcels.sql
 
 ##
-intersect: create_intersection_table \ #22m in 100GB VM
-	get_stats_on_intersection \
-	overlaps_all
+intersect: create_intersection_table \
+	get_stats_on_intersection 
 
 create_intersection_table:
 	$(psql) -c "SET enable_seqscan TO off;"
@@ -100,8 +99,7 @@ assign: assign_simple \
 	assign_plu06
 
 assign_simple: \
-	get_stats_on_overlaps_all \
-	assign_zoning_to_parcels_with_one_zone \
+	assign_zoning_to_parcels_with_one_zone
 
 get_stats_on_overlaps_all:
 	$(psql) -f process/get_stats_on_overlaps_all.sql
@@ -110,7 +108,6 @@ assign_zoning_to_parcels_with_one_zone:
 	$(psql) -f process/assign_zoning_to_parcels_with_one_zone.sql
 
 assign_cities: \
-	assign_zoning_to_parcels_in_cities \
 	overlaps_cities \
 	get_stats_on_overlaps_cities \
 	assign_zoning_to_parcels_in_cities
