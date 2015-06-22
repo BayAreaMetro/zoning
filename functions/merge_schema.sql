@@ -8,7 +8,7 @@ DECLARE
 	      ORDER BY "table_name" ASC
 	      LIMIT ((SELECT count(*)
 		  FROM information_schema.tables
-		  WHERE table_schema = $1)-1);
+		  WHERE table_schema = $1));
 		sql_string text := '';
 BEGIN
 	 FOR table_record IN tables LOOP

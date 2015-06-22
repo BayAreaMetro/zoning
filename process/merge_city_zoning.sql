@@ -14,5 +14,6 @@ CREATE TABLE zoning.zoning_cities_towns_merged
 select zoning.merge('zoning_cities_towns');
 
 --give it a more reasonable name
+DROP TABLE IF EXISTS zoning.cities_towns;
 ALTER TABLE zoning.zoning_cities_towns_merged
     RENAME TO cities_towns;

@@ -9,5 +9,6 @@ CREATE TABLE zoning.zoning_unincorporated_counties_merged
 
 select zoning.merge('zoning_unincorporated_counties');
 
+DROP TABLE IF EXISTS zoning.zoning_unincorporated_counties_merged;
 ALTER TABLE zoning.zoning_unincorporated_counties_merged
     RENAME TO unincorporated_counties;

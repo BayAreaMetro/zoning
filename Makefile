@@ -36,11 +36,10 @@ prepare: merge_zoning \
 	clean_geoms \
 	assign_admin 
 
-merge_zoning:
-	$(psql) -f function/merge_schema.sql #load merge function
-	merge_all_zoning
-	merge_city_zoning
-	merge_county_zoning
+merge_zoning: \
+	merge_all_zoning \
+	merge_city_zoning \
+	merge_county_zoning \
 
 clean_geoms: \
 	clean_bayarea_zoning_geoms \
@@ -51,12 +50,15 @@ clean_geoms: \
 
 ##
 merge_all_zoning:
+	$(psql) -f functions/merge_schema.sql 
 	$(psql) -f process/merge_all_zoning.sql
 
 merge_county_zoning:
+	$(psql) -f functions/merge_schema.sql 
 	$(psql) -f process/merge_county_zoning.sql
 
 merge_city_zoning:
+	$(psql) -f functions/merge_schema.sql 
 	$(psql) -f process/merge_city_zoning.sql
 
 ##
