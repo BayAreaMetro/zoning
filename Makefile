@@ -230,6 +230,9 @@ fix_errors_in_source_zoning:
 load_plu06:
 	$(shp2pgsql) plu06_may2015estimate.shp zoning.plu06_may2015estimate | $(psql)
 
+no_dev: no_dev1_geo_only.csv
+	$(psql) -f load/no_dev.sql
+
 ##############
 ###PREPARE####
 ##############
@@ -281,11 +284,6 @@ city10_ba.shp: city10_ba.zip
 PLU2008_Updated.shp: PLU2008_Updated.zip
 	unzip -o $<
 	touch $@
-
-no_dev_array.csv: no_dev1.txt
-	cp no_dev1.txt no_dev1.csv
-	ogr2ogr -f csv -overwrite -select GEOM_ID no_dev_array.csv no_dev1.csv
-
 
 ##############
 ###DOWNLOAD###
