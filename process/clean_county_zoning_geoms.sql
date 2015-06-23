@@ -29,4 +29,4 @@ ALTER TABLE zoning.unincorporated_counties_valid
  ALTER COLUMN geom TYPE geometry(MULTIPOLYGON, 26910);
 
 --ALTER TABLE zoning.unincorporated_counties RENAME TO unincorporated_counties_source;
-COMMENT ON TABLE zoning.unincorporated_counties_source is 'this is the source merged table of all source city zoning geometries. use zoning.unincorporated_counties_valid for working multipolygons.';
+COMMENT ON TABLE zoning.unincorporated_counties is 'this is the source merged table of all source city zoning geometries. use zoning.unincorporated_counties_valid for working multipolygons.';

@@ -9,6 +9,7 @@ DROP INDEX IF EXISTS zoning_parcel_lookup_geom_idx;
 CREATE INDEX zoning_parcel_lookup_geom_idx ON zoning.parcel using hash (geom_id);
 vacuum (analyze) zoning.parcel;
 
+DROP TABLE IF EXISTS zoning.parcel_geo1;
 CREATE TABLE zoning.parcel_geo1 AS
 SELECT z.*, p.geom
 FROM zoning.parcel z, parcel p
@@ -19,6 +20,7 @@ DROP INDEX IF EXISTS zoning_parcel_geo1_gidx;
 CREATE INDEX zoning_parcel_geo1_gidx ON zoning.parcel_geo1 using GIST (geom);
 vacuum (analyze) zoning.parcel_geo1;
 
+DROP TABLE IF EXISTS zoning.parcel_contested;
 CREATE TABLE zoning.parcel_contested AS
 SELECT *
 FROM parcel
