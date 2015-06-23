@@ -8,18 +8,3 @@ FROM zoning.counties_parcel_overlaps WHERE (geom_id,prop) IN
   FROM zoning.counties_parcel_overlaps
   GROUP BY geom_id
 );
-
---So, create table of parcels with >1 max values
-DROP TABLE IF EXISTS zoning.counties_parcel_two_max;
-CREATE TABLE zoning.counties_parcel_two_max AS
-SELECT geom_id, zoning_id, prop, tablename FROM 
-zoning.counties_parcel_overlaps_maxonly where (geom_id) IN
-	(
-	SELECT geom_id from 
-	(
-	select geom_id, count(*) as countof from 
-	zoning.counties_parcel_overlaps_maxonly
-	GROUP BY geom_id
-	) b
-	WHERE b.countof>1
-	);

@@ -49,6 +49,7 @@ SELECT *
 FROM zoning.contested_parcel_in_counties_single_max;
 COMMENT ON TABLE zoning.parcel_geo1 is 'A geo-table of parcel intersection from counties'
 
+DROP INDEX IF EXISTS zoning_parcel_geo2_gidx;
 CREATE INDEX zoning_parcel_geo2_gidx ON zoning.parcel_geo2 using GIST (geom);
 vacuum (analyze) zoning.parcel_geo2;
 
