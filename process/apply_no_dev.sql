@@ -1,10 +1,17 @@
+CREATE INDEX no_dev_source_gidx ON no_dev_source using GIST (centroid);
+vacuum (analyze) no_dev_source;
+
 DROP TABLE IF EXISTS zoning.parcels_no_dev;
-CREATE TABLE admin.parcels_details_no_dev AS
+CREATE TABLE zoning.parcels_no_dev AS
 SELECT z.* FROM
 	zoning.parcel_withdetails z,
 	no_dev_source nd
-WHERE ST_Within(nd.geometry,z.geom);
+WHERE ST_Within(nd.centroid,z.geom);
 COMMENT ON TABLE zoning.parcel_intersection is 'st_within of zoning.parcel_withdetails and no_dev_source';
+
+CREATE TABLE no_deved_parcels AS
+select * from zoning.parcel_withdetails
+WHERE geom_id IN (SELECT geom_id FROM zoning.parcels_no_dev);
 
 DELETE FROM zoning.parcel_withdetails
 WHERE geom_id IN (SELECT geom_id FROM zoning.parcels_no_dev);
