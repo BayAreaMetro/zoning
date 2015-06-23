@@ -230,8 +230,11 @@ fix_errors_in_source_zoning:
 load_plu06:
 	$(shp2pgsql) plu06_may2015estimate.shp zoning.plu06_may2015estimate | $(psql)
 
-no_dev: no_dev1_geo_only.csv
+load_no_dev: no_dev1_geo_only.csv
 	$(psql) -f load/no_dev.sql
+
+apply_no_dev:
+	$(psql) -f process/apply_no_dev.sql
 
 ##############
 ###PREPARE####
