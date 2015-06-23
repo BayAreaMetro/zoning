@@ -53,5 +53,9 @@ p.ghsh_cntrd
 FROM zoning.parcel_withdetails z,
 parcel p
 where p.geom_id=z.geom_id;
+
+VACUUM (ANALYZE) zoning.parcel_withdetails_nogeom;
+SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel_withdetails_nogeom;
+
 \COPY zoning.parcel_withdetails_nogeom TO '/vm_project_dir/zoning/zoning_parcels.csv' DELIMITER ',' CSV HEADER;
 DROP TABLE zoning.parcel_withdetails_nogeom;

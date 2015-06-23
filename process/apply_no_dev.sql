@@ -1,42 +1,26 @@
-CREATE INDEX no_dev_source_gidx ON no_dev_source using GIST (centroid);
-vacuum (analyze) no_dev_source;
-
-DROP TABLE IF EXISTS zoning.parcels_no_dev;
-CREATE TABLE zoning.parcels_no_dev AS
-SELECT z.* FROM
-	zoning.parcel_withdetails z,
-	no_dev_source nd
+UPDATE zoning.parcel_withdetails as z
+SET 
+id = 0000,
+juris = 0000,
+city = z.city,
+tablename = z.tablename,
+name = z.name,
+min_far = 0,
+max_height = 0,
+max_far = 0,
+min_front_setback = 0,
+max_front_setback = 0,
+side_setback = 0,
+rear_setback = 0,
+min_dua = 0,
+max_dua = 0,
+coverage = 0,
+max_du_per_parcel = 0,
+min_lot_size = 0,
+hs = 0,ht = 0,hm = 0,of = 0,ho = 0,sc = 0,il = 0,iw = 0,ih = 0,rs = 0,rb = 0,mr = 0,mt = 0,me = 0,
+geom_id = z.geom_id,
+geom = z.geom,
+nodev = 0
+FROM 
+no_dev_source nd
 WHERE ST_Within(nd.centroid,z.geom);
-COMMENT ON TABLE zoning.parcel_intersection is 'st_within of zoning.parcel_withdetails and no_dev_source';
-
-CREATE TABLE no_deved_parcels AS
-select * from zoning.parcel_withdetails
-WHERE geom_id IN (SELECT geom_id FROM zoning.parcels_no_dev);
-
-DELETE FROM zoning.parcel_withdetails
-WHERE geom_id IN (SELECT geom_id FROM zoning.parcels_no_dev);
-
-INSERT INTO zoning.parcel_withdetails
-SELECT 
-0000 as id, 
-0000 as juris, 
-text 'NA' as city,
-text 'nodev' as tablename,
-text 'nodev' as name,
-0 as min_far, 
-0 as max_height,
-0 as max_far, 
-0 as min_front_setback,
-0 as max_front_setback,
-0 as side_setback,
-0 as rear_setback,
-0 as min_dua,
-0 as max_dua,           
-0 as coverage,          
-0 as max_du_per_parcel,
-0 as min_lot_size,      
-0 as hs,0 as ht,0 as hm,0 as of,0 as ho,0 as sc,0 as il,0 as iw,0 as ih,0 as rs,0 as rb,0 as mr,0 as mt,0 as me,
-geom_id as geom_id,
-geom as geom
-from
-zoning.parcels_no_dev;

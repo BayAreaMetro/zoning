@@ -137,9 +137,17 @@ CREATE INDEX zoning_parcel_withdetails_geom_idx ON zoning.parcel_withdetails usi
 VACUUM (ANALYZE) zoning.parcel_withdetails;
 
 INSERT INTO zoning.parcel_withdetails
-select * from zoning.plu06_one_intersection;
+select * from zoning.plu06_one_intersection
+WHERE geom_id NOT IN (SELECT geom_id from zoning.parcel_withdetails);
 SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel_withdetails;
 
+VACUUM (ANALYZE) zoning.parcel_withdetails;
+
 INSERT INTO zoning.parcel_withdetails
-select * from zoning.plu06_many_intersection;
+select * from zoning.plu06_many_intersection
+WHERE geom_id NOT IN (SELECT geom_id from zoning.parcel_withdetails);
 SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel_withdetails;
+
+VACUUM (ANALYZE) zoning.parcel_withdetails;
+
+ALTER TABLE zoning.parcel_withdetails ADD COLUMN nodev integer NOT NULL DEFAULT 0;
