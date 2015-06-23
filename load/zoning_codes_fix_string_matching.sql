@@ -48,7 +48,7 @@ where c.name = nc.old_name;
 select count(*) from zoning.codes_string_matching_fix_replacements;
 
 DELETE FROM zoning.codes_dictionary
-WHERE c.id in (select id from zoning.codes_string_matching_fix_replacements);
+WHERE id in (select id from zoning.codes_string_matching_fix_replacements);
 
 INSERT INTO zoning.codes_dictionary
 SELECT * from zoning.codes_string_matching_fix_replacements;
