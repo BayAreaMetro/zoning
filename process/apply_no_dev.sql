@@ -20,7 +20,7 @@ min_lot_size = 0,
 hs = 0,ht = 0,hm = 0,of = 0,ho = 0,sc = 0,il = 0,iw = 0,ih = 0,rs = 0,rb = 0,mr = 0,mt = 0,me = 0,
 geom_id = z.geom_id,
 geom = z.geom,
-nodev = 0
+nodev = 1
 FROM 
 no_dev_source nd
 WHERE ST_Within(nd.centroid,z.geom);
