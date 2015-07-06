@@ -29,4 +29,4 @@ ALTER TABLE zoning.cities_towns_valid
  ALTER COLUMN geom TYPE geometry(MULTIPOLYGON, 26910);
 
 ALTER TABLE zoning.cities_towns RENAME TO cities_towns_source;
-COMMENT ON TABLE zoning.cities_towns_source is 'this is the source merged table of all source city zoning geometries. use zoning.cities_towns_valid for working multipolygons.';
+COMMENT ON TABLE zoning.cities_towns_source is 'this is the source merged table of all source city zoning geometries';

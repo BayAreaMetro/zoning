@@ -9,7 +9,7 @@ FROM
 admin.county10_ca county,
 parcel p
 WHERE ST_Intersects(county.geom, p.geom);
-COMMENT ON TABLE admin.parcel is 'parcels st_intersect with census 2010 county boundaries';
+COMMENT ON TABLE admin.parcel_counties is 'parcels st_intersect with census 2010 county boundaries';
 
 DROP INDEX IF EXISTS admin_parcels_counties_geomid_idx;
 CREATE INDEX admin_parcels_counties_geomid_idx ON admin.parcel_counties using hash (geom_id);

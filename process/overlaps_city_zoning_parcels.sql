@@ -26,7 +26,7 @@ GROUP BY
 	geom_id,
 	tablename,
 	zoning_id;
-COMMENT ON TABLE zoning.parcel_overlaps is 'st_intersects with area for contested parcels in cities';
+COMMENT ON TABLE zoning.cities_parcel_overlaps is 'st_intersects with area for contested parcels in cities';
 
 DROP INDEX IF EXISTS zoning_parcel_overlaps_cities_gidx;
 DROP INDEX IF EXISTS zoning_parcel_overlaps_cities_geom_id_idx;

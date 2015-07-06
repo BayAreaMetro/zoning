@@ -16,7 +16,7 @@ zoning.cities_parcel_overlaps_maxonly z
 	WHERE b.countof=1
 	)
  AND p.geom_id = z.geom_id;
- COMMENT ON TABLE zoning.contested_parcel_in_cities_multiple_max is 'derived from parcels/zoning overlaps for parcels intersecting cities-one max value';
+ COMMENT ON TABLE zoning.contested_parcel_in_cities_single_max is 'derived from parcels/zoning overlaps for parcels intersecting cities-one max value';
 
 DROP TABLE IF EXISTS zoning.contested_parcel_in_cities_multiple_max CASCADE;
 CREATE TABLE zoning.contested_parcel_in_cities_multiple_max
@@ -47,7 +47,7 @@ DROP TABLE IF EXISTS zoning.parcel_geo2 CASCADE;
 CREATE TABLE zoning.parcel_geo2 AS
 SELECT *
 FROM zoning.contested_parcel_in_cities_single_max;
-COMMENT ON TABLE zoning.parcel_geo1 is 'A geo-table of parcel intersection from cities'
+COMMENT ON TABLE zoning.parcel_geo2 is 'A geo-table of parcel intersection from cities'
 
 DROP INDEX IF EXISTS zoning_parcel_geo2_gidx;
 CREATE INDEX zoning_parcel_geo2_gidx ON zoning.parcel_geo2 using GIST (geom);
