@@ -78,5 +78,5 @@ ALTER TABLE zoning.code_additions ALTER COLUMN MR TYPE INTEGER USING MR::INTEGER
 ALTER TABLE zoning.code_additions ALTER COLUMN MT TYPE INTEGER USING MT::INTEGER;
 ALTER TABLE zoning.code_additions ALTER COLUMN ME TYPE INTEGER USING ME::INTEGER;
 
-INSERT INTO zoning.code_additions 
+INSERT INTO zoning.codes_dictionary 
 SELECT * from zoning.code_additions;

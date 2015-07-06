@@ -1,4 +1,4 @@
-DROP TABLE zoning.cities_towns_valid;
+DROP TABLE IF EXISTS zoning.cities_towns_valid;
 CREATE TABLE zoning.cities_towns_valid AS
 SELECT 
 	tablename, juris, zoning, ST_MakeValid(the_geom) geom

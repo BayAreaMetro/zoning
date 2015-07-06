@@ -144,12 +144,15 @@ assign_zoning_to_parcels_in_unincorporated:
 	$(psql) -f process/assign_zoning_to_parcels_in_unincorporated.sql	
 
 plu06: \
-	create_intersection_table \
+	create_intersection_table_plu06 \
 	overlaps_plu06 \
 	assign_plu06
 
+create_intersection_table_plu06:
+	$(psql) -f process/create_intersection_table_plu06.sql
+
 create_intersection_table:
-	$(psql) -f process/create_intersection_table_plu06.sql #22m in 100GB VM
+	$(psql) -f process/create_intersection_table.sql
 
 overlaps_plu06:
 	$(psql) -f process/overlaps_plu06_missing_parcels.sql
@@ -177,12 +180,16 @@ check_output:
 load_pda: pda.shp
 	$(shp2pgsql) pda.shp admin.pda | $(psql)
 
-load_zoning_data: load_zoning_by_jurisdiction \
+load_zoning_data: \
+	load_zoning_by_jurisdiction \
+	load_zoning_data_by_city \
+	load_zoning_data_by_county \
 	fix_errors_in_source_zoning \
 	load_admin_boundaries \
-	load_zoning_codes
+	load_zoning_codes \
+	load_plu06
 
-load_admin_boundaries:
+load_admin_boundaries: city10_ba.shp county10_ca.shp
 	$(psql) -c "DROP SCHEMA if exists admin CASCADE"
 	$(psql) -c "CREATE SCHEMA admin"
 	$(shp2pgsql) city10_ba.shp admin.city10_ba | $(psql)
@@ -191,7 +198,7 @@ load_admin_boundaries:
 	#old file saved here: http://landuse.s3.amazonaws.com/zoning/city10_ba_original.zip
 	$(shp2pgsql) county10_ca.shp admin.county10_ca | $(psql)
 
-load_zoning_by_jurisdiction: 
+load_zoning_by_jurisdiction: jurisdictional/SonomaCountyGeneralPlan.shp 
 	#required files: cities_towns/AlamedaGeneralPlan.shp unincorporated_counties/SonomaCountyGeneralPlan.shp
 	#need to better understand make dependency tree for generating these
 	#make goes to make jurisdictional/SonomaCountyGeneralPlan.shp
@@ -207,7 +214,6 @@ load_zoning_by_jurisdiction:
 load_zoning_data_by_city: cities_towns/AlamedaGeneralPlan.shp
 	$(psql) -c "DROP SCHEMA IF EXISTS zoning_cities_towns CASCADE"
 	$(psql) -c "CREATE SCHEMA zoning_cities_towns"
-	#JURISDICTION-BASED ZONING SOURCE DATA
 	ls cities_towns/*.shp | cut -d "/" -f2 | sed 's/.shp//' | \
 	xargs -I {} $(shp2pgsql) jurisdictional/{} zoning_cities_towns.{} | \
 	$(psql)
@@ -219,14 +225,15 @@ load_zoning_data_by_county: unincorporated_counties/SonomaCountyGeneralPlan.shp
 	xargs -I {} $(shp2pgsql) jurisdictional/{} zoning_unincorporated_counties.{} | \
 	$(psql)
 
-load_zoning_codes:
+load_zoning_codes: zoning_codes_base2012.csv match_fields_tables_zoning_2012_source.csv
 	$(psql) -f load/load-generic-zoning-code-table.sql \
-	load_zoning_code_additions
+	load_zoning_code_additions \
+	fix_string_matching_in_zoning_table
 
 load_zoning_code_additions:
 	$(psql) -f load/add_missing_codes.sql
 
-fix_string_matching_in_zoning_table:
+fix_string_matching_in_zoning_table: match_fields_tables_zoning_2012_source.csv
 	$(psql) -f load/zoning_codes_fix_string_matching.sql
 
 fix_errors_in_source_zoning:
@@ -243,7 +250,7 @@ fix_errors_in_source_zoning:
 	$(psql) -c "CREATE TABLE zoning_staging.solcogeneral_plan_unincorporated AS SELECT * from zoning_staging.solcogeneral_plan_unincorporated_temp;"
 	$(psql) -c "DROP TABLE zoning_staging.solcogeneral_plan_unincorporated_temp;"
 
-load_plu06:
+load_plu06: plu06_may2015estimate.shp
 	$(shp2pgsql) plu06_may2015estimate.shp zoning.plu06_may2015estimate | $(psql)
 
 load_no_dev: no_dev1_geo_only.csv
@@ -266,13 +273,12 @@ City_Santa_Clara_GP_LU_02.shp: City_Santa_Clara_GP_LU_02.zip
 
 cities_towns/AlamedaGeneralPlan.shp: jurisdictional/AlamedaGeneralPlan.shp
 	mkdir -p cities_towns
-	mv jurisdictional/* cities_towns/
-	rm -rf jurisdictional
+	cp jurisdictional/* cities_towns/
 	touch cities_towns/*
 
 unincorporated_counties/SonomaCountyGeneralPlan.shp: jurisdictional/SonomaCountyGeneralPlan.shp
 	mkdir -p unincorporated_counties
-	cd jurisdictional; mv -t ../unincorporated_counties SonomaCountyGeneralPlan.* \
+	cd jurisdictional; cp -t ../unincorporated_counties SonomaCountyGeneralPlan.* \
 				   SolCoGeneral_plan_unincorporated.* \
 				   SanMateoCountyZoning.* \
 				   SantaClaraCountyGenPlan.* \
@@ -288,9 +294,9 @@ jurisdictional/SonomaCountyGeneralPlan.shp: PlannedLandUsePhase1.gdb/a00000001.f
 	bash load/jurisdiction_shapefile_directory.sh
 	touch jurisdictional/*
 
-PlannedLandUsePhase1.gdb: PlannedLandUse1Through6.gdb.zip
+PlannedLandUsePhase1.gdb/a00000001.freelist: PlannedLandUse1Through6.gdb.zip
 	unzip -o $<
-	touch $@/*
+	touch $@
 
 county10_ca.shp: county10_ca.zip
 	unzip -o $<
@@ -298,11 +304,14 @@ county10_ca.shp: county10_ca.zip
 
 city10_ba.shp: city10_ba.zip
 	unzip -o $<
-	touch $@
 
 PLU2008_Updated.shp: PLU2008_Updated.zip
 	unzip -o $<
 	touch $@
+
+plu06_may2015estimate.shp: plu06_may2015estimate.zip
+	unzip -o $<
+	touch $@	
 
 ##############
 ###DOWNLOAD###

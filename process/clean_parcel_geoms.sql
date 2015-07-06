@@ -3,12 +3,14 @@ ALTER TABLE parcel
    TYPE Geometry(MultiPolygon, 26910) 
    USING ST_Transform(geom, 26910);
 
+DROP TABLE IF EXISTS parcel_invalid;
 CREATE TABLE parcel_invalid AS
 SELECT *
 FROM parcel
 WHERE ST_IsValid(geom) = false;
 COMMENT ON TABLE parcel_invalid is 'spandex parcels-invalid geometries';
 
+DROP TABLE IF EXISTS parcel_geometrycollection;
 CREATE TABLE parcel_geometrycollection
 AS
 SELECT *
