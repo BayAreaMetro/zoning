@@ -21,10 +21,11 @@ parcels_pdas.csv:
 #########################
 
 zoning_parcels_with_details.csv: \
+	load_zoning_data \
 	prepare \
 	intersect \
 	assign \
-	finalize \
+	plu06 \
 	backup_db
 
 update_after_change_in_zoning_ids: \
@@ -46,20 +47,23 @@ clean_geoms: \
 	clean_county_zoning_geoms \
 	clean_city_zoning_geoms \
 	clean_parcel_geoms \
-	clean_city_plu06_geoms
+	clean_plu06_geoms
 
 ##
 merge_all_zoning:
 	$(psql) -f functions/merge_schema.sql 
 	$(psql) -f process/merge_all_zoning.sql
+	$(psql) -c "drop schema zoning_staging CASCADE" #temporarily, because of VM size limit
 
 merge_county_zoning:
 	$(psql) -f functions/merge_schema.sql 
 	$(psql) -f process/merge_county_zoning.sql
+	$(psql) -c "DROP SCHEMA zoning_unincorporated_counties CASCADE;"
 
 merge_city_zoning:
 	$(psql) -f functions/merge_schema.sql 
 	$(psql) -f process/merge_city_zoning.sql
+	$(psql) -c "drop schema zoning_cities_towns CASCADE" #temporarily, because of VM size limit
 
 ##
 clean_parcel_geoms:
@@ -87,6 +91,7 @@ intersect: create_intersection_table \
 
 create_intersection_table:
 	$(psql) -c "SET enable_seqscan TO off;"
+	$(psql) -c "CREATE SCHEMA zoning;"
 	$(psql) -f process/create_intersection_table.sql #22m in 100GB VM
 
 get_stats_on_intersection:
@@ -193,12 +198,23 @@ load_zoning_by_jurisdiction:
 	#and then errors out on some detail there
 	#however, the file that depends on already exists
 	#perhaps need to touch the files within FileGDBs?
-	$(psql) -c "CREATE SCHEMA zoning_unincorporated_counties"
+	$(psql) -c "DROP SCHEMA IF EXISTS zoning_staging CASCADE"
+	$(psql) -c "CREATE SCHEMA zoning_staging"
+	ls jurisdictional/*.shp | cut -d "/" -f2 | sed 's/.shp//' | \
+	xargs -I {} $(shp2pgsql) jurisdictional/{} zoning_staging.{} | \
+	$(psql)
+
+load_zoning_data_by_city: cities_towns/AlamedaGeneralPlan.shp
+	$(psql) -c "DROP SCHEMA IF EXISTS zoning_cities_towns CASCADE"
 	$(psql) -c "CREATE SCHEMA zoning_cities_towns"
 	#JURISDICTION-BASED ZONING SOURCE DATA
 	ls cities_towns/*.shp | cut -d "/" -f2 | sed 's/.shp//' | \
 	xargs -I {} $(shp2pgsql) jurisdictional/{} zoning_cities_towns.{} | \
 	$(psql)
+
+load_zoning_data_by_county: unincorporated_counties/SonomaCountyGeneralPlan.shp
+	$(psql) -c "DROP SCHEMA IF EXISTS zoning_unincorporated_counties CASCADE"
+	$(psql) -c "CREATE SCHEMA zoning_unincorporated_counties"
 	ls unincorporated_counties/*.shp | cut -d "/" -f2 | sed 's/.shp//' | \
 	xargs -I {} $(shp2pgsql) jurisdictional/{} zoning_unincorporated_counties.{} | \
 	$(psql)
@@ -378,6 +394,9 @@ zoning_parcel_intersection:
 
 clean_shapefiles:
 	rm -rf jurisdictional
+
+clean_parcel_generation:
+	$(psql)	-f load/drop_parcel_generation_tables.sql
 
 sql_dump:
 	pg_dump --table zoning.parcel_withdetails \

@@ -69,3 +69,15 @@ INSERT INTO zoning.parcel
 SELECT geom_id, zoning_id, prop, tablename from 
 zoning.contested_parcel_in_counties_single_max;
 SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel;
+
+--DROP TO SAVE SPACE (TEMPORARY FOR VAGRANT VM)
+DROP TABLE zoning.contested_parcel_in_counties_single_max CASCADE;
+DROP TABLE zoning.contested_parcel_in_counties_multiple_max CASCADE;
+DROP TABLE zoning.parcel_geo2 CASCADE;
+DROP TABLE zoning.parcel_contested2 CASCADE;
+DROP TABLE zoning.counties_parcel_two_max CASCADE;
+DROP TABLE zoning.counties_parcel_single_max CASCADE;
+DROP TABLE zoning.counties_parcel_overlaps CASCADE;
+DROP TABLE zoning.counties_parcel_overlaps_maxonly CASCADE;
+DROP TABLE zoning.unincorporated_counties CASCADE;
+DROP TABLE zoning.unincorporated_counties_valid CASCADE;
