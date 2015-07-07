@@ -74,14 +74,14 @@ zoning.contested_parcel_in_cities_single_max;
 SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel;
 
 --DROP TO SAVE SPACE (TEMPORARY FOR VAGRANT VM)
-DROP TABLE zoning.contested_parcel_in_cities_single_max CASCADE;
-DROP TABLE zoning.contested_parcel_in_cities_multiple_max CASCADE;
-DROP TABLE zoning.parcel_geo1 CASCADE;
-drop table zoning.parcel_contested CASCADE;
-DROP TABLE zoning.cities_parcel_two_max CASCADE;
-DROP TABLE zoning.cities_parcel_single_max CASCADE;
-DROP TABLE zoning.cities_parcel_overlaps CASCADE;
-DROP TABLE zoning.cities_parcel_overlaps_maxonly CASCADE;
-DROP TABLE zoning.cities_towns CASCADE;
-DROP TABLE zoning.cities_towns_source CASCADE;
-DROP TABLE zoning.cities_towns_valid CASCADE;
+DROP TABLE IF EXISTS zoning.contested_parcel_in_cities_single_max CASCADE;
+DROP TABLE IF EXISTS zoning.contested_parcel_in_cities_multiple_max CASCADE;
+DROP TABLE IF EXISTS zoning.parcel_geo1 CASCADE;
+drop table IF EXISTS zoning.parcel_contested CASCADE;
+DROP TABLE IF EXISTS zoning.cities_parcel_two_max CASCADE;
+DROP TABLE IF EXISTS zoning.cities_parcel_single_max CASCADE;
+DROP TABLE IF EXISTS zoning.cities_parcel_overlaps CASCADE;
+DROP TABLE IF EXISTS zoning.cities_parcel_overlaps_maxonly CASCADE;
+DROP TABLE IF EXISTS zoning.cities_towns CASCADE;
+DROP TABLE IF EXISTS zoning.cities_towns_source CASCADE;
+DROP TABLE IF EXISTS zoning.cities_towns_valid CASCADE;
