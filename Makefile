@@ -97,19 +97,12 @@ create_intersection_table:
 get_stats_on_intersection:
 	$(psql) -f process/get_stats_on_intersection.sql
 
-overlaps_all:
-	$(psql) -f process/create_zoning_parcel_overlaps_table.sql
-
 assign: assign_simple \
 	assign_cities \
 	assign_counties \
-	assign_plu06
 
 assign_simple: \
 	assign_zoning_to_parcels_with_one_zone
-
-get_stats_on_overlaps_all:
-	$(psql) -f process/get_stats_on_overlaps_all.sql
 
 assign_zoning_to_parcels_with_one_zone:
 	$(psql) -f process/assign_zoning_to_parcels_with_one_zone.sql
