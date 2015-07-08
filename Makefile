@@ -21,6 +21,7 @@ parcels_pdas.csv:
 #########################
 
 zoning_parcels_with_details.csv: \
+	backup_db \
 	load_zoning_data \
 	prepare \
 	intersect \
@@ -244,7 +245,9 @@ fix_errors_in_source_zoning:
 	$(psql) -c "DROP TABLE zoning_staging.solcogeneral_plan_unincorporated_temp;"
 
 load_plu06: plu06_may2015estimate.shp
+	$(psql) -c "DROP TABLE zoning.plu06_may2015estimate;"
 	$(shp2pgsql) plu06_may2015estimate.shp zoning.plu06_may2015estimate | $(psql)
+	$(psql) -f load/add-plu-2006.sql
 
 load_no_dev: no_dev1_geo_only.csv
 	$(psql) -f load/no_dev.sql
@@ -422,3 +425,5 @@ remove_source_data:
 	rm zoning_codes_base2012.* 
 	rm PLU2008_Updated.*
 	rm PlannedLandUsePhase*
+
+reload_plu06: load_plu06 clean_plu06_geoms plu_06

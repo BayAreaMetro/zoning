@@ -3,9 +3,9 @@ create INDEX plu06_may2015estimate_gidx ON zoning.plu06_may2015estimate using GI
 create INDEX plu06_may2015estimate_idx ON zoning.plu06_may2015estimate using hash (objectid);
 VACUUM (ANALYZE) zoning.plu06_may2015estimate;
 
-#seems not necessary w/shp2pgsql import: alter table zoning.plu06_may2015estimate rename column of_ to of;
+ALTER TABLE zoning.plu06_may2015estimate RENAME COLUMN of_ TO of;
 
-#seems not necessary w/shp2pgsql import: UPDATE zoning.plu06_may2015estimate SET IH = case when IH = '1' then '1' else '0' end;
+
 ALTER TABLE zoning.plu06_may2015estimate ALTER COLUMN IH TYPE INTEGER USING IH::INTEGER;
 
 ALTER TABLE zoning.plu06_may2015estimate ALTER COLUMN juris TYPE INTEGER USING HS::INTEGER;
