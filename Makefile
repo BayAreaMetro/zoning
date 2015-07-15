@@ -92,7 +92,7 @@ intersect: create_intersection_table \
 
 create_intersection_table:
 	$(psql) -c "SET enable_seqscan TO off;"
-	$(psql) -c "CREATE SCHEMA zoning;"
+	$(psql) -f functions/get_zoning_id.sql
 	$(psql) -f process/create_intersection_table.sql #22m in 100GB VM
 
 get_stats_on_intersection:
@@ -144,9 +144,6 @@ plu06: \
 
 create_intersection_table_plu06:
 	$(psql) -f process/create_intersection_table_plu06.sql
-
-create_intersection_table:
-	$(psql) -f process/create_intersection_table.sql
 
 overlaps_plu06:
 	$(psql) -f process/overlaps_plu06_missing_parcels.sql
@@ -245,7 +242,7 @@ fix_errors_in_source_zoning:
 	$(psql) -c "DROP TABLE zoning_staging.solcogeneral_plan_unincorporated_temp;"
 
 load_plu06: plu06_may2015estimate.shp
-	$(psql) -c "DROP TABLE zoning.plu06_may2015estimate;"
+	$(psql) -c "DROP TABLE IF EXISTS zoning.plu06_may2015estimate;"
 	$(shp2pgsql) plu06_may2015estimate.shp zoning.plu06_may2015estimate | $(psql)
 	$(psql) -f load/add-plu-2006.sql
 
