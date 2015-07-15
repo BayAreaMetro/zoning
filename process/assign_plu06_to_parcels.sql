@@ -9,27 +9,12 @@ FROM zoning.parcel_overlaps_plu WHERE (geom_id,prop) IN
 
 DROP TABLE IF EXISTS zoning.plu06_one_intersection; 
 CREATE TABLE zoning.plu06_one_intersection AS
-SELECT 
-9999 as id, 
-juris as juris, 
-text 'NA' as city,
-text 'plu06' as tablename,
-gengplu as name,
--9999 as min_far, 
-z.max_height as max_height,
-z.max_far as max_far, 
--9999 as min_front_setback,
--9999 as max_front_setback,
--9999 as side_setback,
--9999 as rear_setback,
--9999 as min_dua,
-z.max_dua as max_dua,           
--9999 as coverage,          
-z.max_du_per as max_du_per_parcel,
--9999 as min_lot_size,      
-z.hs,z.ht,z.hm,z.of,z.ho,z.sc,z.il,z.iw,z.ih,z.rs,z.rb,z.mr,z.mt,z.me,
-p.geom_id as geom_id,
-p.geom as geom
+SELECT
+z.geom_id,
+'6' || lpad(cast(plu06_objectid as text),4,'0000') as z.zoning_id,
+p.prop,
+'plu06' as tablename,
+p.geom
 from 
 (select * from zoning.unmapped_parcel_zoning_plu
 where geom_id in 
