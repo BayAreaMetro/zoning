@@ -10,9 +10,12 @@ sudo -u postgres pg_dump -Fc -v -f /vm_project_dir/full.dump -U postgres mtc
 
 #to restore:
 
+# sudo -u postgres psql createdb mtc
+# sudo -u postgres psql mtc -c "create extension postgis;"
+# sudo -u postgres psql mtc -c "create extension postgis_topology;"
 # sudo -u postgres psql -f globals.sql
-# psql -f schema.sql dbname
-# pg_restore -a -d dbname -Fc full.dump
+# psql -f db-schema.sql mtc
+# pg_restore -a -d mtc -Fc full.dump
 
 #write to s3
 today="$(date +'%Y/%m/%d/%H')"
