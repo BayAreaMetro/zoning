@@ -30,7 +30,7 @@ FROM
 admin.city10_ba city,
 parcel p 
 WHERE ST_Intersects(city.geom, p.geom);
-COMMENT ON TABLE admin.parcel is 'parcels st_intersect with census 2010 city boundaries';
+COMMENT ON TABLE admin.parcel_cities is 'parcels st_intersect with census 2010 city boundaries';
 
 DROP INDEX IF EXISTS admin_parcels_cities_geomid_idx;
 CREATE INDEX admin_parcels_cities_geomid_idx ON admin.parcel_cities using hash (geom_id);
