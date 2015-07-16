@@ -16,7 +16,7 @@ zoning.counties_parcel_overlaps_maxonly z
 	WHERE b.countof=1
 	)
  AND p.geom_id = z.geom_id;
- COMMENT ON TABLE zoning.contested_parcel_in_counties_multiple_max is 'derived from parcels/zoning overlaps for parcels intersecting counties-one max value';
+ COMMENT ON TABLE zoning.contested_parcel_in_counties_single_max is 'derived from parcels/zoning overlaps for parcels intersecting counties-one max value';
 
 DROP TABLE IF EXISTS zoning.contested_parcel_in_counties_multiple_max;
 CREATE TABLE zoning.contested_parcel_in_counties_multiple_max
