@@ -310,6 +310,11 @@ plu06_may2015estimate.shp: plu06_may2015estimate.zip
 ###DOWNLOAD###
 ##############
 
+no_dev1_geo_only.csv:
+	$(get)$@ \
+	$@.download
+	mv $@.download $@
+
 pda.shp.zip: 
 	$(get)$@ \
 	$@.download
