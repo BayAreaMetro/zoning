@@ -67,7 +67,8 @@ vacuum (analyze) zoning.parcel_geo3;
 
 INSERT INTO zoning.parcel 
 SELECT geom_id, zoning_id, prop, tablename from 
-zoning.contested_parcel_in_counties_single_max;
+zoning.contested_parcel_in_counties_single_max
+WHERE geom_id NOT IN (SELECT geom_id from zoning.parcel);
 SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel;
 
 --DROP TO SAVE SPACE (TEMPORARY FOR VAGRANT VM)
