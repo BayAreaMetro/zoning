@@ -76,14 +76,14 @@ zoning.plu06_many_intersection where (geom_id) IN
 	);
 
 INSERT INTO zoning.parcel
-select * from zoning.plu06_one_intersection
+select geom_id,cast(zoning_id as integer),prop,tablename from zoning.plu06_one_intersection
 WHERE geom_id NOT IN (SELECT geom_id from zoning.parcel);
 SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel;
 
 VACUUM (ANALYZE) zoning.parcel;
 
 INSERT INTO zoning.parcel
-select * from zoning.plu06_many_intersection
+select geom_id,cast(zoning_id as integer),prop,tablename from zoning.plu06_many_intersection
 WHERE geom_id NOT IN (SELECT geom_id from zoning.parcel);
 SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel;
 
