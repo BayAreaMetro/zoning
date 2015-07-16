@@ -54,12 +54,12 @@ clean_geoms: \
 merge_all_zoning:
 	$(psql) -f functions/merge_schema.sql 
 	$(psql) -f process/merge_all_zoning.sql
-	$(psql) -c "drop schema zoning_staging CASCADE" #temporarily, because of VM size limit
+#	$(psql) -c "drop schema zoning_staging CASCADE" #temporarily, because of VM size limit
 
 merge_county_zoning:
 	$(psql) -f functions/merge_schema.sql 
 	$(psql) -f process/merge_county_zoning.sql
-	$(psql) -c "DROP SCHEMA zoning_unincorporated_counties CASCADE;"
+#	$(psql) -c "DROP SCHEMA zoning_unincorporated_counties CASCADE;"
 
 merge_city_zoning:
 	$(psql) -f functions/merge_schema.sql 
