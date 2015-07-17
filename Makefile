@@ -27,7 +27,8 @@ zoning_parcels_with_details.csv: \
 	intersect \
 	assign \
 	plu06 \
-	backup_db
+	backup_db \
+	$(psql) mtc -f output_maps_and_tables.sql
 
 update_after_change_in_zoning_ids: \
 	intersect \
