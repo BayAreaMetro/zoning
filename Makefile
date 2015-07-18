@@ -27,8 +27,8 @@ zoning_parcels_with_details.csv: \
 	intersect \
 	assign \
 	plu06 \
-	output_csv \
-	backup_db
+	backup_db \
+	$(psql) mtc -f output_maps_and_tables.sql
 
 output_csv:
 	$(psql) -c "\COPY zoning.parcel to 'zoning_parcels.csv' DELIMITER ',' CSV HEADER;"

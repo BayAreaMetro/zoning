@@ -75,6 +75,10 @@ zoning.plu06_many_intersection where (geom_id) IN
 	WHERE b.countof>1
 	);
 
+create INDEX plu06_one_intersection_geomid_idx ON zoning.plu06_one_intersection using hash (geom_id);
+
+VACUUM (ANALYZE) zoning.plu06_one_intersection;
+
 INSERT INTO zoning.parcel
 select geom_id,cast(zoning_id as integer),prop,tablename from zoning.plu06_one_intersection
 WHERE geom_id NOT IN (SELECT geom_id from zoning.parcel);
@@ -82,11 +86,13 @@ SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel;
 
 VACUUM (ANALYZE) zoning.parcel;
 
+create INDEX plu06_many_intersection_geomid_idx ON zoning.plu06_many_intersection using hash (geom_id);
+
+VACUUM (ANALYZE) zoning.plu06_many_intersection;
+
 INSERT INTO zoning.parcel
 select geom_id,cast(zoning_id as integer),prop,tablename from zoning.plu06_many_intersection
 WHERE geom_id NOT IN (SELECT geom_id from zoning.parcel);
 SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel;
 
 VACUUM (ANALYZE) zoning.parcel;
-
-ALTER TABLE zoning.parcel ADD COLUMN nodev integer NOT NULL DEFAULT 0;

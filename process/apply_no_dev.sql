@@ -17,5 +17,5 @@ SELECT * FROM zoning.parcel;
 comment on table zoning.parcel_nodev_remove_zoning_id is 'version of zoning.parcel where zoning_id has been changed to 00000 if nodev=1';
 
 UPDATE zoning.parcel_nodev_remove_zoning_id SET
-zoning_id = 00000 
+zoning_id = 99999 
 WHERE nodev = 1;
