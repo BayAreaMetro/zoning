@@ -20,7 +20,7 @@ parcels_pdas.csv:
 ##Join Parcels/Zoning####
 #########################
 
-zoning_parcels_with_details.csv: \
+zoning_parcels.csv: \
 	backup_db \
 	load_zoning_data \
 	prepare \
