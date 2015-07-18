@@ -1,0 +1,1 @@
+ls jurisdictional/*.* | xargs -I {} aws s3 cp {} s3://landuse/zoning/{}

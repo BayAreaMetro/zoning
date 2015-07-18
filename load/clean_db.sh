@@ -2,7 +2,7 @@ APP_DB_USER=vagrant
 APP_DB_PASS=vagrant
 
 # Edit the following to change the name of the database that is created (defaults to the user name)
-APP_DB_NAME=$APP_DB_USER
+APP_DB_NAME=mtc
 
 sudo -u postgres dropdb vagrant
 sudo -u postgres dropdb staging
