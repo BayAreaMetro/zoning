@@ -27,7 +27,12 @@ zoning_parcels_with_details.csv: \
 	intersect \
 	assign \
 	plu06 \
+	output_csv \
 	backup_db
+
+output_csv:
+	$(psql) -c "\COPY zoning.parcel to 'zoning_parcels.csv' DELIMITER ',' CSV HEADER;"
+	$(psql) -c "\COPY zoning.parcel to 'zoning_parcels_no_dev_as_zero.csv' DELIMITER ',' CSV HEADER;"
 
 update_after_change_in_zoning_ids: \
 	intersect \
