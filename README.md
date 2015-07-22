@@ -31,11 +31,11 @@ If you already have the environment set up, then you can simply type:
 
 `make zoning_parcels.csv`  
 
-This will download and load the necessary data into Postgres, and then assign a Zoning ID to it.
+This will download and load the necessary data (excepting parcels) into Postgres, and then assign a Zoning ID to the parcels. Parcels are now expected to be in the database, as output by the script [here](https://github.com/MetropolitanTransportationCommission/bayarea_urbansim/blob/master/data_regeneration/run.py).
 
 ### Outcome
 
-The `zoning_parcels.csv` table output by this process is an input to UrbanSim and is therefore in the urbansim repository [here](https://github.com/synthicity/bayarea_urbansim/blob/master/data/zoning_parcels.csv).
+The `zoning_parcels.csv` table output by this process is an input to UrbanSim. Download it here: [here](https://landuse.s3.amazonaws.com/zoning/zoning_parcels.csv).
 
 ####Fields in the `zoning_parcels` table:
 
