@@ -18,7 +18,7 @@ The following are required:
 filename|description
 ---------------|--------------
 jurisdictional/*.shp | Zoning v2 A directory of shapefiles of Zoning plans for the jurisdictions in the Bay Area
-a spandex parcel table | these are assembled from source data [with this script](https://github.com/MetropolitanTransportationCommission/bayarea_urbansim/blob/master/data_regeneration/run.py)
+a parcel table | these are assembled from source data [with this script](https://github.com/MetropolitanTransportationCommission/bayarea_urbansim/blob/master/data_regeneration/run.py)
 city10_ba.shp | city boundaries (2010 census) MTC edits for water-features and others
 county10_ca.shp | county boundaries (2010 census) MTC edits for water-features and others
 zoning_codes_base2012.csv | Use these to map specific jurisdictional zoning to a generic taxonomy-from this [table](http://landuse.s3.amazonaws.com/zoning/zoning_codes_base2012.csv)
