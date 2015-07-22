@@ -35,7 +35,7 @@ This will download and load the necessary data (excepting parcels) into Postgres
 
 ### Outcome
 
-The `zoning_parcels.csv` table output by this process is an input to UrbanSim. Download it here: [here](https://landuse.s3.amazonaws.com/zoning/zoning_parcels.csv).
+The `zoning_parcels.csv` table output by this process is an input to UrbanSim. Download it  [here](https://landuse.s3.amazonaws.com/zoning/zoning_parcels.csv).
 
 ####Fields in the `zoning_parcels` table:
 
