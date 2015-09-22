@@ -17,8 +17,4 @@ sudo -u postgres pg_dump -Fc -v -f /vm_project_dir/full.dump -U postgres mtc
 # psql -f db-schema.sql mtc
 # pg_restore -a -d mtc -Fc full.dump
 
-#write to s3
-today="$(date +'%Y/%m/%d/%H')"
-aws s3 cp /vm_project_dir/globals.sql s3://landuse/spandex/outputs/${today}/globals.sql
-aws s3 cp /vm_project_dir/full.dump s3://landuse/spandex/outputs/${today}/full.dump
-aws s3 cp /vm_project_dir/db-schema.sql s3://landuse/spandex/outputs/${today}/db-schema.sql
+

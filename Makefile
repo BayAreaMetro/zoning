@@ -420,6 +420,10 @@ sql_dump:
 
 backup_db:
 	bash output/backup_db.sh
+	write_db_to_s3
+
+write_db_to_s3:
+	bash output/write_db_to_s3.sh
 
 remove_source_data:
 	rm ba8parcels.* 
