@@ -21,14 +21,15 @@ parcels_pdas.csv:
 #########################
 
 zoning_parcels.csv: \
-	backup_db \
 	load_zoning_data \
 	prepare \
 	intersect \
 	assign \
 	plu06 \
+	load_no_dev \
+	apply_no_dev \
 	backup_db \
-	$(psql) mtc -f output_maps_and_tables.sql
+	$(psql) mtc -f process/output_maps_and_tables.sql
 
 output_csv:
 	$(psql) -c "\COPY zoning.parcel to 'zoning_parcels.csv' DELIMITER ',' CSV HEADER;"
@@ -221,10 +222,8 @@ load_zoning_data_by_county: unincorporated_counties/SonomaCountyGeneralPlan.shp
 	xargs -I {} $(shp2pgsql) jurisdictional/{} zoning_unincorporated_counties.{} | \
 	$(psql)
 
-load_zoning_codes: zoning_codes_base2012.csv match_fields_tables_zoning_2012_source.csv
-	$(psql) -f load/load-generic-zoning-code-table.sql \
-	load_zoning_code_additions \
-	fix_string_matching_in_zoning_table
+load_zoning_codes: zoning_lookup.csv
+	$(psql) -f load/load-generic-zoning-code-table.sql
 
 load_zoning_code_additions:
 	$(psql) -f load/add_missing_codes.sql
@@ -341,19 +340,14 @@ parcels_spandex.sql:
 	$@.download
 	mv $@.download $@
 
-zoning_codes_base2012.csv:
-	$(get)zoning_codes_base2012.csv \
-	$@.download
+zoning_lookup.csv:
+	curl -k -o $@.download https://raw.githubusercontent.com/MetropolitanTransportationCommission/bayarea_urbansim/master/data/zoning_lookup.csv?token=AAGCjC_Z9YDWbVUtwzTkKBHJgYdXwJqtks5WDHVUwA%3D%3D 
 	mv $@.download $@
 
 city10_ba.zip:
 	$(get)city10_ba.zip \
 	$@.download
 	mv $@.download $@
-
-zoning_codes_base2008.csv:
-	$(get)zoning_codes_base2008.csv \
-	-o zoning_codes_base2008.csv
 
 county10_ca.zip:
 	$(get)county10_ca.zip \
@@ -419,8 +413,8 @@ sql_dump:
 	vagrant
 
 backup_db:
-	bash output/backup_db.sh
-	write_db_to_s3
+	bash output/backup_db.sh 
+	bash output/write_db_to_s3.sh
 
 write_db_to_s3:
 	bash output/write_db_to_s3.sh
@@ -433,7 +427,6 @@ remove_source_data:
 	rm parcels_spandex.* 
 	rm Parcels2010_Update9.* 
 	rm jurisdictional/*.* 
-	rm zoning_codes_base2012.* 
 	rm PLU2008_Updated.*
 	rm PlannedLandUsePhase*
 
