@@ -302,10 +302,6 @@ county10_ca.shp: county10_ca.zip
 city10_ba.shp: city10_ba.zip
 	unzip -o $<
 
-PLU2008_Updated.shp: PLU2008_Updated.zip
-	unzip -o $<
-	touch $@
-
 plu06_may2015estimate.shp: plu06_may2015estimate.zip
 	unzip -o $<
 	touch $@	
@@ -361,11 +357,6 @@ match_fields_tables_zoning_2012_source.csv:
 
 PlannedLandUse1Through6.gdb.zip:
 	$(get)PlannedLandUse1Through6.gdb.zip \
-	$@.download
-	mv $@.download $@
-
-PLU2008_Updated.zip:
-	$(get)PLU2008_Updated.zip \
 	$@.download
 	mv $@.download $@
 
