@@ -47,7 +47,7 @@ DROP TABLE IF EXISTS zoning.parcel_geo3;
 CREATE TABLE zoning.parcel_geo3 AS
 SELECT *
 FROM zoning.contested_parcel_in_counties_single_max;
-COMMENT ON TABLE zoning.parcel_geo1 is 'A geo-table of parcel intersection from counties'
+COMMENT ON TABLE zoning.parcel_geo1 is 'A geo-table of parcel intersection from counties';
 
 DROP INDEX IF EXISTS zoning_parcel_geo2_gidx;
 CREATE INDEX zoning_parcel_geo2_gidx ON zoning.parcel_geo2 using GIST (geom);
@@ -72,13 +72,3 @@ WHERE geom_id NOT IN (SELECT geom_id from zoning.parcel);
 SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel;
 
 --DROP TO SAVE SPACE (TEMPORARY FOR VAGRANT VM)
-DROP TABLE zoning.contested_parcel_in_counties_single_max CASCADE;
-DROP TABLE zoning.contested_parcel_in_counties_multiple_max CASCADE;
-DROP TABLE zoning.parcel_geo2 CASCADE;
-DROP TABLE zoning.parcel_contested2 CASCADE;
-DROP TABLE zoning.counties_parcel_two_max CASCADE;
-DROP TABLE zoning.counties_parcel_single_max CASCADE;
-DROP TABLE zoning.counties_parcel_overlaps CASCADE;
-DROP TABLE zoning.counties_parcel_overlaps_maxonly CASCADE;
-DROP TABLE zoning.unincorporated_counties CASCADE;
-DROP TABLE zoning.unincorporated_counties_valid CASCADE;
