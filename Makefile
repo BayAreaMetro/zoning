@@ -212,14 +212,14 @@ load_zoning_data_by_city: cities_towns/AlamedaGeneralPlan.shp
 	$(psql) -c "DROP SCHEMA IF EXISTS zoning_cities_towns CASCADE"
 	$(psql) -c "CREATE SCHEMA zoning_cities_towns"
 	ls cities_towns/*.shp | cut -d "/" -f2 | sed 's/.shp//' | \
-	xargs -I {} $(shp2pgsql) jurisdictional/{} zoning_cities_towns.{} | \
+	xargs -I {} $(shp2pgsql) cities_towns/{} zoning_cities_towns.{} | \
 	$(psql)
 
 load_zoning_data_by_county: unincorporated_counties/SonomaCountyGeneralPlan.shp
 	$(psql) -c "DROP SCHEMA IF EXISTS zoning_unincorporated_counties CASCADE"
 	$(psql) -c "CREATE SCHEMA zoning_unincorporated_counties"
 	ls unincorporated_counties/*.shp | cut -d "/" -f2 | sed 's/.shp//' | \
-	xargs -I {} $(shp2pgsql) jurisdictional/{} zoning_unincorporated_counties.{} | \
+	xargs -I {} $(shp2pgsql) unincorporated_counties/{} zoning_unincorporated_counties.{} | \
 	$(psql)
 
 load_zoning_codes: zoning_lookup.csv
@@ -275,7 +275,7 @@ cities_towns/AlamedaGeneralPlan.shp: jurisdictional/AlamedaGeneralPlan.shp
 
 unincorporated_counties/SonomaCountyGeneralPlan.shp: jurisdictional/SonomaCountyGeneralPlan.shp
 	mkdir -p unincorporated_counties
-	cd jurisdictional; cp -t ../unincorporated_counties SonomaCountyGeneralPlan.* \
+	cd jurisdictional; mv -t ../unincorporated_counties SonomaCountyGeneralPlan.* \
 				   SolCoGeneral_plan_unincorporated.* \
 				   SanMateoCountyZoning.* \
 				   SantaClaraCountyGenPlan.* \
