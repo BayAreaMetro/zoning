@@ -2,7 +2,9 @@ DROP TABLE IF EXISTS zoning.cities_parcel_overlaps;
 CREATE TABLE zoning.cities_parcel_overlaps AS
 SELECT 
 	geom_id,
-	zoning_id,
+	zoning_id
+	zoning,
+	juris,
 	tablename,
 	sum(ST_Area(geom)) area,
 	round(sum(ST_Area(geom))/min(parcelarea) * 1000) / 10 prop,
@@ -10,6 +12,8 @@ SELECT
 FROM (
 SELECT p.geom_id, 
 	z.zoning_id,
+	z.zoning,
+	z.juris,
 	z.tablename,
  	ST_Area(p.geom) parcelarea, 
  	ST_Intersection(p.geom, z.geom) geom 
@@ -19,13 +23,15 @@ FROM (select geom_id, geom
 				zoning.parcel_contested p1, 
 				admin.parcel_cities p2
 				where p1.geom_id=p2.geom_id)) as p,
-(select zoning.get_id(zoning,juris) as zoning_id, tablename, geom from zoning.cities_towns_valid) as z
+(select zoning, juris, tablename, geom from zoning.cities_towns_valid) as z
 WHERE ST_Intersects(z.geom, p.geom)
 ) f
 GROUP BY 
 	geom_id,
 	tablename,
-	zoning_id;
+	zoning_id,
+	zoning,
+	juris;
 COMMENT ON TABLE zoning.cities_parcel_overlaps is 'st_intersects with area for contested parcels in cities';
 
 DROP INDEX IF EXISTS zoning_parcel_overlaps_cities_gidx;

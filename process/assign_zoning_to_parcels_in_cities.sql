@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS zoning.contested_parcel_in_cities_single_max CASCADE;
 CREATE TABLE zoning.contested_parcel_in_cities_single_max
 AS 
-SELECT z.geom_id, z.zoning_id, z.prop, z.tablename, p.geom 
+SELECT z.geom_id, z.zoning_id, z.juris, z.zoning, z.prop, z.tablename, p.geom 
 FROM
 parcel p, 
 zoning.cities_parcel_overlaps_maxonly z
@@ -21,7 +21,7 @@ zoning.cities_parcel_overlaps_maxonly z
 DROP TABLE IF EXISTS zoning.contested_parcel_in_cities_multiple_max CASCADE;
 CREATE TABLE zoning.contested_parcel_in_cities_multiple_max
 AS 
-SELECT z.geom_id, z.zoning_id, z.prop, z.tablename, p.geom 
+SELECT z.geom_id, z.zoning_id, z.juris, z.zoning,  z.prop, z.tablename, p.geom 
 FROM
 parcel p, 
 zoning.cities_parcel_overlaps_maxonly z

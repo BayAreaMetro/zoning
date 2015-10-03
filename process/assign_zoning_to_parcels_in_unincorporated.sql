@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS zoning.contested_parcel_in_counties_single_max;
 CREATE TABLE zoning.contested_parcel_in_counties_single_max
 AS 
-SELECT z.geom_id, z.zoning_id, z.prop, z.tablename, p.geom 
+SELECT z.geom_id, z.zoning_id, z.juris, z.zoning, z.prop, z.tablename, p.geom 
 FROM
 parcel p, 
 zoning.counties_parcel_overlaps_maxonly z
@@ -21,7 +21,7 @@ zoning.counties_parcel_overlaps_maxonly z
 DROP TABLE IF EXISTS zoning.contested_parcel_in_counties_multiple_max;
 CREATE TABLE zoning.contested_parcel_in_counties_multiple_max
 AS 
-SELECT z.geom_id, z.zoning_id, z.prop, z.tablename, p.geom 
+SELECT z.geom_id, z.zoning_id, z.juris, z.zoning, z.prop, z.tablename, p.geom 
 FROM
 parcel p, 
 zoning.counties_parcel_overlaps_maxonly z
@@ -66,7 +66,7 @@ vacuum (analyze) zoning.parcel_contested3;
 vacuum (analyze) zoning.parcel_geo3;
 
 INSERT INTO zoning.parcel 
-SELECT geom_id, zoning_id, prop, tablename from 
+SELECT geom_id, zoning_id, zoning, juris, prop, tablename from 
 zoning.contested_parcel_in_counties_single_max
 WHERE geom_id NOT IN (SELECT geom_id from zoning.parcel);
 SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel;
