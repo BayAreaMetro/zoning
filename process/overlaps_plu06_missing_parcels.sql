@@ -1,3 +1,7 @@
+CREATE INDEX ON zoning.unmapped_parcel_intersection_count using btree (geom_id);
+CREATE INDEX ON zoning.parcel_contested3 using btree (geom_id);
+vacuum (analyze) zoning.parcel_contested3;
+vacuum (analyze) zoning.unmapped_parcel_intersection_count;
 DROP TABLE IF EXISTS zoning.parcel_overlaps_plu;
 CREATE TABLE zoning.parcel_overlaps_plu AS
 SELECT 
