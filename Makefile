@@ -70,8 +70,6 @@ merge_county_zoning:
 merge_city_zoning:
 	$(psql) -f functions/merge_schema.sql 
 	$(psql) -f process/merge_city_zoning.sql
-	$(psql) -c "drop schema zoning_cities_towns CASCADE" #temporarily, because of VM size limit
-
 ##
 clean_parcel_geoms:
 	$(psql) -f process/clean_parcel_geoms.sql

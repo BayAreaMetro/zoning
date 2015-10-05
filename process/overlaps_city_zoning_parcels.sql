@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS zoning.cities_parcel_overlaps;
 CREATE TABLE zoning.cities_parcel_overlaps AS
 SELECT 
 	geom_id,
-	zoning_id
+	zoning_id,
 	zoning,
 	juris,
 	tablename,
@@ -23,7 +23,7 @@ FROM (select geom_id, geom
 				zoning.parcel_contested p1, 
 				admin.parcel_cities p2
 				where p1.geom_id=p2.geom_id)) as p,
-(select zoning, juris, tablename, geom from zoning.cities_towns_valid) as z
+(select zoning.get_id(zoning,juris) as zoning_id, zoning, juris, tablename, geom from zoning.cities_towns_valid) as z
 WHERE ST_Intersects(z.geom, p.geom)
 ) f
 GROUP BY 

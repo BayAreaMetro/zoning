@@ -69,7 +69,7 @@ vacuum (analyze) zoning.parcel_contested2;
 vacuum (analyze) zoning.parcel_geo1;
 
 INSERT INTO zoning.parcel 
-SELECT geom_id, zoning_id, prop, tablename from 
+SELECT geom_id, zoning_id, zoning, juris, prop, tablename from 
 zoning.contested_parcel_in_cities_single_max;
 SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel;
 

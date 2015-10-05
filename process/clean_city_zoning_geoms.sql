@@ -28,5 +28,6 @@ SELECT UpdateGeometrySRID('zoning','cities_towns_valid','geom',26910);
 ALTER TABLE zoning.cities_towns_valid 
  ALTER COLUMN geom TYPE geometry(MULTIPOLYGON, 26910);
 
+DROP TABLE IF EXISTS zoning.cities_towns_source;
 ALTER TABLE zoning.cities_towns RENAME TO cities_towns_source;
 COMMENT ON TABLE zoning.cities_towns_source is 'this is the source merged table of all source city zoning geometries';

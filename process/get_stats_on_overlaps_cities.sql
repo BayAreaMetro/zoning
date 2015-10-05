@@ -2,7 +2,7 @@
 --the proportion of overlap is the maximum
 DROP TABLE IF EXISTS zoning.cities_parcel_overlaps_maxonly;
 CREATE TABLE zoning.cities_parcel_overlaps_maxonly AS
-SELECT geom_id, zoning_id, prop, tablename
+SELECT geom_id, zoning_id, zoning, juris, prop, tablename
 FROM zoning.cities_parcel_overlaps WHERE (geom_id,prop) IN 
 ( SELECT geom_id, MAX(prop)
   FROM zoning.cities_parcel_overlaps
@@ -12,7 +12,7 @@ FROM zoning.cities_parcel_overlaps WHERE (geom_id,prop) IN
 --So, create table of parcels with >1 max values
 DROP TABLE IF EXISTS zoning.cities_parcel_two_max;
 CREATE TABLE zoning.cities_parcel_two_max AS
-SELECT geom_id, zoning_id, prop, tablename FROM 
+SELECT geom_id, zoning_id, zoning, juris, prop, tablename FROM 
 zoning.cities_parcel_overlaps_maxonly where (geom_id) IN
 	(
 	SELECT geom_id from 
