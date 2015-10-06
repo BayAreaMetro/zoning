@@ -53,6 +53,22 @@ DROP INDEX IF EXISTS zoning_parcel_geo2_gidx;
 CREATE INDEX zoning_parcel_geo2_gidx ON zoning.parcel_geo2 using GIST (geom);
 vacuum (analyze) zoning.parcel_geo2;
 
+DROP INDEX IF EXISTS zoning_parcel_contested2_gidx;
+CREATE INDEX zoning_parcel_contested2_gidx ON zoning.parcel_contested2 using GIST (geom);
+
+INSERT INTO zoning.parcel 
+SELECT geom_id, zoning_id, zoning, juris, prop, tablename from 
+zoning.contested_parcel_in_cities_single_max;
+SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel;
+
+INSERT INTO zoning.parcel 
+SELECT geom_id, zoning_id, zoning, juris, prop, tablename 
+from zoning.contested_parcel_in_cities_multiple_max where tablename='newarkgp2006db';
+SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel;
+
+create index on zoning.parcel using hash (geom_id);
+vacuum (analyze) zoning.parcel;
+
 DROP TABLE IF EXISTS zoning.parcel_contested2 CASCADE;
 CREATE TABLE zoning.parcel_contested2 AS
 SELECT *
@@ -62,15 +78,8 @@ COMMENT ON TABLE zoning.parcel_contested2 is 'A geo-table of parcels with more t
 \echo 'there are this many parcels not in the zoning.parcel table:'
 select count(*) from zoning.parcel_contested2;
 
-DROP INDEX IF EXISTS zoning_parcel_contested2_gidx;
-CREATE INDEX zoning_parcel_contested2_gidx ON zoning.parcel_contested2 using GIST (geom);
-
 vacuum (analyze) zoning.parcel_contested2;
 vacuum (analyze) zoning.parcel_geo1;
-
-INSERT INTO zoning.parcel 
-SELECT geom_id, zoning_id, zoning, juris, prop, tablename from 
-zoning.contested_parcel_in_cities_single_max;
-SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel;
+vacuum (analyze) zoning.parcel_geo2;
 
 --DROP TO SAVE SPACE (TEMPORARY FOR VAGRANT VM)

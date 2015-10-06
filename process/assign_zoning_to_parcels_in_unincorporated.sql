@@ -53,6 +53,12 @@ DROP INDEX IF EXISTS zoning_parcel_geo2_gidx;
 CREATE INDEX zoning_parcel_geo2_gidx ON zoning.parcel_geo2 using GIST (geom);
 vacuum (analyze) zoning.parcel_geo2;
 
+INSERT INTO zoning.parcel 
+SELECT geom_id, zoning_id, zoning, juris, prop, tablename from 
+zoning.contested_parcel_in_counties_single_max
+WHERE geom_id NOT IN (SELECT geom_id from zoning.parcel);
+SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel;
+
 DROP TABLE IF EXISTS zoning.parcel_contested3;
 CREATE TABLE zoning.parcel_contested3 AS
 SELECT *
@@ -65,10 +71,5 @@ CREATE INDEX zoning_parcel_contested_gidx ON zoning.parcel_contested2 using GIST
 vacuum (analyze) zoning.parcel_contested3;
 vacuum (analyze) zoning.parcel_geo3;
 
-INSERT INTO zoning.parcel 
-SELECT geom_id, zoning_id, zoning, juris, prop, tablename from 
-zoning.contested_parcel_in_counties_single_max
-WHERE geom_id NOT IN (SELECT geom_id from zoning.parcel);
-SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel;
 
 --DROP TO SAVE SPACE (TEMPORARY FOR VAGRANT VM)
