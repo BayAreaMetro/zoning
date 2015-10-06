@@ -207,6 +207,14 @@ load_zoning_by_jurisdiction: jurisdictional/SonomaCountyGeneralPlan.shp
 	$(psql)
 
 load_zoning_data_by_city: cities_towns/AlamedaGeneralPlan.shp
+	cd cities_towns; rm SonomaCountyGeneralPlan.* \
+			   SolCoGeneral_plan_unincorporated.* \
+			   SanMateoCountyZoning.* \
+			   SantaClaraCountyGenPlan.* \
+			   NapaCoZoning.* \
+			   MarinCountyGenPlan.* \
+			   CCCountyGPLandUse.* \
+			   AlamedaCountyGP2006db.*
 	$(psql) -c "DROP SCHEMA IF EXISTS zoning_cities_towns CASCADE"
 	$(psql) -c "CREATE SCHEMA zoning_cities_towns"
 	ls cities_towns/*.shp | cut -d "/" -f2 | sed 's/.shp//' | \
