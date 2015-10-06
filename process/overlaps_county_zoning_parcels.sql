@@ -23,8 +23,9 @@ FROM (select geom_id, geom
 				zoning.parcel_contested2 p1, 
 				admin.parcel_counties p2
 				where p1.geom_id=p2.geom_id)) as p,
-(select zoning.get_id(zoning,juris) as zoning_id, zoning, juris, tablename, geom from zoning.unincorporated_counties_valid) as z
-WHERE ST_Intersects(z.geom, p.geom)
+(select zoning.get_id(zoning,juris) as zoning_id, zoning, juris, tablename, geom 
+	from zoning.unincorporated_counties_valid) as z
+WHERE p.geom && z.geom AND ST_Intersects(z.geom, p.geom)
 ) f
 GROUP BY 
 	geom_id,
