@@ -14,7 +14,7 @@ p.geom_id,
 z.origgplu,
 '6' || lpad(cast(z.objectid as text),4,'0000') as zoning_id,
 100 as prop,
-'plu06' as tablename,
+cast('plu06' as text) as tablename,
 p.geom
 from 
 (select * from zoning.unmapped_parcel_zoning_plu
@@ -35,7 +35,7 @@ p.geom_id,
 z.origgplu,
 '6' || lpad(cast(z.objectid as text),4,'0000') as zoning_id,
 p.prop,
-'plu06' as tablename,
+cast('plu06' as text) as tablename,
 p.geom
 from (select p2.*, pmax.prop 
 	from zoning.unmapped_parcel_zoning_plu p2,
@@ -82,7 +82,8 @@ create INDEX plu06_one_intersection_geomid_idx ON zoning.plu06_one_intersection 
 VACUUM (ANALYZE) zoning.plu06_one_intersection;
 
 INSERT INTO zoning.parcel
-select geom_id,cast(zoning_id as integer),origgplu,prop,tablename from zoning.plu06_one_intersection
+select geom_id, cast(zoning_id as integer), cast(origgplu as text) as zoning, -9999 as juris, prop, tablename 
+from zoning.plu06_one_intersection
 WHERE geom_id NOT IN (SELECT geom_id from zoning.parcel);
 SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel;
 
@@ -93,7 +94,8 @@ create INDEX plu06_many_intersection_geomid_idx ON zoning.plu06_many_intersectio
 VACUUM (ANALYZE) zoning.plu06_many_intersection;
 
 INSERT INTO zoning.parcel
-select geom_id,cast(zoning_id as integer),origgplu,prop,tablename from zoning.plu06_many_intersection
+select geom_id,cast(zoning_id as integer), cast(origgplu as text) as zoning, -9999 as juris, prop, tablename 
+from zoning.plu06_many_intersection
 WHERE geom_id NOT IN (SELECT geom_id from zoning.parcel);
 SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id) FROM zoning.parcel;
 
