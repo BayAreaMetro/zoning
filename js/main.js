@@ -13,8 +13,8 @@ var bing = new L.BingLayer("Ak9B0icHsz6Z-MEMGpXFxHjFA6liDJYmv2JNiddSzwIK5krb37s0
 map.addLayer(toner);
 map.addLayer(bing);
 
-var multifamily = L.tileLayer('http://s3-us-west-2.amazonaws.com/landuse/zoning/effective_max_dua/{z}/{x}/{y}.png',{tms: true, opacity:0.5}).addTo(map);
-var mixedretail = L.tileLayer('http://s3-us-west-2.amazonaws.com/landuse/zoning/effective_max_far/{z}/{x}/{y}.png',{tms: true, opacity:0.5}).addTo(map);
+var maxfar = L.tileLayer('http://s3-us-west-2.amazonaws.com/landuse/zoning/effective_max_far/{z}/{x}/{y}.png',{tms: true, opacity:0.7}).addTo(map);
+var maxdua = L.tileLayer('http://s3-us-west-2.amazonaws.com/landuse/zoning/effective_max_dua/{z}/{x}/{y}.png',{tms: true, opacity:0.4}).addTo(map);
 
 /*document.getElementById('bing').onclick = function () {
     var enable = this.className !== 'active';
@@ -30,19 +30,34 @@ document.getElementById('toner').onclick = function () {
     return false;
 };
 
-document.getElementById('multifamily').onclick = function () {
+document.getElementById('maxdua_light').onclick = function () {
     var enable = this.className !== 'active';
-    multifamily.setOpacity(enable ? 0.5 : 0);
+    maxdua.setOpacity(enable ? 0.3 : 0);
     this.className = enable ? 'active' : '';
     return false;
 };
 
-document.getElementById('mixedretail').onclick = function () {
+document.getElementById('maxdua_heavy').onclick = function () {
     var enable = this.className !== 'active';
-    mixedretail.setOpacity(enable ? 0.5 : 0);
+    maxdua.setOpacity(enable ? 0.7 : 0);
     this.className = enable ? 'active' : '';
     return false;
 };
+
+document.getElementById('maxfar_light').onclick = function () {
+    var enable = this.className !== 'active';
+    maxfar.setOpacity(enable ? 0.3 : 0);
+    this.className = enable ? 'active' : '';
+    return false;
+};
+
+document.getElementById('maxfar_heavy').onclick = function () {
+    var enable = this.className !== 'active';
+    maxfar.setOpacity(enable ? 0.7 : 0);
+    this.className = enable ? 'active' : '';
+    return false;
+};
+
 
 /*var zoning_wms = L.tileLayer.wms("http://10.1.1.204:8080/geoserver/gwc/service/wms?", {
     layers: 'mtc:all_codes_colors',
@@ -65,7 +80,7 @@ var mixedemployment = L.tileLayer.wms('http://10.1.1.204:8080/geoserver/gwc/serv
     attribution: "MTC"
 }).addTo(map);
 
-var mixedretail = L.tileLayer.wms('http://10.1.1.204:8080/geoserver/gwc/service/wms?', {
+var maxfar = L.tileLayer.wms('http://10.1.1.204:8080/geoserver/gwc/service/wms?', {
     layers: 'mtc:all_codes_colors',
     styles: 'mtc:mt-t',
     format: 'image/png',
