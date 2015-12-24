@@ -6,7 +6,7 @@ Produce a CSV with a generic zoning code assigned to every parcel in the SF Bay 
 
 [GNU Make](http://bost.ocks.org/mike/make/), PostGIS 2.1, Postgres 9.3, GDAL 1.11 or > (with both FileGDB driver and Postgres driver), [Amazon CLI](https://aws.amazon.com/cli/)
 
-You can use this [repository](https://github.com/MetropolitanTransportationCommission/bayarea_urbansim_setup/tree/vagrant-ubuntu14-lindsay) to set up an environment. At [this commit](https://github.com/MetropolitanTransportationCommission/bayarea_urbansim_setup/commit/99d628524532a7c01dd1ae4de378109dc349b654) the processes here ran on a VM for over 7 hours on a machine with 70gb ram. 
+You can use this [repository](https://github.com/MetropolitanTransportationCommission/bayarea_urbansim_setup/tree/vagrant-ubuntu14-lindsay) to set up an environment.
 
 ###Usage
 
