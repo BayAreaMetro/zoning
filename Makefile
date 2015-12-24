@@ -29,7 +29,8 @@ zoning_parcels.csv: \
 	load_no_dev \
 	apply_no_dev \
 	backup_db \
-	$(psql) mtc -f process/output_maps_and_tables.sql
+	$(psql) mtc -f process/output_maps_and_tables.sql \
+	python output/fix_zoning_missing_id.py
 
 output_csv:
 	$(psql) -c "\COPY zoning.parcel to 'zoning_parcels.csv' DELIMITER ',' CSV HEADER;"
