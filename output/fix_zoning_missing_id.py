@@ -22,6 +22,12 @@ def zoning_lookup():
     df = df.drop_duplicates(subset='id').set_index('id')
     return df
 
+@orca.table('zoning_table_city_lookup', cache=True)
+def zoning_table_city_lookup():
+    df = pd.read_csv("zoning_table_city_lookup.csv"),
+                     index_col="juris")
+    return df
+
 zl = orca.get_table("zoning_lookup")
 z = orca.get_table("zcsv")
 
