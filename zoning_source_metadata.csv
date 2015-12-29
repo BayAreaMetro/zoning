@@ -1,0 +1,101 @@
+juris_code,tablename,city_name,sourcing_project_year,regulatory_type,date_in_name
+6,fostercitygp2006db,Foster City,2006,general plan,2006
+7,halfmoonbaygp2006db,Half Moon Bay,2006,general plan,2006
+8,beniciagp2006db,Benicia,2006,general plan,2006
+9,dixongp2006db,Dixon,2006,general plan,2006
+12,cotatigp2006db,Cotati,2006,general plan,2006
+18,sonomacitygp2006db,Sonoma,2006,general plan,2006
+19,windsorgp2006db,Windsor,2006,general plan,2006
+20,hillsboroughgp2006db,Hillsborough,2006,general plan,2006
+22,monteserenogp2006db,Monte Sereno,2006,general plan,2006
+23,morganhillgp2006db,Morgan Hill,2006,general plan,2006
+24,mountainviewgp2006db,Mountain View,2006,general plan,2006
+32,southsanfranciscogp2006db,South San Francisco,2006,general plan,2006
+33,woodsidegp2006db,Woodside,2006,general plan,2006
+36,portolavalleygp2006db,Portola Valley,2006,general plan,2006
+39,campbellgp2006db,Campbell,2006,general plan,2006
+41,losaltosgp2006db,Los Altos,2006,general plan,2006
+42,losaltoshillsgp2006db,Los Altos Hills,2006,general plan,2006
+45,athertongp2006db,Atherton,2006,general plan,2006
+46,belmontgp2006db,Belmont,2006,general plan,2006
+47,brisbanegp2006db,Brisbane,2006,general plan,2006
+48,burlingamegp2006db,Burlingame,2006,general plan,2006
+49,colmagp2006db,Colma,2006,general plan,2006
+50,dalycitygp2006db,Daly City,2006,general plan,2006
+51,eastpaloaltogp2006db,East Palo Alto,2006,general plan,2006
+52,yountvillegp2006db,Yountville,2006,general plan,2006
+54,calistogagp2006db,Calistoga,2006,general plan,2006
+56,sthelenagp2006db,St. Helena,2006,general plan,2006
+60,larkspurgp2006db,Larkspur,2006,general plan,2006
+62,novatogp2006db,Novato,2006,general plan,2006
+69,riovistagp2006db,Rio Vista,2006,general plan,2006
+70,suisuncitygp2006db,Suisun City,2006,general plan,2006
+72,vallejogp2006db,Vallejo,2006,general plan,2006
+74,pittsburggp2006db,Pittsburg,2006,general plan,2006
+75,oakleygp2006db,Oakley,2006,general plan,2006
+77,pleasanthillgp2006db,Pleasant Hill,2006,general plan,2006
+83,sanleandrogp2006db,San Leandro,2006,general plan,2006
+84,unioncitygp2006db,Union City,2006,general plan,2006
+86,claytongp2006db,Clayton,2006,general plan,2006
+88,danvillegp2006db,Danville,2006,general plan,2006
+90,herculesgp2006db,Hercules,2006,general plan,2006
+91,lafayettegp2006db,Lafayette,2006,general plan,2006
+93,moragagp2006db,Moraga,2006,general plan,2006
+100,newarkgp2006db,Newark,2006,general plan,2006
+102,alamedagp2006db,Unincorporated Alameda,2006,general plan,2006
+1,albanyzoningdesignations,Albany,other,zoning,
+2,berkeleyzoning,Berkeley,other,zoning,
+3,dublingeneralplan,Dublin,other,general plan,
+4,emeryvillegpparcels,Emeryville,other,na,
+5,fremontgeneralplan,Fremont,other,general plan,
+14,petalumagp2025_landuse,Petaluma,other,general plan,2025
+15,rohnertpark_gp_2010,Rohnert Park,other,general plan,4010
+16,santarosageneralplan,Santa Rosa,other,general plan,
+21,menloparkzoning,Menlo Park,other,zoning,
+25,paloaltogenplan,Palo Alto,other,general plan,
+26,sanjosegeneralplan2040,San Jose,other,gp,2040
+27,santaclaracountygenplan,Santa Clara,other,gp,
+29,sunnyvalegeneralplan,Sunnyvale,other,gp,
+30,sancarloszoning,San Carlos,other,zoning,
+31,sanmateocitygpparcels,San Mateo,other,gp,
+34,millbraegeneralplan,Millbrae,other,gp,
+35,pacificageneralplan,Pacifica,other,gp,
+37,redwoodcityzoningparcels,Redwood City,other,zoning,
+38,sanbrunogeneralplan,San Bruno,other,gp,
+40,cupertinozoning,Cupertino,other,zoning,
+43,losgatosgeneralplan,Los Gatos,other,gp,
+44,milpitasgeneralplan,Milpitas,other,gp,
+55,napazoning,Napa,other,zoning,
+57,belvedere_general_plan,Belvedere,other,gp,
+58,corte_madera_general_plan,Corte Madera,other,gp,
+59,fairfax_general_plan,Fairfax,other,gp,
+61,millvalleyzoning,Mill Valley,other,zoning,
+63,rossgenplan,Ross,other,gp,
+64,sananselmogenplan,San Anselmo,other,gp,
+65,sanrafaelgeneralplan,San Rafael,other,gp,
+66,sausalitogenplan,Sausalito,other,gp,
+67,tiburongenplan,Tiburon,other,gp,
+68,gilroygpparcels,Gilroy,other,gp,
+71,vacavillegenplan,Vacaville,other,gp,
+76,orinda_zoning,Orinda,other,zoning,
+78,richmond_genplan,Richmond,other,gp,
+79,sanpabloproposed_gplu_112410,San Pablo,other,gp,2010
+81,walnutcreekgenplan,Walnut Creek,other,gp,
+82,antiochgeneralplan,Antioch,other,gp,
+85,brentwood_zoning,Brentwood,other,zoning,
+87,concordparcels_gp120607_clip,Concord,other,gp,2007
+89,elcerritozoning,El Cerrito,other,zoning,
+92,martinezzoning,Martinez,other,zoning,
+94,oakland_generalplan_2005,Oakland,other,gp,2005
+96,pleasantongeneralplan,Pleasanton,other,gp,
+97,alamedageneralplan,Alameda,other,gp,
+98,hayward_gp_landuse,Hayward,other,gp,
+99,livermoregeneralplan,Livermore,other,gp,
+101,sanfranciscozoning,San Francisco,other,zoning,
+103,cccountygplanduse,Unincorporated Contra Costa,other,gp,
+104,marincountygenplan,Unincorporated Marin,other,gp,
+105,napacozoning,Unincorporated Napa,other,zoning,
+106,santaclaracountygenplan,Unincorporated Santa Clara,other,gp,
+107,sanmateocountyzoning,Unincorporated San Mateo,other,zoning,
+108,solcogeneral_plan_unincorporated,Unincorporated Solano,other,gp,
+109,sonomacountygeneralplan,Unincorporated Sonoma,other,gp,
