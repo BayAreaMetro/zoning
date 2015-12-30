@@ -207,6 +207,10 @@ load_zoning_by_jurisdiction: jurisdictional/SonomaCountyGeneralPlan.shp
 	xargs -I {} $(shp2pgsql) jurisdictional/{} zoning_staging.{} | \
 	$(psql)
 
+gdb_table_list:
+	ls jurisdictional/*.shp | cut -d "/" -f2 | \
+	sed 's/.shp//' | tr '[A-Z]' '[a-z]'| sort > gdb_table_list
+
 load_zoning_data_by_city: cities_towns/AlamedaGeneralPlan.shp
 	cd cities_towns; rm SonomaCountyGeneralPlan.* \
 			   SolCoGeneral_plan_unincorporated.* \
