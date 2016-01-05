@@ -1,6 +1,7 @@
 #$@ is the file name of the target of the rule. 
 #example get from s3:aws s3 cp s3://landuse/zoning/match_fields_tables_zoning_2012_source.csv match_fields_tables_zoning_2012_source.csv
 get = aws s3 cp s3://landuse/zoning/
+get_zoning = aws s3 cp s3://zoning-sf-bay-area/
 DBUSERNAME=vagrant
 DBPASSWORD=vagrant
 DBHOST=localhost
@@ -194,7 +195,22 @@ load_admin_boundaries: city10_ba.shp county10_ca.shp
 	#old file saved here: http://landuse.s3.amazonaws.com/zoning/city10_ba_original.zip
 	$(shp2pgsql) county10_ca.shp admin.county10_ca | $(psql)
 
-load_zoning_by_jurisdiction: jurisdictional/SonomaCountyGeneralPlan.shp 
+legacy_tablenames := $(shell cat shapefile_list | tr '\n' ' ')
+zip_targets = $(addsuffix .shp.zip, $(legacy_tablenames))
+shp_targets = $(addsuffix .shp, $(legacy_tablenames))
+
+zoning_files: $(shp_targets)
+
+$(shp_targets): $(zip_targets)
+	unzip -d jurisdictional -o $@.zip
+	touch $@
+
+$(zip_targets):
+	$(get_zoning)$(@F) \
+	$@.download
+	mv $@.download $@
+
+load_zoning_by_jurisdiction: zoning_files
 	#required files: cities_towns/AlamedaGeneralPlan.shp unincorporated_counties/SonomaCountyGeneralPlan.shp
 	#need to better understand make dependency tree for generating these
 	#make goes to make jurisdictional/SonomaCountyGeneralPlan.shp
@@ -206,10 +222,6 @@ load_zoning_by_jurisdiction: jurisdictional/SonomaCountyGeneralPlan.shp
 	ls jurisdictional/*.shp | cut -d "/" -f2 | sed 's/.shp//' | \
 	xargs -I {} $(shp2pgsql) jurisdictional/{} zoning_staging.{} | \
 	$(psql)
-
-gdb_table_list:
-	ls jurisdictional/*.shp | cut -d "/" -f2 | \
-	sed 's/.shp//' | tr '[A-Z]' '[a-z]'| sort > gdb_table_list
 
 load_zoning_data_by_city: cities_towns/AlamedaGeneralPlan.shp
 	cd cities_towns; rm SonomaCountyGeneralPlan.* \
@@ -433,3 +445,15 @@ remove_source_data:
 	rm PlannedLandUsePhase*
 
 reload_plu06: load_plu06 clean_plu06_geoms plu_06
+
+########
+##extras
+########
+
+gdb_table_list:
+	ls jurisdictional/*.shp | cut -d "/" -f2 | \
+	sed 's/.shp//' | tr '[A-Z]' '[a-z]'| sort > gdb_table_list
+
+zip_up_shapefiles:
+	ls *.shp | sed 's/.shp//' | \
+	xargs -I {} zip -r {}.zip . -i {}.shp.*
