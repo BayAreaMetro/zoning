@@ -12,6 +12,14 @@ You can use this [repository](https://github.com/MetropolitanTransportationCommi
 
 The [Makefile](https://github.com/MetropolitanTransportationCommission/zoning/blob/master/Makefile) contains all the necessary pointers to what data is needed, where to get it, scripts to load it into Postgres, and scripts to join source parcel and zoning data. In general we have treated the Makefile as the documentation of the data process. So start there if you need to change something. It will be closer to the data/process than this readme.
 
+'sudo -u postgres createdb sf-bayarea-landuse'
+'sudo -u postgres psql sf_bayarea_landuse -c "CREATE USER landuse WITH PASSWORD 'landuse';"'
+'sudo -u postgres psql sf_bayarea_landuse -c "GRANT ALL PRIVILEGES ON DATABASE sf_bayarea_landuse to landuse;'
+'sudo -u postgres psql sf_bayarea_landuse -c "CREATE EXTENSION postgis;"'
+'sudo -u postgres psql sf_bayarea_landuse -c "CREATE EXTENSION postgis_topology;"'
+
+sudo -u postgres psql sf_bayarea_landuse -c "GRANT ALL PRIVILEGES ON DATABASE sf_bayarea_landuse to vagrant;
+
 ####Data
 The following are required: 
 

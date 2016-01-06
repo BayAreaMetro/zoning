@@ -211,14 +211,9 @@ $(zip_targets):
 	mv $@.download $@
 
 load_zoning_by_jurisdiction: zoning_files
-	#required files: cities_towns/AlamedaGeneralPlan.shp unincorporated_counties/SonomaCountyGeneralPlan.shp
-	#need to better understand make dependency tree for generating these
-	#make goes to make jurisdictional/SonomaCountyGeneralPlan.shp
-	#and then errors out on some detail there
-	#however, the file that depends on already exists
-	#perhaps need to touch the files within FileGDBs?
 	$(psql) -c "DROP SCHEMA IF EXISTS zoning_staging CASCADE"
 	$(psql) -c "CREATE SCHEMA zoning_staging"
+	#    $(foreach jurisdiction, $(legacy_tablenames), $(shp2pgsql) $(jurisdiction) zoning_staging.$(jurisdiction) | $(psql);)
 	ls jurisdictional/*.shp | cut -d "/" -f2 | sed 's/.shp//' | \
 	xargs -I {} $(shp2pgsql) jurisdictional/{} zoning_staging.{} | \
 	$(psql)
