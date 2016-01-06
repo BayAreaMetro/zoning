@@ -195,9 +195,9 @@ load_admin_boundaries: city10_ba.shp county10_ca.shp
 	#old file saved here: http://landuse.s3.amazonaws.com/zoning/city10_ba_original.zip
 	$(shp2pgsql) county10_ca.shp admin.county10_ca | $(psql)
 
-legacy_tablenames := $(shell cat shapefile_list | tr '\n' ' ')
-zip_targets = $(addsuffix .shp.zip, $(legacy_tablenames))
-shp_targets = $(addsuffix .shp, $(legacy_tablenames))
+legacy_tablenames := $(shell cat zoning_source_metadata.csv | cut -d ',' -f2 | tr '\n' ' ')
+zip_targets = $(addprefix jurisdictional/, $(addsuffix .shp.zip, $(legacy_tablenames)))
+shp_targets = $(addprefix jurisdictional/, $(addsuffix .shp, $(legacy_tablenames)))
 
 zoning_files: $(shp_targets)
 
