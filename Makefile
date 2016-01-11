@@ -178,7 +178,7 @@ load_pda: pda.shp
 	$(shp2pgsql) pda.shp admin.pda | $(psql)
 
 load_zoning_data: \
-	load_zoning_by_jurisdiction \
+	load_zoning_shapefiles \
 	load_zoning_data_by_city \
 	load_zoning_data_by_county \
 	fix_errors_in_source_zoning \
@@ -187,17 +187,20 @@ load_zoning_data: \
 	load_plu06
 
 load_admin_boundaries: city10_ba.shp county10_ca.shp
-	$(psql) -c "DROP SCHEMA if exists admin CASCADE"
-	$(psql) -c "CREATE SCHEMA admin"
-	$(shp2pgsql) city10_ba.shp admin.city10_ba | $(psql)
+	$(psql) -c "DROP SCHEMA if exists admin_staging CASCADE"
+	$(psql) -c "CREATE SCHEMA admin_staging"
+	$(shp2pgsql) city10_ba.shp admin_staging.city10_ba | $(psql)
 	#for city10_ba had to delete columns: sqmi, aland, awater b/c stored as numeric(17,17) 
 	#which was beyond capabilities of shapefile, latter 2 replaced with INT, former easy to make w/PostGIS
 	#old file saved here: http://landuse.s3.amazonaws.com/zoning/city10_ba_original.zip
-	$(shp2pgsql) county10_ca.shp admin.county10_ca | $(psql)
+	$(shp2pgsql) county10_ca.shp admin_staging.county10_ca | $(psql)
 
 legacy_tablenames := $(shell cat zoning_source_metadata.csv | cut -d ',' -f2 | tr '\n' ' ')
 zip_targets = $(addprefix jurisdictional/, $(addsuffix .shp.zip, $(legacy_tablenames)))
 shp_targets = $(addprefix jurisdictional/, $(addsuffix .shp, $(legacy_tablenames)))
+
+testme:
+	echo $(legacy_tablenames)
 
 zoning_files: $(shp_targets)
 
@@ -210,7 +213,7 @@ $(zip_targets):
 	$@.download
 	mv $@.download $@
 
-load_zoning_by_jurisdiction: zoning_files
+load_zoning_shapefiles: zoning_files
 	$(psql) -c "DROP SCHEMA IF EXISTS zoning_staging CASCADE"
 	$(psql) -c "CREATE SCHEMA zoning_staging"
 	#    $(foreach jurisdiction, $(legacy_tablenames), $(shp2pgsql) $(jurisdiction) zoning_staging.$(jurisdiction) | $(psql);)
@@ -242,6 +245,9 @@ load_zoning_data_by_county: unincorporated_counties/SonomaCountyGeneralPlan.shp
 
 load_zoning_codes: zoning_lookup.csv
 	$(psql) -f load/load-generic-zoning-code-table.sql
+
+load_zoning_shapefile_metadata:
+	$(psql) -f load/load-zoning-shapefile-metadata.sql
 
 load_zoning_code_additions:
 	$(psql) -f load/add_missing_codes.sql
