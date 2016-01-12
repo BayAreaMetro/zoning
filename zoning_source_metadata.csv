@@ -1,73 +1,39 @@
 97,alamedageneralplan,Alameda,2012,gp,0,0
-102,alamedacountygp2006db,Unincorporated Alameda,2006,general plan,2006,1
 1,albanyzoningdesignations,Albany,2012,zoning,0,0
 82,antiochgeneralplan,Antioch,2012,gp,0,0
-45,athertongp2006db,Atherton,2006,general plan,2006,0
-46,belmontgp2006db,Belmont,2006,general plan,2006,0
 57,belvedere_general_plan,Belvedere,2012,gp,0,0
-8,beniciagp2006db,Benicia,2006,general plan,2006,0
 2,berkeleyzoning,Berkeley,2012,zoning,0,0
 85,brentwood_zoning,Brentwood,2012,zoning,0,0
-47,brisbanegp2006db,Brisbane,2006,general plan,2006,0
-48,burlingamegp2006db,Burlingame,2006,general plan,2006,0
-54,calistogagp2006db,Calistoga,2006,general plan,2006,0
-39,campbellgp2006db,Campbell,2006,general plan,2006,0
-103,cccountygplanduse,Unincorporated Contra Costa,2012,gp,0,1
+103,cccountygplanduse,Contra Costa,2012,gp,0,1
 27,city_santa_clara_gp_lu_02,Santa Clara,2002,general plan,2002,0
-86,claytongp2006db,Clayton,2006,general plan,2006,0
-49,colmagp2006db,Colma,2006,general plan,2006,0
 87,concordparcels_gp120607_clip,Concord,2012,gp,2007,0
 58,corte_madera_general_plan,Corte Madera,2012,gp,0,0
-12,cotatigp2006db,Cotati,2006,general plan,2006,0
 40,cupertinozoning,Cupertino,2012,zoning,0,0
-50,dalycitygp2006db,Daly City,2006,general plan,2006,0
-88,danvillegp2006db,Danville,2006,general plan,2006,0
-9,dixongp2006db,Dixon,2006,general plan,2006,0
 3,dublingeneralplan,Dublin,2012,general plan,0,0
-51,eastpaloaltogp2006db,East Palo Alto,2006,general plan,2006,0
 89,elcerritozoning,El Cerrito,2012,zoning,0,0
 4,emeryvillegpparcels,Emeryville,2012,na,0,0
 59,fairfax_general_plan,Fairfax,2012,gp,0,0
-6,fostercitygp2006db,Foster City,2006,general plan,2006,0
 5,fremontgeneralplan,Fremont,2012,general plan,0,0
 68,gilroygpparcels,Gilroy,2012,gp,0,0
-7,halfmoonbaygp2006db,Half Moon Bay,2006,general plan,2006,0
 98,hayward_gp_landuse,Hayward,2012,gp,0,0
-90,herculesgp2006db,Hercules,2006,general plan,2006,0
-20,hillsboroughgp2006db,Hillsborough,2006,general plan,2006,0
-91,lafayettegp2006db,Lafayette,2006,general plan,2006,0
-60,larkspurgp2006db,Larkspur,2006,general plan,2006,0
 99,livermoregeneralplan,Livermore,2012,gp,0,0
-41,losaltosgp2006db,Los Altos,2006,general plan,2006,0
-42,losaltoshillsgp2006db,Los Altos Hills,2006,general plan,2006,0
 43,losgatosgeneralplan,Los Gatos,2012,gp,0,0
-104,marincountygenplan,Unincorporated Marin,2012,gp,0,1
+104,marincountygenplan,Marin,2012,gp,0,1
 92,martinezzoning,Martinez,2012,zoning,0,0
 21,menloparkzoning,Menlo Park,2012,zoning,0,0
 34,millbraegeneralplan,Millbrae,2012,gp,0,0
 61,millvalleyzoning,Mill Valley,2012,zoning,0,0
 44,milpitasgeneralplan,Milpitas,2012,gp,0,0
-22,monteserenogp2006db,Monte Sereno,2006,general plan,2006,0
-93,moragagp2006db,Moraga,2006,general plan,2006,0
-23,morganhillgp2006db,Morgan Hill,2006,general plan,2006,0
-24,mountainviewgp2006db,Mountain View,2006,general plan,2006,0
-105,napacozoning,Unincorporated Napa,2012,zoning,0,1
+105,napacozoning,Napa,2012,zoning,0,1
 55,napazoning,Napa,2012,zoning,0,0
-100,newarkgp2006db,Newark,2006,general plan,2006,0
-62,novatogp2006db,Novato,2006,general plan,2006,0
 94,oakland_generalplan_2005,Oakland,2012,gp,2005,0
-75,oakleygp2006db,Oakley,2006,general plan,2006,0
 76,orinda_zoning,Orinda,2012,zoning,0,0
 35,pacificageneralplan,Pacifica,2012,gp,0,0
 25,paloaltogenplan,Palo Alto,2012,general plan,0,0
 14,petalumagp2025_landuse,Petaluma,2012,general plan,2025,0
-74,pittsburggp2006db,Pittsburg,2006,general plan,2006,0
-77,pleasanthillgp2006db,Pleasant Hill,2006,general plan,2006,0
 96,pleasantongeneralplan,Pleasanton,2012,gp,0,0
-36,portolavalleygp2006db,Portola Valley,2006,general plan,2006,0
 37,redwoodcityzoningparcels,Redwood City,2012,zoning,0,0
 78,richmond_genplan,Richmond,2012,gp,0,0
-69,riovistagp2006db,Rio Vista,2006,general plan,2006,0
 15,rohnertpark_gp_2010,Rohnert Park,2012,general plan,4010,0
 63,rossgenplan,Ross,2012,gp,0,0
 64,sananselmogenplan,San Anselmo,2012,gp,0,0
@@ -75,26 +41,16 @@
 30,sancarloszoning,San Carlos,2012,zoning,0,0
 101,sanfranciscozoning,San Francisco,2012,zoning,0,0
 26,sanjosegeneralplan2040,San Jose,2012,gp,2040,0
-83,sanleandrogp2006db,San Leandro,2006,general plan,2006,0
 31,sanmateocitygpparcels,San Mateo,2012,gp,0,0
-107,sanmateocountyzoning,Unincorporated San Mateo,2012,zoning,0,1
+107,sanmateocountyzoning,San Mateo,2012,zoning,0,1
 79,sanpabloproposed_gplu_112410,San Pablo,2012,gp,2010,0
 65,sanrafaelgeneralplan,San Rafael,2012,gp,0,0
-106,santaclaracountygenplan,Unincorporated Santa Clara,2012,gp,0,1
+106,santaclaracountygenplan,Santa Clara,2012,gp,0,1
 16,santarosageneralplan,Santa Rosa,2012,general plan,0,0
 66,sausalitogenplan,Sausalito,2012,gp,0,0
-108,solcogeneral_plan_unincorporated,Unincorporated Solano,2012,gp,0,1
-18,sonomacitygp2006db,Sonoma,2006,general plan,2006,0
-109,sonomacountygeneralplan,Unincorporated Sonoma,2012,gp,0,1
-32,southsanfranciscogp2006db,South San Francisco,2006,general plan,2006,0
-56,sthelenagp2006db,St. Helena,2006,general plan,2006,0
-70,suisuncitygp2006db,Suisun City,2006,general plan,2006,0
+108,solcogeneral_plan_unincorporated,Solano,2012,gp,0,1
+109,sonomacountygeneralplan,Sonoma,2012,gp,0,1
 29,sunnyvalegeneralplan,Sunnyvale,2012,gp,0,0
 67,tiburongenplan,Tiburon,2012,gp,0,0
-84,unioncitygp2006db,Union City,2006,general plan,2006,0
 71,vacavillegenplan,Vacaville,2012,gp,0,0
-72,vallejogp2006db,Vallejo,2006,general plan,2006,0
 81,walnutcreekgenplan,Walnut Creek,2012,gp,0,0
-19,windsorgp2006db,Windsor,2006,general plan,2006,0
-33,woodsidegp2006db,Woodside,2006,general plan,2006,0
-52,yountvillegp2006db,Yountville,2006,general plan,2006,0
