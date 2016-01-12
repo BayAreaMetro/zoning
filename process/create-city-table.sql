@@ -1,5 +1,58 @@
-DROP TABLE IF EXISTS admin.cities;
-CREATE TABLE admin.cities AS 
+select m.common_name from
+zoning_staging.shapefile_metadata
+where county is TRUE;
+
+drop table admin_staging.unioned_counties;
+create table admin_staging.unioned_counties as
+select cn.geoid10, cn.name10, st_union(cn.geom) as geom from
+zoning_staging.shapefile_metadata m,
+admin_staging.temp_census cn
+where m.county is TRUE
+and (cn.name10 like 'Alameda'
+or cn.name10 like m.common_name)
+group by cn.geoid10,
+cn.name10;
+
+create table admin_staging.temp_census as
+select m.common_name, mtc.geoid10, census.geo_id, census.geom
+from admin_staging.gz_2010_us_050_00_5m census,
+admin_staging.county10_ca mtc,
+zoning_staging.shapefile_metadata m
+where 1=1
+AND mtc.geoid10 = right(census.geo_id,5)
+AND m.county is TRUE
+and mtc.name10 like m.common_name;
+
+
+UPDATE admin_staging.city10_ba
+SET geom = ST_MakeValid(geom);
+
+drop table admin_staging.unincorporated_counties;
+CREATE TABLE admin_staging.unincorporated_counties AS
+SELECT cnty.geoid10, cnty.name10, ST_Difference(cnty.geom, cty.geom) as geom
+FROM admin_staging.unioned_counties cnty,
+admin_staging.city10_ba cty;
+
+DROP TABLE admin_staging.unincorporated_counties_geometry_collection;
+CREATE TABLE admin_staging.unincorporated_counties_geometry_collection AS
+SELECT *
+FROM admin_staging.unincorporated_counties
+WHERE GeometryType(geom) <> 'MULTIPOLYGON';
+COMMENT ON TABLE admin_staging.unincorporated_counties is 'subset of adming_staging.county with non multipolygon';
+
+
+UPDATE admin_staging.unincorporated_counties
+SET geom = ST_Multi(geom);
+
+drop table admin_staging.unincorporated_counties_union;
+CREATE TABLE admin_staging.unincorporated_counties_union AS
+SELECT cnty.geoid10, cnty.name10, ST_Union(cnty.geom) as geom
+FROM admin_staging.unincorporated_counties cnty
+group by cnty.geoid10,
+cnty.name10;
+
+DROP TABLE IF EXISTS admin.jurisdictions;
+CREATE TABLE admin.jurisdictions AS
 SELECT m.*, c.geoid10, c.geom
 from zoning_staging.shapefile_metadata m,
 admin_staging.city10_ba c

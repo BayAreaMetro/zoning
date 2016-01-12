@@ -186,7 +186,7 @@ load_zoning_data: \
 	load_zoning_codes \
 	load_plu06
 
-load_admin_boundaries: city10_ba.shp county10_ca.shp
+load_admin_boundaries: city10_ba.shp county10_ca.shp load_census_county_boundaries
 	$(psql) -c "DROP SCHEMA if exists admin_staging CASCADE"
 	$(psql) -c "CREATE SCHEMA admin_staging"
 	$(shp2pgsql) city10_ba.shp admin_staging.city10_ba | $(psql)
@@ -194,6 +194,19 @@ load_admin_boundaries: city10_ba.shp county10_ca.shp
 	#which was beyond capabilities of shapefile, latter 2 replaced with INT, former easy to make w/PostGIS
 	#old file saved here: http://landuse.s3.amazonaws.com/zoning/city10_ba_original.zip
 	$(shp2pgsql) county10_ca.shp admin_staging.county10_ca | $(psql)
+
+load_census_city_boundaries: gz_2010_06_160_00_500k.shp
+	$(shp2pgsql) gz_2010_06_160_00_500k.shp admin_staging.gz_2010_06_160_00_500k | $(psql)
+
+gz_2010_06_160_00_500k.shp: gz_2010_06_160_00_500k.zip
+	unzip -o gz_2010_06_160_00_500k.zip
+
+gz_2010_06_160_00_500k.zip:
+	curl -k -o $@.download http://www2.census.gov/geo/tiger/GENZ2010/gz_2010_06_160_00_500k.zip
+	mv $@.download $@
+
+load_census_county_boundaries: gz_2010_us_050_00_5m.shp
+	$(shp2pgsql) -W "latin1" gz_2010_us_050_00_5m.shp admin_staging.gz_2010_us_050_00_5m | $(psql)
 
 legacy_tablenames := $(shell cat zoning_source_metadata.csv | cut -d ',' -f2 | tr '\n' ' ')
 zip_targets = $(addprefix jurisdictional/, $(addsuffix .shp.zip, $(legacy_tablenames)))
@@ -318,6 +331,9 @@ jurisdictional/SonomaCountyGeneralPlan.shp: PlannedLandUsePhase1.gdb/a00000001.f
 PlannedLandUsePhase1.gdb/a00000001.freelist: PlannedLandUse1Through6.gdb.zip
 	unzip -o $<
 	touch $@
+
+census_county.shp: gz_2010_us_050_00_5m.zip
+
 
 county10_ca.shp: county10_ca.zip
 	unzip -o $<
