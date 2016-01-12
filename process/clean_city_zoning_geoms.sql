@@ -6,12 +6,12 @@ FROM
 	zoning.cities_towns;
 COMMENT ON TABLE zoning.cities_towns_valid is 'subset of zoning.cities_towns_source with valid geometries only';
 
-DROP TABLE zoning.cities_towns_invalid;
-CREATE TABLE zoning.cities_towns_invalid AS
+DROP TABLE admin_staging.unincorporated_counties_geometry_collection;
+CREATE TABLE admin_staging.unincorporated_counties_geometry_collection AS
 SELECT *
-FROM zoning.cities_towns
-WHERE ST_IsValid(the_geom) = false;
-COMMENT ON TABLE zoning.cities_towns_invalid is 'subset of zoning.cities_towns_source with invalid geometries only';
+FROM admin_staging.unincorporated_counties
+WHERE GeometryType(geom) <> 'MULTIPOLYGON';
+COMMENT ON TABLE admin_staging.unincorporated_counties is 'subset of adming_staging.county with non multipolygon';
 
 DROP TABLE zoning.cities_towns_geometry_collection;
 CREATE TABLE zoning.cities_towns_geometry_collection
