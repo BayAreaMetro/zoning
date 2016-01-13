@@ -55,7 +55,7 @@ Indexes:
 
 */
 
-DROP TABLE IF EXISTS admin_staging.unincorporated_counties;
+DROP TABLE IF EXISTS admin_staging.unincorporated_counties CASCADE;
 
 CREATE TABLE admin_staging.unincorporated_counties AS
 SELECT cnty.geoid10,
@@ -78,7 +78,7 @@ GROUP BY cnty.geoid10,
          cnty.name10;
 
 
-DROP TABLE IF EXISTS administrative_areas.jurisdictions;
+DROP TABLE IF EXISTS administrative_areas.jurisdictions CASCADE;
 
 
 CREATE TABLE administrative_areas.jurisdictions AS
