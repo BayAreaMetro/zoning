@@ -18,8 +18,7 @@ DELETE FROM zoning.bay_area
 WHERE ST_IsValid(geom) = false;
 
 DROP TABLE zoning.geometry_collection ;
-CREATE TABLE zoning.geometry_collection
-AS
+CREATE TABLE zoning.geometry_collection AS
 SELECT *
 FROM zoning.bay_area
 WHERE GeometryType(geom) = 'GEOMETRYCOLLECTION';
