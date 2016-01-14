@@ -17,11 +17,13 @@ parcels_pdas.csv:
 	load_pda \
 	$(psql) -f process/get_pda_for_parcels.sql
 
+
 #########################
 ##Join Parcels/Zoning####
 #########################
 
 zoning_parcels.csv: \
+	load_administrative_tables \
 	load_zoning_data \
 	prepare \
 	intersect \
@@ -177,14 +179,15 @@ check_output:
 load_pda: pda.shp
 	$(shp2pgsql) pda.shp admin.pda | $(psql)
 
+load_administrative_tables: \
+	load_admin_boundaries \
+	create_jurisdiction_table \
+
 load_zoning_data: \
 	load_zoning_shapefiles \
-	load_zoning_data_by_city \
-	load_zoning_data_by_county \
-	fix_errors_in_source_zoning \
-	load_admin_boundaries \
-	load_zoning_codes \
-	load_plu06
+	load_zoning_shapefile_metadata \
+	load_plu06 \
+	fix_errors_in_source_zoning
 
 load_admin_boundaries: city10_ba.shp county10_ca.shp load_census_county_boundaries
 	$(psql) -c "DROP SCHEMA if exists admin_staging CASCADE"
@@ -282,9 +285,9 @@ fix_errors_in_source_zoning:
 	$(psql) -c "CREATE TABLE zoning_staging.solcogeneral_plan_unincorporated AS SELECT * from zoning_staging.solcogeneral_plan_unincorporated_temp;"
 	$(psql) -c "DROP TABLE zoning_staging.solcogeneral_plan_unincorporated_temp;"
 
-load_plu06: plu06_may2015estimate.shp
+load_plu06: jurisdictional/plu06_may2015estimate.shp
 	$(psql) -c "DROP TABLE IF EXISTS zoning.plu06_may2015estimate;"
-	$(shp2pgsql) plu06_may2015estimate.shp zoning.plu06_may2015estimate | $(psql)
+	$(shp2pgsql) plu06_may2015estimate.shp zoning_staging.plu06_may2015estimate | $(psql)
 	$(psql) -f load/add-plu-2006.sql
 
 load_no_dev: no_dev1_geo_only.csv
@@ -342,7 +345,7 @@ county10_ca.shp: county10_ca.zip
 city10_ba.shp: city10_ba.zip
 	unzip -o $<
 
-plu06_may2015estimate.shp: plu06_may2015estimate.zip
+jurisdictional/plu06_may2015estimate.shp: jurisdictional/plu06_may2015estimate.zip
 	unzip -o $<
 	touch $@	
 
@@ -400,7 +403,7 @@ PlannedLandUse1Through6.gdb.zip:
 	$@.download
 	mv $@.download $@
 
-plu06_may2015estimate.zip:
+jurisdictional/plu06_may2015estimate.zip:
 	$(get)plu06_may2015estimate.zip \
 	$@.download
 	mv $@.download $@
