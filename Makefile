@@ -198,18 +198,39 @@ load_admin_boundaries: city10_ba.shp county10_ca.shp load_census_county_boundari
 	#old file saved here: http://landuse.s3.amazonaws.com/zoning/city10_ba_original.zip
 	$(shp2pgsql) county10_ca.shp admin_staging.county10_ca | $(psql)
 
+create_jurisdiction_table:
+	$(psql) -f process/create_jurisdictional_table.sql
+
+##################################################
+###following may be useful later, not used now####
+####for loading/checks against census source #####
+##################################################
+
 load_census_city_boundaries: gz_2010_06_160_00_500k.shp
-	$(shp2pgsql) gz_2010_06_160_00_500k.shp admin_staging.gz_2010_06_160_00_500k | $(psql)
+        shp2pgsql -W "LATIN1" -t 2D -s 26910 -I gz_2010_06_160_00_500k.shp admin_staging.gz_2010_06_160_00_500k | $(psql)
 
 gz_2010_06_160_00_500k.shp: gz_2010_06_160_00_500k.zip
-	unzip -o gz_2010_06_160_00_500k.zip
+        unzip -o gz_2010_06_160_00_500k.zip
 
 gz_2010_06_160_00_500k.zip:
-	curl -k -o $@.download http://www2.census.gov/geo/tiger/GENZ2010/gz_2010_06_160_00_500k.zip
-	mv $@.download $@
+        curl -k -o $@.download http://www2.census.gov/geo/tiger/GENZ2010/gz_2010_06_160_00_500k.zip
+        mv $@.download $@
 
 load_census_county_boundaries: gz_2010_us_050_00_5m.shp
-	$(shp2pgsql) -W "latin1" gz_2010_us_050_00_5m.shp admin_staging.gz_2010_us_050_00_5m | $(psql)
+        shp2pgsql -W "LATIN1" -t 2D -s 26910 -I gz_2010_us_050_00_5m.shp admin_staging.gz_2010_us_050_00_5m | $(psql)
+
+gz_2010_us_050_00_5m.shp: gz_2010_us_050_00_5m.zip
+        unzip -o $<
+
+gz_2010_us_050_00_5m.zip:
+        curl -k -o $@.download http://www2.census.gov/geo/tiger/GENZ2010/gz_2010_us_050_00_5m.zip
+        mv $@.download $@
+
+##################################################
+##################END CENSUS IMPORT###############
+####for loading/checks against census source #####
+##################################################
+
 
 legacy_tablenames := $(shell cat zoning_source_metadata.csv | cut -d ',' -f2 | tr '\n' ' ')
 zip_targets = $(addprefix jurisdictional/, $(addsuffix .shp.zip, $(legacy_tablenames)))
