@@ -44,10 +44,6 @@ zoning_parcels.csv: zoning_files \
 	ls jurisdictional/*.shp | cut -d "/" -f2 | sed 's/.shp//' |
 		xargs -I {} $(shp2pgsql) jurisdictional/{} zoning_staging.{} | $(psql)
 	$(psql) -f load/load-zoning-shapefile-metadata.sql
-#load zoning source data shapefile from 2006
-	$(psql) -c "DROP TABLE IF EXISTS zoning.plu06_may2015estimate;"
-	$(shp2pgsql) plu06_may2015estimate.shp zoning_staging.plu06_may2015estimate | $(psql)
-	$(psql) -f load/add-plu-2006.sql
 #FIX for Napa
 	$(psql) -c "CREATE TABLE zoning_staging.napacozoning_temp AS SELECT zoning, geom from zoning_staging.napacozoning;"
 	$(psql) -c "DROP TABLE zoning_staging.napacozoning;"
@@ -61,6 +57,10 @@ zoning_parcels.csv: zoning_files \
 #merge the 2012 tables together into one
 	$(psql) -f functions/merge_schema.sql 
 	$(psql) -f process/merge_2012_zoning.sql
+#load zoning source data shapefile from 2006
+	$(psql) -c "DROP TABLE IF EXISTS zoning.plu06_may2015estimate;"
+	$(shp2pgsql) data/plu06_may2015estimate.shp zoning.plu06_may2015estimate | $(psql)
+	$(psql) -f load/add-plu-2006.sql
 #clean and homogenize geometries
 	$(psql) -f process/clean_parcel_geoms.sql
 	$(psql) -f process/clean_2012_zoning_geoms.sql
@@ -107,9 +107,9 @@ zoning_files: zoning_files_2012 zoning_file_2006
 
 zoning_files_2012: $(shp_targets) 
 
-zoning_file_2006: jurisdictional/plu06_may2015estimate.shp
+zoning_file_2006: data/plu06_may2015estimate.shp
 
-jurisdictional/plu06_may2015estimate.shp: jurisdictional/plu06_may2015estimate.zip
+data/plu06_may2015estimate.shp: data/plu06_may2015estimate.zip
 	unzip -o $<
 	touch $@
 
@@ -152,7 +152,7 @@ match_fields_tables_zoning_2012_source.csv:
 	$@.download
 	mv $@.download $@
 
-jurisdictional/plu06_may2015estimate.zip:
+data/plu06_may2015estimate.zip:
 	$(get)plu06_may2015estimate.zip \
 	$@.download
 	mv $@.download $@
