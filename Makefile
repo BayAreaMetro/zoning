@@ -11,14 +11,6 @@ psql = PGPASSWORD=vagrant psql -p $(DBPORT) -h $(DBHOST) -U $(DBUSERNAME) $(DBNA
 shp2pgsql = shp2pgsql -t 2D -s 26910 -I
 
 #########################
-###Join Parcels/PDAs#####
-#########################
-parcels_pdas.csv: 
-	load_pda \
-	$(psql) -f process/get_pda_for_parcels.sql
-
-
-#########################
 ##Join Parcels/Zoning####
 #########################
 
@@ -44,57 +36,22 @@ update_after_change_in_zoning_ids: \
 	assign \
 	backup_db
 
-prepare: merge_zoning \
+prepare: merge_2012_zoning \
 	clean_geoms \
 	assign_admin 
 
-merge_zoning: \
-	merge_all_zoning \
-	merge_city_zoning \
-	merge_county_zoning \
-
 clean_geoms: \
-	clean_bayarea_zoning_geoms \
-	clean_county_zoning_geoms \
-	clean_city_zoning_geoms \
-	clean_parcel_geoms \
-	clean_plu06_geoms
-
-##
-merge_all_zoning:
-	$(psql) -f functions/merge_schema.sql 
-	$(psql) -f process/merge_all_zoning.sql
-#	$(psql) -c "drop schema zoning_staging CASCADE" #temporarily, because of VM size limit
-
-merge_county_zoning:
-	$(psql) -f functions/merge_schema.sql 
-	$(psql) -f process/merge_county_zoning.sql
-#	$(psql) -c "DROP SCHEMA zoning_unincorporated_counties CASCADE;"
-
-merge_city_zoning:
-	$(psql) -f functions/merge_schema.sql 
-	$(psql) -f process/merge_city_zoning.sql
-##
-clean_parcel_geoms:
 	$(psql) -f process/clean_parcel_geoms.sql
-
-clean_bayarea_zoning_geoms:
-	$(psql) -f process/clean_zoning_geoms.sql
-
-clean_city_zoning_geoms:
-	$(psql) -f process/clean_city_zoning_geoms.sql
-
-clean_county_zoning_geoms:
-	$(psql) -f process/clean_county_zoning_geoms.sql
-
-clean_plu06_geoms:
+	$(psql) -f process/clean_2012_zoning_geoms.sql
 	$(psql) -f process/clean_plu06_geoms.sql
 
-##
+merge_2012_zoning:
+	$(psql) -f functions/merge_schema.sql
+	$(psql) -f process/merge_2012_zoning.sql
+
 assign_admin:
 	$(psql) -f process/assign_admin_to_parcels.sql
 
-##
 intersect: create_intersection_table \
 	get_stats_on_intersection 
 
@@ -106,44 +63,17 @@ create_intersection_table:
 get_stats_on_intersection:
 	$(psql) -f process/get_stats_on_intersection.sql
 
-assign: assign_simple \
-	assign_cities \
-	assign_counties \
+assign: assign_simple
 
-assign_simple: \
+assign_simple:
 	assign_zoning_to_parcels_with_one_zone
 
 assign_zoning_to_parcels_with_one_zone:
 	$(psql) -f process/assign_zoning_to_parcels_with_one_zone.sql
 
-assign_cities: \
-	overlaps_cities \
-	get_stats_on_overlaps_cities \
-	assign_zoning_to_parcels_in_cities
-
-get_stats_on_overlaps_cities:
-	$(psql) -f process/get_stats_on_overlaps_cities.sql
-
-overlaps_cities:
-	$(psql) -f functions/get_zoning_id.sql
-	$(psql) -f process/overlaps_city_zoning_parcels.sql
-
-assign_zoning_to_parcels_in_cities:
-	$(psql) -f process/assign_zoning_to_parcels_in_cities.sql
-
-assign_counties: \
-	overlaps_counties \
-	get_stats_on_overlaps_counties \
-	assign_zoning_to_parcels_in_unincorporated
-
-overlaps_counties:
-	$(psql) -f process/overlaps_county_zoning_parcels.sql
-
-get_stats_on_overlaps_counties:
-	$(psql) -f process/get_stats_on_overlaps_counties.sql
-
-assign_zoning_to_parcels_in_unincorporated:
-	$(psql) -f process/assign_zoning_to_parcels_in_unincorporated.sql	
+###########
+###plu06###
+###########
 
 plu06: \
 	create_intersection_table_plu06 \
@@ -158,15 +88,6 @@ overlaps_plu06:
 
 assign_plu06:
 	$(psql) -f process/assign_plu06_to_parcels.sql		
-
-# finalize: \
-# 	make load_plu06 \
-# 	make check_output \
-# 	make add_plu06
-
-# add_plu06:
-# 	$(psql) -f process/clean_plu06_geoms.sql
-# 	$(psql) -f load/add-plu-2006.sql
 
 check_output:
 	$(psql) -f process/check_zoning_parcel_table.sql
@@ -201,35 +122,6 @@ load_admin_boundaries: city10_ba.shp county10_ca.shp load_census_county_boundari
 create_jurisdiction_table:
 	$(psql) -f process/create_jurisdictional_table.sql
 
-##################################################
-###following may be useful later, not used now####
-####for loading/checks against census source #####
-##################################################
-
-load_census_city_boundaries: gz_2010_06_160_00_500k.shp
-        shp2pgsql -W "LATIN1" -t 2D -s 26910 -I gz_2010_06_160_00_500k.shp admin_staging.gz_2010_06_160_00_500k | $(psql)
-
-gz_2010_06_160_00_500k.shp: gz_2010_06_160_00_500k.zip
-        unzip -o gz_2010_06_160_00_500k.zip
-
-gz_2010_06_160_00_500k.zip:
-        curl -k -o $@.download http://www2.census.gov/geo/tiger/GENZ2010/gz_2010_06_160_00_500k.zip
-        mv $@.download $@
-
-load_census_county_boundaries: gz_2010_us_050_00_5m.shp
-        shp2pgsql -W "LATIN1" -t 2D -s 26910 -I gz_2010_us_050_00_5m.shp admin_staging.gz_2010_us_050_00_5m | $(psql)
-
-gz_2010_us_050_00_5m.shp: gz_2010_us_050_00_5m.zip
-        unzip -o $<
-
-gz_2010_us_050_00_5m.zip:
-        curl -k -o $@.download http://www2.census.gov/geo/tiger/GENZ2010/gz_2010_us_050_00_5m.zip
-        mv $@.download $@
-
-##################################################
-##################END CENSUS IMPORT###############
-####for loading/checks against census source #####
-##################################################
 
 
 legacy_tablenames := $(shell cat zoning_source_metadata.csv | cut -d ',' -f2 | tr '\n' ' ')
@@ -439,25 +331,9 @@ no_dev1.txt:
 ##General Targets##
 ###################
 
-clean_zoning_data: 
-	$(psql) -c "DROP SCHEMA zoning CASCADE;"
-	$(psql) -c "DROP SCHEMA zoning_staging CASCADE;"
-
-clean_db:
-	sudo bash load/clean_db.sh
-	
-clean_intersection_tables:
-	$(psql)	-f load/drop_intersection_tables.sql
-
 zoning_parcel_intersection:
 	$(psql) \
 	-f process/parcel_zoning_intersection.sql
-
-clean_shapefiles:
-	rm -rf jurisdictional
-
-clean_parcel_generation:
-	$(psql)	-f load/drop_parcel_generation_tables.sql
 
 sql_dump:
 	pg_dump --table zoning.parcel_withdetails \
@@ -474,6 +350,29 @@ backup_db:
 write_db_to_s3:
 	bash output/write_db_to_s3.sh
 
+##################################
+##extras##########################
+##################################
+##everything down here is not#####
+##part of the main target creation
+##################################
+
+clean_zoning_data:
+	$(psql) -c "DROP SCHEMA zoning CASCADE;"
+	$(psql) -c "DROP SCHEMA zoning_staging CASCADE;"
+
+clean_db:
+	sudo bash load/clean_db.sh
+
+clean_intersection_tables:
+	$(psql)	-f load/drop_intersection_tables.sql
+
+clean_parcel_generation:
+	$(psql)	-f load/drop_parcel_generation_tables.sql
+
+clean_shapefiles:
+	rm -rf jurisdictional
+
 remove_source_data:
 	rm ba8parcels.* 
 	rm city10_ba.* 
@@ -487,9 +386,46 @@ remove_source_data:
 
 reload_plu06: load_plu06 clean_plu06_geoms plu_06
 
-########
-##extras
-########
+
+
+#########################
+###Join Parcels/PDAs#####
+#########################
+parcels_pdas.csv:
+	load_pda \
+	$(psql) -f process/get_pda_for_parcels.sql
+
+
+##################################################
+###following may be useful later, not used now####
+####for loading/checks against census source #####
+##################################################
+
+load_census_city_boundaries: gz_2010_06_160_00_500k.shp
+        shp2pgsql -W "LATIN1" -t 2D -s 26910 -I gz_2010_06_160_00_500k.shp admin_staging.gz_2010_06_160_00_500k | $(psql)
+
+gz_2010_06_160_00_500k.shp: gz_2010_06_160_00_500k.zip
+        unzip -o gz_2010_06_160_00_500k.zip
+
+gz_2010_06_160_00_500k.zip:
+        curl -k -o $@.download http://www2.census.gov/geo/tiger/GENZ2010/gz_2010_06_160_00_500k.zip
+        mv $@.download $@
+
+load_census_county_boundaries: gz_2010_us_050_00_5m.shp
+        shp2pgsql -W "LATIN1" -t 2D -s 26910 -I gz_2010_us_050_00_5m.shp admin_staging.gz_2010_us_050_00_5m | $(psql)
+
+gz_2010_us_050_00_5m.shp: gz_2010_us_050_00_5m.zip
+        unzip -o $<
+
+gz_2010_us_050_00_5m.zip:
+        curl -k -o $@.download http://www2.census.gov/geo/tiger/GENZ2010/gz_2010_us_050_00_5m.zip
+        mv $@.download $@
+
+##################################################
+##################END CENSUS IMPORT###############
+####for loading/checks against census source #####
+##################################################
+
 
 gdb_table_list:
 	ls jurisdictional/*.shp | cut -d "/" -f2 | \
