@@ -40,10 +40,35 @@ CREATE VIEW admin_staging.parcels_not_on_jurisdiction_lines as
 ALTER TABLE parcel
     ADD COLUMN jurisdiction_id integer;
 
+
+ALTER TABLE administrative_areas.jurisdictions
+    ADD COLUMN county_id integer;
+
+UPDATE administrative_areas.jurisdictions
+    SET county_id = CAST (right(geoid10,3) AS INTEGER);
+
+DROP INDEX IF EXISTS jurisdictions_county_id_idx;
+    CREATE INDEX jurisdictions_county_id_idx ON administrative_areas.jurisdictions using hash (county_id);
+
+vacuum (analyze) administrative_areas.jurisdictions;
+
+DROP INDEX IF EXISTS parcel_county_id_idx;
+    CREATE INDEX parcel_county_id_idx ON parcel using hash (county_id);
+
+vacuum (analyze) parcel;
+
+UPDATE parcel
+    SET jurisdiction_id = CAST (juris.geoid10 AS INTEGER)
+    FROM parcel p,
+    admin_staging.parcels_not_on_jurisdiction_lines p2,
+    administrative_areas.jurisdictions juris
+    WHERE p.geom_id = p2.geom_id AND
+        juris.county_id = p.county_id;
+
 UPDATE parcel
     SET jurisdiction_id = juris.id
     FROM parcel p,
-    administrative_areas.jurisdictions juris,
+    (select * from administrative_areas.jurisdictions where county=false) juris,
     admin_staging.parcels_not_on_jurisdiction_lines p2
     WHERE 1=1 AND
         p.geom_id = p2.geom_id AND
@@ -52,8 +77,7 @@ UPDATE parcel
 
 DROP INDEX IF EXISTS admin_staging_jurisdictions_lines;
     CREATE INDEX admin_staging_jurisdictions_lines ON administrative_areas.jurisdictions using gist (boundary_lines);
-
-
+/*
 DROP TABLE IF EXISTS admin_staging.parcels_on_jurisdiction_lines;
 CREATE TABLE admin_staging.parcels_on_jurisdiction_lines AS
 SELECT juris.name10 as name1,
@@ -102,3 +126,4 @@ CREATE INDEX admin_parcel_cities_name_idx ON admin.parcel_cities using hash (nam
 
 
 VACUUM (ANALYZE) admin.parcel_cities;
+*/
