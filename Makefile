@@ -32,12 +32,12 @@ zoning_parcels.csv: zoning_files \
 #load generic zoning assignment table
 	$(psql) -f load/load-generic-zoning-code-table.sql
 #load and assign adminstrative areas to parcels
- 	$(psql) -c "DROP SCHEMA if exists admin_staging CASCADE"
+	$(psql) -c "DROP SCHEMA if exists admin_staging CASCADE;"
  	$(psql) -c "CREATE SCHEMA admin_staging"
  	$(shp2pgsql) city10_ba.shp admin_staging.city10_ba | $(psql)
  	$(shp2pgsql) county10_ca.shp admin_staging.county10_ca | $(psql)
-	$(psql) -f process/create_jurisdictional_table.sql 
-	$(psql) -f process/assign_admin_to_parcels.sql 
+	$(psql) -f process/create_jurisdictional_table.sql
+	$(psql) -f process/assign_city_name_by_county.sql
 #load zoning source data shapefiles from 2012
 	$(psql) -c "DROP SCHEMA IF EXISTS zoning_staging CASCADE"
 	$(psql) -c "CREATE SCHEMA zoning_staging"
