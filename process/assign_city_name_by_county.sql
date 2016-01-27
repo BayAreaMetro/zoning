@@ -1,3 +1,4 @@
+/*
 ALTER TABLE parcel
     ADD COLUMN geoid10 integer;
 
@@ -158,6 +159,7 @@ LEFT JOIN
 jurisdiction_county_views.napa j
 ON ST_Contains(j.geom, p.point_on_surface)) as subquery
 where subquery.geom_id = upd_p.geom_id;
+*/
 
 DROP TABLE IF EXISTS admin_staging.parcels_on_jurisdiction_lines;
 CREATE TABLE admin_staging.parcels_on_jurisdiction_lines AS
@@ -173,7 +175,7 @@ WHERE
 p.geom && juris.boundary_lines AND
 ST_Intersects(juris.boundary_lines, p.geom);
 COMMENT ON TABLE admin_staging.parcel_counties is 'parcels st_intersect with juris boundaries';
-*/
+
 ---------
 
 CREATE INDEX ON admin_staging.parcels_on_jurisdiction_lines using btree (geom_id);
