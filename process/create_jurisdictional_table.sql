@@ -52,7 +52,6 @@ Indexes:
 Indexes:
     "city10_ba_pkey" PRIMARY KEY, btree (gid)
     "city10_ba_geom_idx" gist (geom)
-
 */
 
 DROP TABLE IF EXISTS admin_staging.unincorporated_counties CASCADE;
@@ -77,11 +76,10 @@ FROM
 GROUP BY cnty.geoid10,
          cnty.name10;
 
+DROP TABLE IF EXISTS admin_staging.jurisdictions CASCADE;
 
-DROP TABLE IF EXISTS administrative_areas.jurisdictions CASCADE;
 
-
-CREATE TABLE administrative_areas.jurisdictions AS
+CREATE TABLE admin_staging.jurisdictions AS
 SELECT m.juris_id,
        m.shapefile_name,
        m.collection_project_year,
@@ -98,7 +96,7 @@ WHERE 1=1
   AND c.name10 LIKE m.common_name;
 
 
-INSERT INTO administrative_areas.jurisdictions (shapefile_name, collection_project_year, regulation_type, year_in_tablename, county, geoid10, name10, geom)
+INSERT INTO admin_staging.jurisdictions (shapefile_name, collection_project_year, regulation_type, year_in_tablename, county, geoid10, name10, geom)
 SELECT m.shapefile_name AS shapefile_name,
        '2012' AS collection_project_year,
        'gp' regulation_type,
@@ -127,11 +125,11 @@ FROM
           cty.geom,
           j.juris_id
    FROM admin_staging.city10_ba cty
-   LEFT JOIN administrative_areas.jurisdictions j ON cty.geoid10 = j.geoid10) q
+   LEFT JOIN admin_staging.jurisdictions j ON cty.geoid10 = j.geoid10) q
 WHERE q.juris_id IS NULL;
 
 
-INSERT INTO administrative_areas.jurisdictions (shapefile_name, collection_project_year, regulation_type, year_in_tablename, county, geoid10, name10, geom)
+INSERT INTO admin_staging.jurisdictions (shapefile_name, collection_project_year, regulation_type, year_in_tablename, county, geoid10, name10, geom)
 SELECT 'plu_may2015estimate.shp' AS shapefile_name,
        '2006' AS collection_project_year,
        'na' regulation_type,
@@ -156,14 +154,14 @@ FROM
           cnty.geom,
           j.juris_id
    FROM admin_staging.unincorporated_counties cnty
-   LEFT JOIN administrative_areas.jurisdictions j ON cnty.geoid10 = j.geoid10
+   LEFT JOIN admin_staging.jurisdictions j ON cnty.geoid10 = j.geoid10
    WHERE county IS NULL
      AND NOT cnty.geoid10 = '06075' -- san francisco
 ) q
 WHERE q.juris_id IS NULL;
 
 
-INSERT INTO administrative_areas.jurisdictions (shapefile_name, collection_project_year, regulation_type, year_in_tablename, county, geoid10, name10, geom)
+INSERT INTO admin_staging.jurisdictions (shapefile_name, collection_project_year, regulation_type, year_in_tablename, county, geoid10, name10, geom)
 SELECT 'plu_may2015estimate.shp' AS shapefile_name,
        '2006' AS collection_project_year,
        'na' regulation_type,
@@ -175,38 +173,34 @@ SELECT 'plu_may2015estimate.shp' AS shapefile_name,
 FROM admin_staging.counties_to_fill_with_2006 c;
 
 --create primary key
-ALTER TABLE administrative_areas.jurisdictions ADD COLUMN id INTEGER;
-CREATE SEQUENCE administrative_areas_jurisdictions_id_seq;
-UPDATE administrative_areas.jurisdictions SET id = nextval('administrative_areas_jurisdictions_id_seq');
-ALTER TABLE administrative_areas.jurisdictions ALTER COLUMN id SET DEFAULT nextval('administrative_areas_jurisdictions_id_seq');
-ALTER TABLE administrative_areas.jurisdictions ALTER COLUMN id SET NOT NULL;
-ALTER TABLE administrative_areas.jurisdictions ADD PRIMARY KEY (id);
+ALTER TABLE admin_staging.jurisdictions ADD COLUMN id INTEGER;
+CREATE SEQUENCE admin_staging.jurisdictions_id_seq;
+UPDATE admin_staging.jurisdictions SET id = nextval('admin_staging.jurisdictions_id_seq');
+ALTER TABLE admin_staging.jurisdictions ALTER COLUMN id SET DEFAULT nextval('admin_staging.jurisdictions_id_seq');
+ALTER TABLE admin_staging.jurisdictions ALTER COLUMN id SET NOT NULL;
+ALTER TABLE admin_staging.jurisdictions ADD PRIMARY KEY (id);
 
-ALTER TABLE administrative_areas.jurisdictions
+ALTER TABLE admin_staging.jurisdictions
     ADD COLUMN geoid10_int integer;
 
-UPDATE administrative_areas.jurisdictions
+UPDATE admin_staging.jurisdictions
     SET geoid10_int = cast(geoid10 as integer);
 
-DROP INDEX IF EXISTS administrative_areas_jurisdictions_geoid_idx;
-CREATE INDEX administrative_areas_jurisdictions_geoid_idx ON administrative_areas.jurisdictions using btree (geoid10_int);
-
-DROP INDEX IF EXISTS parcel_geoid_idx;
-CREATE INDEX parcel_geoid_idx ON parcel using btree (geoid10_int);
-
+DROP INDEX IF EXISTS admin_staging_jurisdictions_geoid_idx;
+CREATE INDEX admin_staging_jurisdictions_geoid_idx ON admin_staging.jurisdictions using btree (geoid10_int);
 
 --create spatial index
-DROP INDEX IF EXISTS administrative_areas_jurisdictions_idx;
-CREATE INDEX administrative_areas_jurisdictions_idx ON administrative_areas.jurisdictions using gist (geom);
+DROP INDEX IF EXISTS admin_staging_jurisdictions_idx;
+CREATE INDEX admin_staging_jurisdictions_idx ON admin_staging.jurisdictions using gist (geom);
 
 
-ALTER TABLE administrative_areas.jurisdictions
+ALTER TABLE admin_staging.jurisdictions
     ADD COLUMN boundary_lines geometry(MULTILINESTRING,26910);
 
-UPDATE administrative_areas.jurisdictions
-    SET boundary_lines = ST_Boundary(juris.geom)::geometry(MULTILINESTRING,26910)
+UPDATE admin_staging.jurisdictions juris
+    SET boundary_lines = ST_Boundary(juris.geom)::geometry(MULTILINESTRING,26910);
 
 DROP INDEX IF EXISTS admin_staging_jurisdictions_lines;
-    CREATE INDEX admin_staging_jurisdictions_lines ON administrative_areas.jurisdictions using gist (boundary_lines);
+    CREATE INDEX admin_staging_jurisdictions_lines ON admin_staging.jurisdictions using gist (boundary_lines);
 
-VACUUM (ANALYZE) administrative_areas.jurisdictions;
+VACUUM (ANALYZE) admin_staging.jurisdictions;

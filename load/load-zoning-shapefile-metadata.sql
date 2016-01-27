@@ -9,4 +9,4 @@ CREATE TABLE zoning_staging.shapefile_metadata (
     county boolean
 );
 
-\COPY zoning_staging.shapefile_metadata FROM 'zoning_source_metadata.csv' WITH (FORMAT csv, DELIMITER ',', HEADER FALSE);
+\COPY zoning_staging.shapefile_metadata FROM 'data/zoning_source_metadata.csv' WITH (FORMAT csv, DELIMITER ',', HEADER FALSE);
