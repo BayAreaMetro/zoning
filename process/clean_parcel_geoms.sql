@@ -11,8 +11,7 @@ WHERE ST_IsValid(geom) = false;
 COMMENT ON TABLE parcel_invalid is 'spandex parcels-invalid geometries';
 
 DROP TABLE IF EXISTS parcel_geometrycollection;
-CREATE TABLE parcel_geometrycollection
-AS
+CREATE TABLE parcel_geometrycollection AS 
 SELECT *
 FROM parcel
 WHERE GeometryType(geom) = 'GEOMETRYCOLLECTION';

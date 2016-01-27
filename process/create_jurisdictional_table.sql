@@ -182,3 +182,31 @@ ALTER TABLE administrative_areas.jurisdictions ALTER COLUMN id SET DEFAULT nextv
 ALTER TABLE administrative_areas.jurisdictions ALTER COLUMN id SET NOT NULL;
 ALTER TABLE administrative_areas.jurisdictions ADD PRIMARY KEY (id);
 
+ALTER TABLE administrative_areas.jurisdictions
+    ADD COLUMN geoid10_int integer;
+
+UPDATE administrative_areas.jurisdictions
+    SET geoid10_int = cast(geoid10 as integer);
+
+DROP INDEX IF EXISTS administrative_areas_jurisdictions_geoid_idx;
+CREATE INDEX administrative_areas_jurisdictions_geoid_idx ON administrative_areas.jurisdictions using btree (geoid10_int);
+
+DROP INDEX IF EXISTS parcel_geoid_idx;
+CREATE INDEX parcel_geoid_idx ON parcel using btree (geoid10_int);
+
+
+--create spatial index
+DROP INDEX IF EXISTS administrative_areas_jurisdictions_idx;
+CREATE INDEX administrative_areas_jurisdictions_idx ON administrative_areas.jurisdictions using gist (geom);
+
+
+ALTER TABLE administrative_areas.jurisdictions
+    ADD COLUMN boundary_lines geometry(MULTILINESTRING,26910);
+
+UPDATE administrative_areas.jurisdictions
+    SET boundary_lines = ST_Boundary(juris.geom)::geometry(MULTILINESTRING,26910)
+
+DROP INDEX IF EXISTS admin_staging_jurisdictions_lines;
+    CREATE INDEX admin_staging_jurisdictions_lines ON administrative_areas.jurisdictions using gist (boundary_lines);
+
+VACUUM (ANALYZE) administrative_areas.jurisdictions;

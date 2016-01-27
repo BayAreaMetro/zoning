@@ -18,8 +18,7 @@ UPDATE zoning.plu06_may2015estimate
 	SET geom = ST_MakeValid(geom);
 
 DROP TABLE zoning.plu06_may2015estimate_geometry_collection;
-CREATE TABLE zoning.plu06_may2015estimate_geometry_collection
-AS
+CREATE TABLE zoning.plu06_may2015estimate_geometry_collection AS 
 SELECT *
 FROM zoning.plu06_may2015estimate
 WHERE GeometryType(geom) <> 'MULTIPOLYGON';
