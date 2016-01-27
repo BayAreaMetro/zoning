@@ -182,6 +182,15 @@ ALTER TABLE administrative_areas.jurisdictions ALTER COLUMN id SET DEFAULT nextv
 ALTER TABLE administrative_areas.jurisdictions ALTER COLUMN id SET NOT NULL;
 ALTER TABLE administrative_areas.jurisdictions ADD PRIMARY KEY (id);
 
+ALTER TABLE administrative_areas.jurisdictions
+    ADD COLUMN geoid10_int integer;
+
+UPDATE administrative_areas.jurisdictions
+    SET geoid10_int = cast(geoid10 as integer);
+
+DROP INDEX IF EXISTS administrative_areas_jurisdictions_geoid_idx;
+CREATE INDEX administrative_areas_jurisdictions_geoid_idx ON administrative_areas.jurisdictions using btree (geoid10_int);
+
 --create spatial index
 DROP INDEX IF EXISTS administrative_areas_jurisdictions_idx;
 CREATE INDEX administrative_areas_jurisdictions_idx ON administrative_areas.jurisdictions using gist (geom);
