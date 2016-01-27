@@ -1,3 +1,32 @@
+ALTER TABLE parcel
+    ADD COLUMN geoid10 integer;
+
+ALTER TABLE admin_staging.city10_ba
+    ADD COLUMN geoid10_int integer;
+
+UPDATE admin_staging.city10_ba
+    SET geoid10_int = cast(geoid10 as integer);
+
+ALTER TABLE parcel
+    ADD COLUMN geoid10_int integer;
+
+UPDATE parcel
+    SET geoid10_int = cast(geoid10 as integer);
+
+ALTER TABLE parcel
+    ADD COLUMN point_on_surface geometry(POINT,26910);
+
+ALTER TABLE parcel 
+    SET COLUMN point_on_surface = ST_PointOnSurface(geom);
+
+DROP INDEX IF EXISTS parcel_pos_idx;
+    CREATE INDEX parcel_pos_idx ON parcel using gist (point_on_surface);
+
+VACUUM (ANALYZE) parcel;
+
+CREATE INDEX ON parcel using btree (geoid10_int);
+CREATE INDEX ON admin_staging.city10_ba using gist (geoid10_int);
+
 DROP SCHEMA parcel_county_views cascade;
 CREATE SCHEMA parcel_county_views;
 CREATE VIEW parcel_county_views.santa_clara 
@@ -138,24 +167,24 @@ juris.geoid10 geoid,
 p.geom_id,
 p.geom
 FROM
-administrative_areas.jurisdictions juris,
+admin_staging.jurisdictions juris,
 parcel p
 WHERE
 p.geom && juris.boundary_lines AND
 ST_Intersects(juris.boundary_lines, p.geom);
 COMMENT ON TABLE admin_staging.parcel_counties is 'parcels st_intersect with juris boundaries';
-
+*/
 ---------
 
 CREATE INDEX ON admin_staging.parcels_on_jurisdiction_lines using btree (geom_id);
 CREATE INDEX ON admin_staging.parcels_on_jurisdiction_lines using gist (geom);
 
-UPDATE administrative_areas.jurisdictions
+UPDATE admin_staging.jurisdictions
 SET geom = ST_MakeValid(geom);
 
 DROP TABLE IF EXISTS admin_staging.parcels_on_jurisdiction_lines_overlaps;
 CREATE TABLE admin_staging.parcels_on_jurisdiction_lines_overlaps AS
-select * from GetOverlaps('admin_staging.parcels_on_jurisdiction_lines','administrative_areas.jurisdictions','id','geom') as codes(
+select * from GetOverlaps('admin_staging.parcels_on_jurisdiction_lines','admin_staging.jurisdictions','id','geom') as codes(
         geom_id bigint,
         jurisdiction_table_id double precision,
         area double precision,
@@ -187,7 +216,7 @@ UPDATE parcel
 SET jurisdiction_id = s.id FROM (
 SELECT
     j.id, p.geom_id FROM
-    administrative_areas.jurisdictions j,
+    admin_staging.jurisdictions j,
     parcel p
 where p.geoid10_int = j.geoid10_int) s
 where s.geom_id=parcel.geom_id;
@@ -214,7 +243,7 @@ UPDATE admin_staging.parcels_in_counties
     SET jurisdiction_id = s.id FROM (
         SELECT
         j.id, p.geom_id FROM
-        administrative_areas.jurisdictions j,
+        admin_staging.jurisdictions j,
         admin_staging.parcels_in_counties p
         where p.geoid10_int = j.geoid10_int) s
     where s.geom_id=parcel.geom_id;
@@ -226,7 +255,7 @@ UPDATE parcel p
         SELECT
         j.id, p.geom_id
         FROM
-        administrative_areas.jurisdictions j,
+        admin_staging.jurisdictions j,
         (select * from parcel where geoid10_int < 7000) p
         where p.geoid10_int = j.geoid10_int) s
     where p.geom_id = s.geom_id;
@@ -236,7 +265,7 @@ CREATE TABLE admin_staging.parcels_jurisdictions as
 SELECT p.geom_id, j.name10, j.geoid10, j.county, p.jurisdiction_id
 FROM parcel p
 LEFT JOIN
-administrative_areas.jurisdictions j
+admin_staging.jurisdictions j
 ON p.jurisdiction_id = j.id
 where j.county = false;
 
@@ -244,7 +273,7 @@ INSERT INTO admin_staging.parcels_jurisdictions
 SELECT p.geom_id, j.name10 || ' County', j.geoid10, j.county, p.jurisdiction_id
 FROM parcel p
 LEFT JOIN
-administrative_areas.jurisdictions j
+admin_staging.jurisdictions j
 ON p.jurisdiction_id = j.id
 where j.county = true;
 
