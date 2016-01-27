@@ -191,6 +191,10 @@ UPDATE administrative_areas.jurisdictions
 DROP INDEX IF EXISTS administrative_areas_jurisdictions_geoid_idx;
 CREATE INDEX administrative_areas_jurisdictions_geoid_idx ON administrative_areas.jurisdictions using btree (geoid10_int);
 
+DROP INDEX IF EXISTS parcel_geoid_idx;
+CREATE INDEX parcel_geoid_idx ON parcel using btree (geoid10_int);
+
+
 --create spatial index
 DROP INDEX IF EXISTS administrative_areas_jurisdictions_idx;
 CREATE INDEX administrative_areas_jurisdictions_idx ON administrative_areas.jurisdictions using gist (geom);
