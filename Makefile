@@ -280,7 +280,8 @@ parcels_pdas.csv:
 ##################################################
 
 load_census_city_boundaries: gz_2010_06_160_00_500k.shp
-	shp2pgsql -W "LATIN1" -t 2D -s 26910 -I gz_2010_06_160_00_500k.shp admin_staging.gz_2010_06_160_00_500k | $(psql)
+	$(psql) -c "DROP TABLE IF EXISTS admin_staging.gz_2010_06_160_00_500k"
+	shp2pgsql -W "LATIN1" -t 2D -s 4269 -I gz_2010_06_160_00_500k.shp admin_staging.gz_2010_06_160_00_500k | $(psql)
 
 gz_2010_06_160_00_500k.shp: gz_2010_06_160_00_500k.zip
 	unzip -o gz_2010_06_160_00_500k.zip
@@ -290,7 +291,8 @@ gz_2010_06_160_00_500k.zip:
 	mv $@.download $@
 
 load_census_county_boundaries: gz_2010_us_050_00_5m.shp
-	shp2pgsql -W "LATIN1" -t 2D -s 26910 -I gz_2010_us_050_00_5m.shp admin_staging.gz_2010_us_050_00_5m | $(psql)
+	$(psql) -c "DROP TABLE IF EXISTS admin_staging.gz_2010_us_050_00_5m"
+	shp2pgsql -W "LATIN1" -t 2D -s 4269 -I gz_2010_us_050_00_5m.shp admin_staging.gz_2010_us_050_00_5m | $(psql)
 
 gz_2010_us_050_00_5m.shp: gz_2010_us_050_00_5m.zip
 	unzip -o $<
