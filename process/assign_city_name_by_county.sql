@@ -1,3 +1,6 @@
+ALTER TABLE parcel
+    ADD COLUMN jurisdiction_id integer;
+
 /*
 ALTER TABLE parcel
     ADD COLUMN geoid10 integer;
@@ -159,7 +162,7 @@ LEFT JOIN
 jurisdiction_county_views.napa j
 ON ST_Contains(j.geom, p.point_on_surface)) as subquery
 where subquery.geom_id = upd_p.geom_id;
-*/
+
 
 DROP TABLE IF EXISTS admin_staging.parcels_on_jurisdiction_lines;
 CREATE TABLE admin_staging.parcels_on_jurisdiction_lines AS
@@ -188,7 +191,7 @@ DROP TABLE IF EXISTS admin_staging.parcels_on_jurisdiction_lines_overlaps;
 CREATE TABLE admin_staging.parcels_on_jurisdiction_lines_overlaps AS
 select * from GetOverlaps('admin_staging.parcels_on_jurisdiction_lines','admin_staging.jurisdictions','id','geom') as codes(
         geom_id bigint,
-        jurisdiction_table_id double precision,
+        jurisdiction_table_id integer,
         area double precision,
         prop double precision,
         geom geometry);
@@ -213,7 +216,7 @@ ORDER  BY 1, 2 DESC, 3;
 
 --in the future, should use geoid10_int as jurisdiction id
 --but since above query took so long, just mapping the table id to geoid10_int for now
-
+*/
 UPDATE parcel
 SET jurisdiction_id = s.id FROM (
 SELECT
