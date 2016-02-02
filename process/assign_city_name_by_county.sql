@@ -1,10 +1,4 @@
-ALTER TABLE parcel
-    ADD COLUMN jurisdiction_id integer;
-
 /*
-ALTER TABLE parcel
-    ADD COLUMN geoid10 integer;
-
 ALTER TABLE admin_staging.city10_ba
     ADD COLUMN geoid10_int integer;
 
@@ -20,7 +14,7 @@ UPDATE parcel
 ALTER TABLE parcel
     ADD COLUMN point_on_surface geometry(POINT,26910);
 
-ALTER TABLE parcel 
+UPDATE parcel 
     SET COLUMN point_on_surface = ST_PointOnSurface(geom);
 
 DROP INDEX IF EXISTS parcel_pos_idx;
@@ -60,8 +54,6 @@ CREATE VIEW jurisdiction_county_views.alameda
 AS SELECT * from admin_staging.city10_ba where county = 01;
 CREATE VIEW jurisdiction_county_views.contra_costa 
 AS SELECT * from admin_staging.city10_ba where county = 13;
-CREATE VIEW jurisdiction_county_views.san_francisco
-AS SELECT * from admin_staging.city10_ba where county = 75;
 CREATE VIEW jurisdiction_county_views.san_mateo 
 AS SELECT * from admin_staging.city10_ba where county = 81;
 CREATE VIEW jurisdiction_county_views.sonoma 
@@ -110,13 +102,7 @@ ON ST_Contains(j.geom, p.point_on_surface)) AS subquery
 WHERE subquery.geom_id = upd_p.geom_id;
 
 UPDATE parcel_county_views.san_francisco upd_p
-SET geoid10_int = subquery.geoid10_int FROM (
-SELECT geom_id, j.geoid10_int FROM
-parcel_county_views.san_francisco p
-LEFT JOIN 
-jurisdiction_county_views.san_francisco j
-ON ST_Contains(j.geom, p.point_on_surface)) AS subquery
-WHERE subquery.geom_id = upd_p.geom_id;
+SET geoid10_int = 667000;
 
 UPDATE parcel_county_views.san_mateo upd_p
 SET geoid10_int = subquery.geoid10_int FROM (
@@ -185,110 +171,84 @@ CREATE INDEX ON admin_staging.parcels_on_jurisdiction_lines using btree (geom_id
 CREATE INDEX ON admin_staging.parcels_on_jurisdiction_lines using gist (geom);
 
 UPDATE admin_staging.jurisdictions
+
 SET geom = ST_MakeValid(geom);
 
+/*
 DROP TABLE IF EXISTS admin_staging.parcels_on_jurisdiction_lines_overlaps;
-CREATE TABLE admin_staging.parcels_on_jurisdiction_lines_overlaps AS
-select * from GetOverlaps('admin_staging.parcels_on_jurisdiction_lines','admin_staging.jurisdictions','id','geom') as codes(
-        geom_id bigint,
-        jurisdiction_table_id integer,
-        area double precision,
-        prop double precision,
-        geom geometry);
 
---create primary key for above
---this might not be necessary
-ALTER TABLE admin_staging.parcels_on_jurisdiction_lines_overlaps ADD COLUMN id INTEGER;
-CREATE SEQUENCE admin_staging_parcels_on_jurisdiction_lines_overlaps_id_seq;
-UPDATE admin_staging.parcels_on_jurisdiction_lines_overlaps SET id = nextval('admin_staging_parcels_on_jurisdiction_lines_overlaps_id_seq');
-ALTER TABLE admin_staging.parcels_on_jurisdiction_lines_overlaps ALTER COLUMN id SET DEFAULT nextval('admin_staging_parcels_on_jurisdiction_lines_overlaps_id_seq');
-ALTER TABLE admin_staging.parcels_on_jurisdiction_lines_overlaps ALTER COLUMN id SET NOT NULL;
-ALTER TABLE admin_staging.parcels_on_jurisdiction_lines_overlaps ADD PRIMARY KEY (id);
+
+CREATE TABLE admin_staging.parcels_on_jurisdiction_lines_overlaps AS
+SELECT *
+FROM GetOverlaps('admin_staging.parcels_on_jurisdiction_lines','admin_staging.jurisdictions','geoid10_int','geom') AS codes( geom_id bigint, geoid10_int integer, area double PRECISION, prop double PRECISION, geom geometry);
 
 
 --select the jurisdiction that has the
 --largest area of coverage for a given parcel
-CREATE VIEW admin_staging.resolve_admin_overlap AS
-SELECT DISTINCT ON (1)
-       geom_id, prop, jurisdiction_table_id
-FROM   admin_staging.parcels_on_jurisdiction_lines_overlaps
-ORDER  BY 1, 2 DESC, 3;
 
+DROP VIEW IF EXISTS admin_staging.resolve_admin_overlap;
+CREATE VIEW admin_staging.resolve_admin_overlap AS
+SELECT DISTINCT ON (1) geom_id,
+                       prop,
+                       geoid10_int
+FROM admin_staging.parcels_on_jurisdiction_lines_overlaps
+ORDER BY 1,
+         2 DESC, 3;
+*/
 --in the future, should use geoid10_int as jurisdiction id
 --but since above query took so long, just mapping the table id to geoid10_int for now
-*/
-UPDATE parcel
-SET jurisdiction_id = s.id FROM (
-SELECT
-    j.id, p.geom_id FROM
-    admin_staging.jurisdictions j,
-    parcel p
-where p.geoid10_int = j.geoid10_int) s
-where s.geom_id=parcel.geom_id;
 
 UPDATE parcel
-SET jurisdiction_id = s.id FROM (
-SELECT
-    j.jurisdiction_table_id as id, geom_id FROM
-    admin_staging.resolve_admin_overlap j) s
-where s.geom_id=parcel.geom_id;
+SET geoid10_int = j.geoid10_int
+FROM
+   admin_staging.resolve_admin_overlap j
+WHERE j.geom_id=parcel.geom_id;
 
-CREATE VIEW admin_staging.parcels_in_counties AS
-    SELECT * FROM parcel
-    WHERE geoid10_int IS NULL;
+--parcels that don't yet have a geoid10_int are those that 
+--were not selected in the overlaps resolution query above
+--and those that were not selected in the city jursdiction assignment
+CREATE VIEW admin_staging.unassigned_parcels AS
+SELECT *
+FROM parcel
+WHERE geoid10_int IS NULL;
 
-UPDATE admin_staging.parcels_in_counties
- SET geoid10_int = 6000 + county_id
 
-/*
---admin_staging.parcels_in_counties should be
-an empty view because of above
+UPDATE admin_staging.unassigned_parcels
+SET geoid10_int = 6000 + county_id;
 
-UPDATE admin_staging.parcels_in_counties
-    SET jurisdiction_id = s.id FROM (
-        SELECT
-        j.id, p.geom_id FROM
-        admin_staging.jurisdictions j,
-        admin_staging.parcels_in_counties p
-        where p.geoid10_int = j.geoid10_int) s
-    where s.geom_id=parcel.geom_id;
+DROP VIEW admin_staging.unassigned_parcels;
 
-*/
+ --prepare output tables for urbansim csv
 
-UPDATE parcel p
-    SET jurisdiction_id = s.id FROM (
-        SELECT
-        j.id, p.geom_id
-        FROM
-        admin_staging.jurisdictions j,
-        (select * from parcel where geoid10_int < 7000) p
-        where p.geoid10_int = j.geoid10_int) s
-    where p.geom_id = s.geom_id;
-
---prepare output tables for urbansim csv
-CREATE TABLE admin_staging.parcels_jurisdictions as
-SELECT p.geom_id, j.name10, j.geoid10, j.county, p.jurisdiction_id
+DROP TABLE IF EXISTS admin_staging.parcels_jurisdictions;
+CREATE TABLE admin_staging.parcels_jurisdictions AS
+SELECT p.geom_id,
+       j.name10,
+       j.geoid10
 FROM parcel p
-LEFT JOIN
-admin_staging.jurisdictions j
-ON p.jurisdiction_id = j.id
-where j.county = false;
+LEFT JOIN admin_staging.jurisdictions j ON p.geoid10_int = j.geoid10_int
+WHERE j.county = FALSE;
 
+--here we output county names with their suffix to avoid
+--any confusion where counties and cities have the same name
 INSERT INTO admin_staging.parcels_jurisdictions
-SELECT p.geom_id, j.name10 || ' County', j.geoid10, j.county, p.jurisdiction_id
+SELECT p.geom_id,
+       j.name10 || ' County',
+                   j.geoid10
 FROM parcel p
-LEFT JOIN
-admin_staging.jurisdictions j
-ON p.jurisdiction_id = j.id
-where j.county = true;
-
-UPDATE parcel p
-    SET jurisdiction_id = 363
-    WHERE geoid10_int = 6075;
+LEFT JOIN admin_staging.jurisdictions j ON p.geoid10_int = j.geoid10_int
+WHERE j.county = TRUE;
 
 --check that there aren't a lot of unassigned parcels
-select count(*) from parcel where jurisdiction_id is null;
 
---make a map table to check them out
-create table admin_staging.nojuris_parcels as
-select * from parcel where jurisdiction_id is null;
+SELECT count(*)
+FROM parcel
+WHERE geoid10_int IS NULL;
+
+ --make a map table to check them out
+
+CREATE TABLE admin_staging.nojuris_parcels AS
+SELECT *
+FROM parcel
+WHERE geoid10_int IS NULL;
+
