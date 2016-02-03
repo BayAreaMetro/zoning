@@ -2,7 +2,7 @@
 2,berkeleyzoning,Berkeley,2012,zoning,0,0,zondist
 3,dublingeneralplan,Dublin,2012,general plan,0,0,lu
 4,emeryvillegpparcels,Emeryville,2012,na,0,0,gp_lufardensht
-5,fremontgeneralplan,Fremont,2012,general plan,0,0,urbansimlu
+5,fremontgeneralplan,Fremont,2012,general plan,0,0,urbsimlu
 14,petalumagp2025_landuse,Petaluma,2012,general plan,2025,0,label
 15,rohnertpark_gp_2010,Rohnert Park,2012,general plan,4010,0,gp_code
 16,santarosageneralplan,Santa Rosa,2012,general plan,0,0,gp_landuse
@@ -32,14 +32,14 @@
 67,tiburongenplan,Tiburon,2012,gp,0,0,generalpla
 68,gilroygpparcels,Gilroy,2012,gp,0,0,land_use
 71,vacavillegenplan,Vacaville,2012,gp,0,0,land_use
-76,orinda_zoning,Orinda,2012,zoning,0,0,dfx_text
+76,orinda_zoning,Orinda,2012,zoning,0,0,dxf_text
 78,richmond_genplan,Richmond,2012,gp,0,0,gp_des_txt
 79,sanpabloproposed_gplu_112410,San Pablo,2012,gp,2010,0,propgplu
 81,walnutcreekgenplan,Walnut Creek,2012,gp,0,0,text_008
 82,antiochgeneralplan,Antioch,2012,gp,0,0,gpcode
 85,brentwood_zoning,Brentwood,2012,zoning,0,0,district
 87,concordparcels_gp120607_clip,Concord,2012,gp,2007,0,gp
-89,elcerritozoning,El Cerrito,2012,zoning,0,0,gplanduse
+89,elcerritozoning,El Cerrito,2012,zoning,0,0,new_zoning
 92,martinezzoning,Martinez,2012,zoning,0,0,zoning
 94,oakland_generalplan_2005,Oakland,2012,gp,2005,0,classifica
 96,pleasantongeneralplan,Pleasanton,2012,gp,0,0,data
