@@ -43,20 +43,26 @@ zoning_parcels.csv: zoning_files \
 	$(psql) -f process/create_jurisdictional_table.sql
 	$(psql) -f process/assign_city_name_by_county.sql
 #load zoning source data shapefiles from 2012
-	$(psql) -c "DROP SCHEMA IF EXISTS zoning_staging CASCADE"
-	$(psql) -c "CREATE SCHEMA zoning_staging"
+	$(psql) -c "DROP SCHEMA IF EXISTS zoning_2012_staging CASCADE"
+	$(psql) -c "CREATE SCHEMA zoning_2012_staging"
 	ls jurisdictional/*.shp | cut -d "/" -f2 | sed 's/.shp//' |
-		xargs -I {} $(shp2pgsql) jurisdictional/{} zoning_staging.{} | $(psql)
+		xargs -I {} $(shp2pgsql) jurisdictional/{} zoning_2012_staging.{} | $(psql)
 #FIX for Napa
-	$(psql) -c "CREATE TABLE zoning_staging.napacozoning_temp AS SELECT zoning, geom from zoning_staging.napacozoning;"
-	$(psql) -c "DROP TABLE zoning_staging.napacozoning;"
-	$(psql) -c "CREATE TABLE zoning_staging.napacozoning AS SELECT * from zoning_staging.napacozoning_temp;"
-	$(psql) -c "DROP TABLE zoning_staging.napacozoning_temp;"
+	$(psql) -c "CREATE TABLE zoning_2012_staging.napacozoning_temp AS SELECT zoning, geom from zoning_2012_staging.napacozoning;"
+	$(psql) -c "DROP TABLE zoning_2012_staging.napacozoning;"
+	$(psql) -c "CREATE TABLE zoning_2012_staging.napacozoning AS SELECT * from zoning_2012_staging.napacozoning_temp;"
+	$(psql) -c "DROP TABLE zoning_2012_staging.napacozoning_temp;"
 #FIX for Solano
-	$(psql) -c "CREATE TABLE zoning_staging.solcogeneral_plan_unincorporated_temp AS SELECT full_name, geom from zoning_staging.solcogeneral_plan_unincorporated;"
-	$(psql) -c "DROP TABLE zoning_staging.solcogeneral_plan_unincorporated;"
-	$(psql) -c "CREATE TABLE zoning_staging.solcogeneral_plan_unincorporated AS SELECT * from zoning_staging.solcogeneral_plan_unincorporated_temp;"
-	$(psql) -c "DROP TABLE zoning_staging.solcogeneral_plan_unincorporated_temp;"
+	$(psql) -c "CREATE TABLE zoning_2012_staging.solcogeneral_plan_unincorporated_temp AS SELECT full_name, geom from zoning_2012_staging.solcogeneral_plan_unincorporated;"
+	$(psql) -c "DROP TABLE zoning_2012_staging.solcogeneral_plan_unincorporated;"
+	$(psql) -c "CREATE TABLE zoning_2012_staging.solcogeneral_plan_unincorporated AS SELECT * from zoning_2012_staging.solcogeneral_plan_unincorporated_temp;"
+	$(psql) -c "DROP TABLE zoning_2012_staging.solcogeneral_plan_unincorporated_temp;"
+#do 2012 assignment by city
+	$(psql) -f functions/2012_zoning.sql
+	$(psql) -c "SELECT fix_2012_geoms(TRUE);"
+	$(psql) -c "DROP SCHEMA IF EXISTS zoning_2012_parcel_overlaps CASCADE;"
+	$(psql) -c "CREATE SCHEMA zoning_2012_parcel_overlaps;"
+	$(psql) -c "SELECT overlap_2012(TRUE);"
 #merge the 2012 tables together into one
 	$(psql) -f functions/merge_schema.sql 
 	$(psql) -f process/merge_2012_zoning.sql
@@ -239,7 +245,7 @@ write_db_to_s3:
 
 clean_zoning_data: 
 	$(psql) -c "DROP SCHEMA zoning CASCADE;"
-	$(psql) -c "DROP SCHEMA zoning_staging CASCADE;"
+	$(psql) -c "DROP SCHEMA zoning_2012_staging CASCADE;"
 
 clean_db:
 	sudo bash load/clean_db.sh

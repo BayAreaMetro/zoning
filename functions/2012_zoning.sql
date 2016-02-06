@@ -33,7 +33,7 @@ END;
 $function$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION assign_2012(exec boolean = FALSE) RETURNS text AS $function$
+CREATE OR REPLACE FUNCTION overlap_2012(exec boolean = FALSE) RETURNS text AS $function$
 DECLARE
         sql_string text := '';
 BEGIN
@@ -59,7 +59,7 @@ BEGIN
             (
                 select shapefile_name, substring(matchfield from 1 for 10) as matchfield, geoid10_int
                     FROM zoning_staging.shapefile_metadata
-            ) qry
+	    ) qry
         ) s;
     IF exec THEN
         EXECUTE sql_string;
