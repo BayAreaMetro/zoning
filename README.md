@@ -6,34 +6,22 @@ Produce a CSV with a generic zoning code assigned to every parcel in the SF Bay 
 
 [GNU Make](http://bost.ocks.org/mike/make/), PostGIS 2.1, Postgres 9.3, GDAL 1.11 or > (with both FileGDB driver and Postgres driver), [Amazon CLI](https://aws.amazon.com/cli/)
 
-You can use this [repository](https://github.com/MetropolitanTransportationCommission/bayarea_urbansim_setup/tree/vagrant-ubuntu14-lindsay) to set up an environment.
+###Setting up PostgreSQL--Example
+
+```
+sudo -u postgres createdb sf_bayarea_landuse
+sudo -u postgres psql sf_bayarea_landuse -c "CREATE USER ****** WITH PASSWORD '******';"
+sudo -u postgres psql sf_bayarea_landuse -c "GRANT ALL PRIVILEGES ON DATABASE sf_bayarea_landuse to ******;
+sudo -u postgres psql sf_bayarea_landuse -c "CREATE EXTENSION postgis;"
+sudo -u postgres psql sf_bayarea_landuse -c "CREATE EXTENSION postgis_topology;"
+sudo -u postgres psql sf_bayarea_landuse -c "GRANT ALL PRIVILEGES ON DATABASE sf_bayarea_landuse to ******;
+```
 
 ###Usage
 
-The [Makefile](https://github.com/MetropolitanTransportationCommission/zoning/blob/master/Makefile) contains all the necessary pointers to what data is needed, where to get it, scripts to load it into Postgres, and scripts to join source parcel and zoning data. In general we have treated the Makefile as the documentation of the data process. So start there if you need to change something. It will be closer to the data/process than this readme.
+The [Makefile](https://github.com/MetropolitanTransportationCommission/zoning/blob/master/Makefile) contains pointers to what data is needed, where to get it, scripts to load it into Postgres, and scripts to join source parcel and zoning data.
 
-'sudo -u postgres createdb sf-bayarea-landuse'
-'sudo -u postgres psql sf_bayarea_landuse -c "CREATE USER landuse WITH PASSWORD 'landuse';"'
-'sudo -u postgres psql sf_bayarea_landuse -c "GRANT ALL PRIVILEGES ON DATABASE sf_bayarea_landuse to landuse;'
-'sudo -u postgres psql sf_bayarea_landuse -c "CREATE EXTENSION postgis;"'
-'sudo -u postgres psql sf_bayarea_landuse -c "CREATE EXTENSION postgis_topology;"'
-
-sudo -u postgres psql sf_bayarea_landuse -c "GRANT ALL PRIVILEGES ON DATABASE sf_bayarea_landuse to vagrant;
-
-####Data
-The following are required: 
-
-filename|description
----------------|--------------
-jurisdictional/*.shp | Zoning v2 A directory of shapefiles of Zoning plans for the jurisdictions in the Bay Area
-a parcel table | these are assembled from source data [with this script](https://github.com/MetropolitanTransportationCommission/bayarea_urbansim/blob/master/data_regeneration/run.py)
-city10_ba.shp | city boundaries (2010 census) MTC edits for water-features and others
-county10_ca.shp | county boundaries (2010 census) MTC edits for water-features and others
-zoning_codes_base2012.csv | Use these to map specific jurisdictional zoning to a generic taxonomy-from this [table](http://landuse.s3.amazonaws.com/zoning/zoning_codes_base2012.csv)
-match_fields_tables_zoning_2012_source.csv | Names the column used in Zoning V2 which is used in the zoning taxonomy - from the [Project Management Spreadsheet](http://landuse.s3.amazonaws.com/zoning/CityAssignments_Nov3_2014.xlsx)
-plu06_may2015estimate.shp | PLU 2006 data from [ABAG](http://gis.abag.ca.gov/)
-
-It is recommended to use the makefile to fetch the necessary data.
+In general we have treated the Makefile as the documentation of the data process. So start there if you need to change something. It will be closer to the data/process than this readme.
 
 If you already have the environment set up, then you can simply type:
 
