@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS zoning_staging.shapefile_metadata;
+DROP TABLE IF EXISTS zoning_staging.shapefile_metadata CASCADE;
 CREATE TABLE zoning_staging.shapefile_metadata (    
     juris_id integer CONSTRAINT juris_id_pk PRIMARY KEY, --in source data called "juris"
     shapefile_name text,
