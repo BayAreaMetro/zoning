@@ -71,5 +71,144 @@ END;
 $function$
 LANGUAGE plpgsql;
 
+--this function is based on the functions in this postgis add-ons repository: https://github.com/pedrogit/postgisaddons
+--and these plpgsql tutorials: https://wiki.postgresql.org/wiki/Return_more_than_one_row_of_data_from_PL/pgSQL_functions
 
+/*
+Use this function to return a table with statistics on how 2 postgis polygon tables overlap.
+The function returns rows with the unique id's of the tables passed to it where they intersect.
+It also returns the area of overlap, the proportion of overlap, and the geometry of their intersection.
+
+EXAMPLE USAGE:
+select * from GetOverlaps('parcel','zoning_staging.santarosageneralplan','gp_landuse','geom') as codes(
+        geom_id bigint,
+        zoning_id varchar(50),
+        area double precision,
+        prop double precision,
+        geom geometry);
+*/
+
+create or replace function GetOverlaps(_p text,_z text,_z_id text,_z_geom text) returns setof record as
+'
+declare
+r record;
+begin
+    for r in EXECUTE ''SELECT
+        geom_id,
+        ''|| _z_id || '',
+        sum(ST_Area(geom)) area,
+        round(sum(ST_Area(geom))/min(parcelarea) * 1000) / 10 prop,
+        ST_Union(geom) geom
+        FROM (
+            SELECT p.geom_id,
+                z.''|| _z_id || '',
+                ST_Area(p.geom) parcelarea,
+                ST_Intersection(p.geom, z.geom) geom
+            FROM (select geom_id, geom FROM '' || _p || '') as p,
+                 (select ''|| _z_id || '', '' || _z_geom ||
+                 '' as geom FROM '' || _z || '') as z
+            WHERE ST_Intersects(z.geom, p.geom)
+            ) f
+            GROUP BY
+                geom_id,
+                ''|| _z_id || '''' loop
+return next r;
+end loop;
+return;
+end
+'
+language 'plpgsql';
+
+/*
+modification of the above to filter parcels by a census jurisdiction geoid
+*/
+
+create or replace function GetOverlapsGoeid(_g_id int, _z_id text, _z text) returns setof record as
+'
+declare
+r record;
+begin
+    for r in EXECUTE ''SELECT
+        geom_id,
+        ''|| _z_id || '',
+        sum(ST_Area(geom)) area,
+        round(sum(ST_Area(geom))/min(parcelarea) * 1000) / 10 prop,
+        ST_Union(geom) geom
+        FROM (
+            SELECT p.geom_id,
+                z.''|| _z_id || '',
+                ST_Area(p.geom) parcelarea,
+                ST_Intersection(p.geom, z.geom) geom
+            FROM (select geom_id, geom FROM parcel WHERE geoid10_int = ''|| _g_id ||'') as p,
+                 (select ''|| _z_id || '', geom as geom FROM '' || _z || '') as z
+            WHERE ST_Intersects(z.geom, p.geom)
+            ) f
+            GROUP BY
+                geom_id,
+                ''|| _z_id || '''' loop
+return next r;
+end loop;
+return;
+end
+'
+language 'plpgsql';
+
+
+----------------------
+----------------------
+--DEPRECATED FUNCTIONS
+----------------------
+----------------------
+
+--used the following as part of the previous process but can probably drop them in the future:
+
+CREATE OR REPLACE FUNCTION zoning.get_id(name text,juris int)
+   RETURNS int AS
+$$
+  SELECT id
+  from zoning.codes_dictionary
+  WHERE name = $1
+  AND juris = $2;
+$$
+  LANGUAGE sql;
+
+CREATE OR REPLACE FUNCTION merge_schema(schema_name text)
+   RETURNS void AS
+$BODY$
+DECLARE
+      tables CURSOR FOR SELECT *
+        FROM information_schema.tables
+        WHERE table_schema = $1
+        ORDER BY "table_name" ASC
+        LIMIT ((SELECT count(*)
+      FROM information_schema.tables
+      WHERE table_schema = $1));
+    sql_string text := '';
+BEGIN
+   FOR table_record IN tables LOOP
+   sql_string := (SELECT '
+     insert into public.'
+     || $1 ||
+     '_merged select ' ||
+     quote_LITERAL(table_record."table_name") ||
+     ', CAST(' ||
+     qry.matchfield ||
+     ' as text) as zoning, ' ||
+     qry.juris_id ||
+     ' as juris,' ||
+     'ST_Force2D(geom) as the_geom ' ||
+     'from ' || $1 || '.' ||
+     table_record."table_name"
+    FROM
+      (
+        select substring(matchfield from 1 for 10) as matchfield, CAST(juris_id as text)
+          FROM zoning_staging.shapefile_metadata s
+        WHERE s.shapefile_name = table_record."table_name") qry
+      );
+    RAISE NOTICE '%', sql_string;
+    EXECUTE sql_string;
+   END LOOP;
+  END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE;
 

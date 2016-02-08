@@ -2,7 +2,7 @@ The following are required (and accessible with the Makefile in the root directo
 
 filename|description
 ---------------|--------------
-jurisdictional/*.shp | A directory of shapefiles of Zoning and General plans for the jurisdictions in the Bay Area--details below
+jurisdictional/*.shp | A directory of shapefiles of Zoning and General plans for the jurisdictions in the Bay Area--details in zoning_source_metadata.csv
 a parcel table | these are assembled from source data [with this script](https://github.com/MetropolitanTransportationCommission/bayarea_urbansim/blob/master/data_regeneration/run.py)
 city10_ba.shp | city boundaries (2010 census) MTC edits for water-features and others
 county10_ca.shp | county boundaries (2010 census) MTC edits for water-features and others
