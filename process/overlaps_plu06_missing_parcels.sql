@@ -1,9 +1,9 @@
-CREATE INDEX ON zoning.unmapped_parcel_intersection_count using btree (geom_id);
-CREATE INDEX ON zoning.parcel_contested3 using btree (geom_id);
-vacuum (analyze) zoning.parcel_contested3;
-vacuum (analyze) zoning.unmapped_parcel_intersection_count;
-DROP TABLE IF EXISTS zoning.parcel_overlaps_plu;
-CREATE TABLE zoning.parcel_overlaps_plu AS
+CREATE INDEX ON zoning_staging.unmapped_parcel_intersection_count using btree (geom_id);
+CREATE INDEX ON zoning_staging.parcel_contested3 using btree (geom_id);
+vacuum (analyze) zoning_staging.parcel_contested3;
+vacuum (analyze) zoning_staging.unmapped_parcel_intersection_count;
+DROP TABLE IF EXISTS zoning_staging.parcel_overlaps_plu;
+CREATE TABLE zoning_staging.parcel_overlaps_plu AS
 SELECT 
 	geom_id,
 	plu06_objectid,
@@ -17,12 +17,12 @@ FROM (
 	 	ST_Intersection(p.geom, z.geom) geom 
 	FROM 
 		(select geom_id, geom 
-			FROM zoning.parcel_contested3
+			FROM zoning_staging.parcel_contested3
 			WHERE geom_id in 
 				(select geom_id 
-					from zoning.unmapped_parcel_intersection_count 
+					from zoning_staging.unmapped_parcel_intersection_count
 					WHERE countof>1)) as p,
-				(select objectid, geom from zoning.plu06_may2015estimate) as z
+				(select objectid, geom from zoning_staging.plu06_may2015estimate) as z
 		WHERE ST_Intersects(z.geom, p.geom)
 		) f
 GROUP BY 
