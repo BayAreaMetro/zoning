@@ -72,8 +72,6 @@ zoning_parcels.csv: zoning_files \
 	$(psql) -f process/clean_plu06_geoms.sql
 #intersection with 2006:
 	$(psql) -f process/create_intersection_table_plu06.sql
-	$(psql) -f process/overlaps_plu06_missing_parcels.sql
-	$(psql) -f process/assign_plu06_to_parcels.sql
 #output 		
 	$(psql) -f output/summarize.sql
 	python output/fix_zoning_missing_id.py
