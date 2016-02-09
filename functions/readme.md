@@ -16,12 +16,4 @@ psql dbname -c `fix_2012_geoms(TRUE)`
 psql dbname -c `overlap_2012(TRUE)`
 ```
 
-Notice that by passing TRUE to the 2 functions, the SQL that is generated is immediately executed. Otherwise, the default is FALSE and the SQL is output to the terminal. Function (3) will take a long time to load if there are many large zoning shapefiles to process. 
-
-
-
-
-
-
-
-
+Notice that by passing TRUE to the functions, the SQL that is generated is immediately executed. Otherwise, the default is FALSE and the SQL is output to the terminal. Function (3) will take a long time to load if there are many large zoning shapefiles to process.

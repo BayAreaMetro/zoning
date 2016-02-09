@@ -71,6 +71,45 @@ END;
 $function$
 LANGUAGE plpgsql;
 
+
+CREATE OR REPLACE FUNCTION assign_2012(exec boolean = FALSE) RETURNS text AS $function$
+DECLARE
+        sql_string text := '';
+BEGIN
+     SELECT array_to_string(array_agg(sql_statement), '') INTO sql_string
+     FROM (
+        SELECT 'CREATE TABLE
+         zoning_2012_parcel_overlaps.'
+         || qry.shapefile_name ||
+         ' AS SELECT * from GetOverlapsGoeid(' ||
+         qry.geoid10_int ||
+         ', '||
+         quote_literal(qry.matchfield) ||
+         ', '
+         || quote_literal(concat('zoning_2012_staging.', qry.shapefile_name)) ||
+         ') as codes(geom_id bigint,
+                    zoning_id varchar,
+                    area double precision,
+                    prop double precision,
+                    geom geometry);
+     '
+        AS sql_statement
+        FROM
+            (
+                select shapefile_name, substring(matchfield from 1 for 10) as matchfield, geoid10_int
+                    FROM zoning_staging.shapefile_metadata
+        ) qry
+        ) s;
+    IF exec THEN
+        EXECUTE sql_string;
+        RETURN 'Success!';
+    ELSE
+        RETURN sql_string;
+    END IF;
+END;
+$function$
+LANGUAGE plpgsql;
+
 --this function is based on the functions in this postgis add-ons repository: https://github.com/pedrogit/postgisaddons
 --and these plpgsql tutorials: https://wiki.postgresql.org/wiki/Return_more_than_one_row_of_data_from_PL/pgSQL_functions
 
@@ -172,43 +211,67 @@ $$
 $$
   LANGUAGE sql;
 
+geometry(Polygon,26910)
+
+CREATE OR REPLACE FUNCTION set_multipolygon(schema_name text)
+   RETURNS void AS
+$BODY$
+DECLARE
+        tables CURSOR FOR SELECT *
+          FROM information_schema.tables
+          WHERE table_schema = $1
+          ORDER BY "table_name" ASC
+          LIMIT ((SELECT count(*)
+          FROM information_schema.tables
+          WHERE table_schema = $1));
+        sql_string text := '';
+BEGIN
+     FOR table_record IN tables LOOP
+     sql_string := (SELECT '
+         INSERT INTO zoning_staging.'
+         || $1 || '_merged SELECT
+         geom_id,
+         zoning_id as zoning_name,
+         area,
+         prop,
+         geom
+          from ' || $1 || '.' ||
+         table_record."table_name");
+        RAISE NOTICE '%', sql_string;
+        EXECUTE sql_string;
+     END LOOP;
+    END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE;
+
+
 CREATE OR REPLACE FUNCTION merge_schema(schema_name text)
    RETURNS void AS
 $BODY$
 DECLARE
-      tables CURSOR FOR SELECT *
-        FROM information_schema.tables
-        WHERE table_schema = $1
-        ORDER BY "table_name" ASC
-        LIMIT ((SELECT count(*)
-      FROM information_schema.tables
-      WHERE table_schema = $1));
-    sql_string text := '';
+        tables CURSOR FOR SELECT *
+          FROM information_schema.tables
+          WHERE table_schema = $1
+          ORDER BY "table_name" ASC
+          LIMIT ((SELECT count(*)
+          FROM information_schema.tables
+          WHERE table_schema = $1));
+        sql_string text := '';
 BEGIN
-   FOR table_record IN tables LOOP
-   sql_string := (SELECT '
-     insert into public.'
-     || $1 ||
-     '_merged select ' ||
-     quote_LITERAL(table_record."table_name") ||
-     ', CAST(' ||
-     qry.matchfield ||
-     ' as text) as zoning, ' ||
-     qry.juris_id ||
-     ' as juris,' ||
-     'ST_Force2D(geom) as the_geom ' ||
-     'from ' || $1 || '.' ||
-     table_record."table_name"
-    FROM
-      (
-        select substring(matchfield from 1 for 10) as matchfield, CAST(juris_id as text)
-          FROM zoning_staging.shapefile_metadata s
-        WHERE s.shapefile_name = table_record."table_name") qry
-      );
-    RAISE NOTICE '%', sql_string;
-    EXECUTE sql_string;
-   END LOOP;
-  END;
+     FOR table_record IN tables LOOP
+     sql_string := (SELECT '
+         INSERT INTO zoning_staging.'
+         || $1 || '_merged SELECT
+         geom_id,
+         zoning_id as zoning_name,
+         area,
+         prop,
+         geom
+          from ' || $1 || '.' ||
+         table_record."table_name");
+        RAISE NOTICE '%', sql_string;
+        EXECUTE sql_string;
+     END LOOP;
+    END;
 $BODY$
   LANGUAGE plpgsql VOLATILE;
-

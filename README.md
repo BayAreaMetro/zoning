@@ -4,7 +4,7 @@ Produce a CSV with a generic zoning code assigned to every parcel in the SF Bay 
 
 ###Requirements
 
-[GNU Make](http://bost.ocks.org/mike/make/), PostGIS 2.1, Postgres 9.3, GDAL 1.11 or > (with both FileGDB driver and Postgres driver), [Amazon CLI](https://aws.amazon.com/cli/)
+[GNU Make](http://bost.ocks.org/mike/make/), PostGIS 2.1, Postgres 9.3, GDAL 1.11 or >, [Amazon CLI](https://aws.amazon.com/cli/)
 
 ###Setting up PostgreSQL--Example
 
