@@ -30,7 +30,7 @@ zoning_parcels.csv: zoning_files \
 					zoning_lookup.csv \
 					parcels_sql_dump
 #load postgis extensions
-	$(psql) -f functions/get_overlaps.sql
+	$(psql) -f functions/zoning_functions.sql
 	$(psql) -f functions/postgis_addons.sql
 #load generic zoning assignment table
 	$(psql) -f load/load-generic-zoning-code-table.sql
@@ -58,14 +58,12 @@ zoning_parcels.csv: zoning_files \
 	$(psql) -c "CREATE TABLE zoning_2012_staging.solcogeneral_plan_unincorporated AS SELECT * from zoning_2012_staging.solcogeneral_plan_unincorporated_temp;"
 	$(psql) -c "DROP TABLE zoning_2012_staging.solcogeneral_plan_unincorporated_temp;"
 #do 2012 assignment by city
-	$(psql) -f functions/2012_zoning.sql
 	$(psql) -c "SELECT fix_2012_geoms(TRUE);"
 	$(psql) -c "DROP SCHEMA IF EXISTS zoning_2012_parcel_overlaps CASCADE;"
 	$(psql) -c "CREATE SCHEMA zoning_2012_parcel_overlaps;"
 	$(psql) -c "SELECT overlap_2012(TRUE);"
-#merge the 2012 tables together into one
-	$(psql) -f functions/merge_schema.sql 
-	$(psql) -f process/merge_2012_zoning.sql
+#assign the 2012 zoning data to parcels
+	$(psql) -f process/assign_2012_zoning_to_parcels.sql
 #load zoning source data shapefile from 2006
 	$(psql) -c "DROP TABLE IF EXISTS zoning.plu06_may2015estimate;"
 	$(shp2pgsql) data/plu06_may2015estimate.shp zoning.plu06_may2015estimate | $(psql)
@@ -91,7 +89,6 @@ zoning_parcels.csv: zoning_files \
 	bash output/backup_db.sh
 	bash output/write_db_to_s3.sh
 	$(psql) -c "\COPY zoning.parcel to 'zoning_parcels_no_dev_as_zero.csv' DELIMITER ',' CSV HEADER;"
-
 ##############
 ##############
 ####FILES!####
