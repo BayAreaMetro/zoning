@@ -69,15 +69,7 @@ zoning_parcels.csv: zoning_files \
 	$(shp2pgsql) data/plu06_may2015estimate.shp zoning.plu06_may2015estimate | $(psql)
 	$(psql) -f load/add-plu-2006.sql
 #clean and homogenize geometries
-	$(psql) -f process/clean_parcel_geoms.sql
-	$(psql) -f process/clean_2012_zoning_geoms.sql
 	$(psql) -f process/clean_plu06_geoms.sql
-#intersection for 2012:
-	$(psql) -c "SET enable_seqscan TO off;"
-	$(psql) -f functions/get_zoning_id.sql
-	$(psql) -f process/create_intersection_table.sql
-	$(psql) -f process/get_stats_on_intersection.sql
-	$(psql) -f process/assign_zoning_to_parcels_with_one_zone.sql 	
 #intersection with 2006:
 	$(psql) -f process/create_intersection_table_plu06.sql
 	$(psql) -f process/overlaps_plu06_missing_parcels.sql
