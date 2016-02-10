@@ -114,10 +114,10 @@ SELECT p.geom_id,
               p.geom
 FROM
   (SELECT *
-   FROM zoning_staging.unmapped_parcel_zoning_staging_plu
+   FROM zoning_staging.parcels_with_plu06_intersection
    WHERE geom_id IN
        (SELECT geom_id
-        FROM zoning_staging.unmapped_parcel_intersection_count
+        FROM zoning_staging.parcels_with_plu06_intersection_count
         WHERE countof=1)) AS p,
      zoning_staging.plu06_may2015estimate z
 WHERE p.plu06_objectid=z.objectid;
@@ -142,7 +142,7 @@ SELECT p.geom_id,
 FROM
   (SELECT p2.*,
           pmax.prop
-   FROM zoning_staging.unmapped_parcel_zoning_staging_plu p2,
+   FROM zoning_staging.parcels_with_plu06_intersection p2,
                                                           zoning_staging.parcel_overlaps_maxonly_plu pmax
    WHERE pmax.geom_id=p2.geom_id
      AND p2.plu06_objectid=pmax.plu06_objectid) AS p,
@@ -217,21 +217,18 @@ ON zoning_staging.plu06_many_intersection USING hash (geom_id);
 
 VACUUM (ANALYZE) zoning_staging.plu06_many_intersection;
 
+UPDATE parcel p
+  SET zoning_name=q.origgplu
+FROM
+(SELECT geom_id, origgplu FROM zoning_staging.plu06_one_intersection plu) q
+WHERE p.geom_id = q.geom_id
+AND p.zoning_name is null;
 
-INSERT INTO zoning_staging.parcel
-SELECT geom_id,
-       cast(zoning_id AS integer),
-       cast(origgplu AS text) AS zoning_staging,
-       -9999 AS juris,
-       prop,
-       tablename
-FROM zoning_staging.plu06_many_intersection
-WHERE geom_id NOT IN
-    (SELECT geom_id
-     FROM zoning_staging.parcel);
+UPDATE parcel p
+  SET zoning_name=q.origgplu
+FROM
+(SELECT geom_id, origgplu FROM zoning_staging.plu06_many_intersection plu) q
+WHERE p.geom_id = q.geom_id
+AND p.zoning_name is null;
 
 
-SELECT COUNT(geom_id) - COUNT(DISTINCT geom_id)
-FROM zoning_staging.parcel;
-
-VACUUM (ANALYZE) zoning_staging.parcel;
