@@ -79,6 +79,7 @@ zoning_parcels.csv: zoning_files \
 	bash output/backup_db.sh
 	bash output/write_db_to_s3.sh
 	$(psql) -c "\COPY zoning.parcel to 'zoning_parcels_no_dev_as_zero.csv' DELIMITER ',' CSV HEADER;"
+
 ##############
 ##############
 ####FILES!####
@@ -89,7 +90,8 @@ zoning_parcels.csv: zoning_files \
 ###PARCELS!###
 ##############
 
-parcels_sql_dump:
+#whats the best way to handle this?
+#previously a sql dump, but not sure thats best?
 
 ##############
 ###ZONING!####
@@ -118,9 +120,9 @@ $(zip_targets):
 	$@.download
 	mv $@.download $@
 
-########################
-####ADMINISTRATIVE!#####
-########################
+#############################
+####ADMINISTRATIVE DATA!#####
+#############################
 
 county10_ca.shp: county10_ca.zip
 	unzip -o $<
@@ -128,10 +130,6 @@ county10_ca.shp: county10_ca.zip
 
 city10_ba.shp: city10_ba.zip
 	unzip -o $<
-
-zoning_lookup.csv:
-	curl -k -o $@.download https://raw.githubusercontent.com/MetropolitanTransportationCommission/bayarea_urbansim/master/data/zoning_lookup.csv?token=AAGCjC_Z9YDWbVUtwzTkKBHJgYdXwJqtks5WDHVUwA%3D%3D 
-	mv $@.download $@
 
 city10_ba.zip:
 	$(get)city10_ba.zip \
@@ -143,170 +141,7 @@ county10_ca.zip:
 	$@.download
 	mv $@.download $@
 
-match_fields_tables_zoning_2012_source.csv:
-	$(get)match_fields_tables_zoning_2012_source.csv \
-	$@.download
-	mv $@.download $@
-
 data/plu06_may2015estimate.zip:
 	$(get)plu06_may2015estimate.zip \
 	$@.download
 	mv $@.download $@
-
-##################################
-#############EXTRAS###############
-##################################
-##everything down here is not#####
-#part of the main target creation#
-##################################
-
-load_pda: pda.shp
-	$(shp2pgsql) pda.shp admin.pda | $(psql)
-
-update_after_change_in_zoning_ids: \
-	intersect \
-	assign \
-	backup_db
-
-pda.shp.zip: 
-	$(get)$@ \
-	$@.download
-	mv $@.download $@
-
-City_Santa_Clara_GP_LU_02.zip: 
-	$(get)$@ \
-	$@.download
-	mv $@.download $@
-
-ba8parcels.sql:
-	$(get)ba8parcels.sql \
-	$@.download
-	mv $@.download $@
-
-parcels_spandex.sql:
-	$(get)parcels_spandex.sql \
-	$@.download
-	mv $@.download $@
-
-####################
-######NO DEV########
-####################
-
-no_dev1_geo_only.csv:
-	$(get)$@ \
-	$@.download
-	mv $@.download $@
-
-no_dev:
-	load_no_dev \
-	apply_no_dev \
-
-load_no_dev: no_dev1_geo_only.csv
-	$(psql) -f load/no_dev.sql
-
-apply_no_dev:
-	$(psql) -f process/apply_no_dev.sql
-
-no_dev1.txt:
-	$(get)$@ \
-	$@.download
-	mv $@.download $@
-	touch $@
-
-###################
-######Output#######
-###################
-
-sql_dump:
-	pg_dump --table zoning.parcel_withdetails \
-	-f /mnt/bootstrap/zoning/data_out/zoning_parcel_withdetails.sql \
-	vagrant
-	pg_dump --table zoning.parcel_withdetails \
-	-f /mnt/bootstrap/zoning/data_out/zoning_parcel.sql \
-	vagrant
-
-write_db_to_s3:
-	bash output/write_db_to_s3.sh
-
-###################
-
-clean_zoning_data: 
-	$(psql) -c "DROP SCHEMA zoning CASCADE;"
-	$(psql) -c "DROP SCHEMA zoning_2012_staging CASCADE;"
-
-clean_db:
-	sudo bash load/clean_db.sh
-	
-clean_intersection_tables:
-	$(psql)	-f load/drop_intersection_tables.sql
-
-clean_parcel_generation:
-	$(psql)	-f load/drop_parcel_generation_tables.sql
-
-clean_shapefiles:
-	rm -rf jurisdictional
-
-remove_source_data:
-	rm ba8parcels.* 
-	rm city10_ba.* 
-	rm county10_ca.* 
-	rm match_fields_tables_zoning_2012_source.* 
-	rm parcels_spandex.* 
-	rm Parcels2010_Update9.* 
-	rm jurisdictional/*.* 
-	rm PLU2008_Updated.*
-	rm PlannedLandUsePhase*
-
-reload_plu06: load_plu06 clean_plu06_geoms plu_06
-
-#########################
-###Join Parcels/PDAs#####
-#########################
-parcels_pdas.csv: 
-	load_pda \
-	$(psql) -f process/get_pda_for_parcels.sql
-
-
-##################################################
-###following may be useful later, not used now####
-####for loading/checks against census source #####
-##################################################
-
-load_census_city_boundaries: gz_2010_06_160_00_500k.shp
-	$(psql) -c "DROP TABLE IF EXISTS admin_staging.gz_2010_06_160_00_500k"
-	shp2pgsql -W "LATIN1" -t 2D -s 4269 -I gz_2010_06_160_00_500k.shp admin_staging.gz_2010_06_160_00_500k | $(psql)
-
-gz_2010_06_160_00_500k.shp: gz_2010_06_160_00_500k.zip
-	unzip -o gz_2010_06_160_00_500k.zip
-
-gz_2010_06_160_00_500k.zip:
-	curl -k -o $@.download http://www2.census.gov/geo/tiger/GENZ2010/gz_2010_06_160_00_500k.zip
-	mv $@.download $@
-
-load_census_county_boundaries: gz_2010_us_050_00_5m.shp
-	$(psql) -c "DROP TABLE IF EXISTS admin_staging.gz_2010_us_050_00_5m"
-	shp2pgsql -W "LATIN1" -t 2D -s 4269 -I gz_2010_us_050_00_5m.shp admin_staging.gz_2010_us_050_00_5m | $(psql)
-
-gz_2010_us_050_00_5m.shp: gz_2010_us_050_00_5m.zip
-	unzip -o $<
-
-gz_2010_us_050_00_5m.zip:
-	curl -k -o $@.download http://www2.census.gov/geo/tiger/GENZ2010/gz_2010_us_050_00_5m.zip
-	mv $@.download $@
-
-##################################################
-##################END CENSUS IMPORT###############
-####for loading/checks against census source #####
-##################################################
-
-pda.shp: pda.shp.zip
-	unzip -o $<
-	touch $@
-
-gdb_table_list:
-	ls jurisdictional/*.shp | cut -d "/" -f2 | \
-	sed 's/.shp//' | tr '[A-Z]' '[a-z]'| sort > gdb_table_list
-
-zip_up_shapefiles:
-	ls *.shp | sed 's/.shp//' | \
-	xargs -I {} zip -r {}.zip . -i {}.shp.*

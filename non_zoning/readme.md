@@ -1,1 +1,0 @@
-The scripts in this directory were originally used to assign various administrative and geographic attributes to parcels. We had them in this repository for workflow/environment reasons, and they could probably just as well be moved elsewhere, or the named scope of this repository could be expanded to actually capture them.
