@@ -47,31 +47,3 @@ no_dev|site will not be developed in urbansim
 
 The `zoning_id` column in this table can be used to look up the qualities of zoning relevant to UrbanSim, such as those in the table below. See [the lookup table](https://github.com/synthicity/bayarea_urbansim/blob/master/data/zoning_lookup.csv) for more details.
 
-####Fields in the `zoning_lookup.csv`
-
-column name|description
-----|----------------
-id|generic zoning id
-juris|jurisdiction id
-city|city name
-name|string of zoning type from source data
-max_far|maximum floor-to-area ratio
-max_height|maximum height
-max_dua|maximum dwelling units per acre
-max_du_per_parcel|maximum dwelling units per parcel
-hs|single-family detached
-ht|single-family attached
-hm|multi-family
-of|office
-ho|hotel
-sc|school
-il|light industrial
-iw|warehouse industrial
-ih|heavy industrial
-rs|strip mall retail
-rb|big-box retail
-mr|residential-focus mixed
-mt|retail-focus mixed
-me|employment-focus mixed
-
-We expect that this table will change as we improve on our methods and data sources. 
