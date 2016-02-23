@@ -31,7 +31,7 @@ git clone https://github.com/MetropolitanTransportationCommission/zoning.git
 
 load postgis extension for zoning processing
 ```
-psql sf_bayarea_landuse -f functions/zoning_functions.sql 
+psql sf_bayarea_landuse -f functions/main.sql 
 ```
 
 create schemas to put things in:
