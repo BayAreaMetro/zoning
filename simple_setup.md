@@ -7,8 +7,8 @@ sudo -u postgres psql sf_bayarea_landuse sf_bayarea_landuse -c "CREATE EXTENSION
 
 (optional) add a user 
 ```
-sudo -u postgres psql sf_bayarea_landuse sf_bayarea_landuse -c "CREATE USER *** WITH PASSWORD '***';"
-sudo -u postgres psql sf_bayarea_landuse sf_bayarea_landuse -c "GRANT ALL PRIVILEGES ON DATABASE sf_bayarea_landuse to ***;
+psql sf_bayarea_landuse -c "CREATE USER *** WITH PASSWORD '***';"
+psql sf_bayarea_landuse -c "GRANT ALL PRIVILEGES ON DATABASE sf_bayarea_landuse to ***;
 ```
 
 dump the parcel table into it
