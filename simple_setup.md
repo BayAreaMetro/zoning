@@ -1,3 +1,5 @@
+###PostgreSQL Setup
+
 create a database
 ```
 sudo -u postgres createdb sf_bayarea_landuse
@@ -21,15 +23,10 @@ in this example, we'll borrow the parcel table from the existing landuse
 database so that we can skip the admin code assignment and save ourselves 
 some time below under "load and assign administrative areas to parcels"
 
+###Setup Zoning Metadata
 clone the zoning repository
 ```
 git clone https://github.com/MetropolitanTransportationCommission/zoning.git
-```
-
-get admin data
-```
-make city10_ba.shp
-make county10_ba.shp
 ```
 
 load postgis extension for zoning processing
@@ -41,10 +38,18 @@ create schemas to put things in:
 ```
 psql sf_bayarea_landuse -f load/load-schema-names.sql
 ```
+
 load generic zoning assignment tables
 ```
 psql sf_bayarea_landuse -f load/load-generic-zoning-code-table.sql
 psql sf_bayarea_landuse -f load/load-zoning-shapefile-metadata.sql
+```
+
+###Setup Administrative Metadata
+get admin data
+```
+make city10_ba.shp
+make county10_ba.shp
 ```
 
 load and assign adminstrative areas to parcels
@@ -53,11 +58,13 @@ shp2pgsql -t 2D -s 26910 -I city10_ba.shp admin_staging.city10_ba | psql sf_baya
 shp2pgsql -t 2D -s 26910 -I county10_ca.shp admin_staging.county10_ca | psql sf_bayarea_landuse
 psql sf_bayarea_landuse -f process/create_jurisdictional_table.sql
 ```
+normally we would do the following but, in the interest of time, 
 the following line is obviated by the parcel dump above
 ```
 psql sf_bayarea_landuse -f process/assign_city_name_by_county.sql
 ```
 
+###Load 2012 Zoning Data and Process it
 get zoning_data
 ```
 make zoning_files
@@ -86,11 +93,12 @@ to do all the cities we would have done:
     psql sf_bayarea_landuse -c "SELECT overlap_2012(TRUE);"
 ```
 
-
-assign the 2012 zoning data to parcels
+###Assign the 2012 Data to Parcels:
 ```
     psql sf_bayarea_landuse -f process/assign_2012_zoning_to_parcels.sql
 ```
+
+###Process 2006 Zoning Data
 load zoning source data shapefile from 2006
 ```
     psql sf_bayarea_landuse -c "DROP TABLE IF EXISTS zoning.plu06_may2015estimate;"
@@ -103,14 +111,12 @@ clean and homogenize geometries
 ```
 intersection with 2006:
 ```
-    psql sf_bayarea_landuse -f process/create_intersection_table_plu06.sql
+    psql sf_bayarea_landuse -f process/assign_2006_zoning_to_parcels.sql
 ```
+
+###Output Results:
 output:
 ```
-    psql sf_bayarea_landuse -f output/summarize.sql
-    python output/fix_zoning_missing_id.py
-    psql sf_bayarea_landuse mtc -f output/summarize.sql
-    bash output/backup_db.sh
-    bash output/write_db_to_s3.sh
+    psql sf_bayarea_landuse -c "process/assign_id.sql"
     psql sf_bayarea_landuse -c "\COPY zoning.parcel to 'zoning_parcels_no_dev_as_zero.csv' DELIMITER ',' CSV HEADER;"
 ```
