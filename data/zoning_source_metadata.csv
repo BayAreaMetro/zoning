@@ -1,56 +1,57 @@
-1,albanyzoningdesignations,Albany,2012,zoning,0,0,zoning
-2,berkeleyzoning,Berkeley,2012,zoning,0,0,zondist
-3,dublingeneralplan,Dublin,2012,general plan,0,0,lu
-4,emeryvillegpparcels,Emeryville,2012,na,0,0,gp_lufardensht
-5,fremontgeneralplan,Fremont,2012,general plan,0,0,urbsimlu
-14,petalumagp2025_landuse,Petaluma,2012,general plan,2025,0,label
-15,rohnertpark_gp_2010,Rohnert Park,2012,general plan,4010,0,gp_code
-16,santarosageneralplan,Santa Rosa,2012,general plan,0,0,gp_landuse
-21,menloparkzoning,Menlo Park,2012,zoning,0,0,zoning
-25,paloaltogenplan,Palo Alto,2012,general plan,0,0,designat02
-26,sanjosegeneralplan2040,San Jose,2012,gp,2040,0,designatio
-27,city_santa_clara_gp_lu_02,Santa Clara,2002,general plan,2002,0,gp_designa
-29,sunnyvalegeneralplan,Sunnyvale,2012,gp,0,0,gplanduse
-30,sancarloszoning,San Carlos,2012,zoning,0,0,zoning_db
-31,sanmateocitygpparcels,San Mateo,2012,gp,0,0,gplanduse
-34,millbraegeneralplan,Millbrae,2012,gp,0,0,landuse
-35,pacificageneralplan,Pacifica,2012,gp,0,0,exgp_db
-37,redwoodcityzoningparcels,Redwood City,2012,zoning,0,0,lu_code
-38,sanbrunogeneralplan,San Bruno,2012,gp,0,0,gplu
-40,cupertinozoning,Cupertino,2012,zoning,0,0,label
-43,losgatosgeneralplan,Los Gatos,2012,gp,0,0,land_use
-44,milpitasgeneralplan,Milpitas,2012,gp,0,0,gp_landuse
-55,napazoning,Napa,2012,zoning,0,0,zone_desg
-57,belvedere_general_plan,Belvedere,2012,gp,0,0,generalpla
-58,corte_madera_general_plan,Corte Madera,2012,gp,0,0,generalpla
-59,fairfax_general_plan,Fairfax,2012,gp,0,0,generalpla
-61,millvalleyzoning,Mill Valley,2012,zoning,0,0,zoning
-63,rossgenplan,Ross,2012,gp,0,0,genplan
-64,sananselmogenplan,San Anselmo,2012,gp,0,0,generalpla
-65,sanrafaelgeneralplan,San Rafael,2012,gp,0,0,generalpla
-66,sausalitogenplan,Sausalito,2012,gp,0,0,generalpla
-67,tiburongenplan,Tiburon,2012,gp,0,0,generalpla
-68,gilroygpparcels,Gilroy,2012,gp,0,0,land_use
-71,vacavillegenplan,Vacaville,2012,gp,0,0,land_use
-76,orinda_zoning,Orinda,2012,zoning,0,0,dxf_text
-78,richmond_genplan,Richmond,2012,gp,0,0,gp_des_txt
-79,sanpabloproposed_gplu_112410,San Pablo,2012,gp,2010,0,propgplu
-81,walnutcreekgenplan,Walnut Creek,2012,gp,0,0,text_008
-82,antiochgeneralplan,Antioch,2012,gp,0,0,gpcode
-85,brentwood_zoning,Brentwood,2012,zoning,0,0,district
-87,concordparcels_gp120607_clip,Concord,2012,gp,2007,0,gp
-89,elcerritozoning,El Cerrito,2012,zoning,0,0,new_zoning
-92,martinezzoning,Martinez,2012,zoning,0,0,zoning
-94,oakland_generalplan_2005,Oakland,2012,gp,2005,0,classifica
-96,pleasantongeneralplan,Pleasanton,2012,gp,0,0,data
-97,alamedageneralplan,Alameda,2012,gp,0,0,gplan
-98,hayward_gp_landuse,Hayward,2012,gp,0,0,lu_abb
-99,livermoregeneralplan,Livermore,2012,gp,0,0,layer
-101,sanfranciscozoning,San Francisco,2012,zoning,0,0,landuse
-103,cccountygplanduse,Contra Costa,2012,gp,0,1,gp_lu_des
-104,marincountygenplan,Marin,2012,gp,0,1,generalpla
-105,napacozoning,Napa,2012,zoning,0,1,zoning
-106,santaclaracountygenplan,Santa Clara,2012,gp,0,1,gen_plan
-107,sanmateocountyzoning,San Mateo,2012,zoning,0,1,zone_
-108,solcogeneral_plan_unincorporated,Solano,2012,gp,0,1,full_name
-109,sonomacountygeneralplan,Sonoma,2012,gp,0,1,provision
+juris_id,shapefile_name,common_name,collection_project_year,regulation_type,year_in_tablename,county,matchfield,geoid10_int
+106,santaclaracountygenplan,Santa Clara,2012,gp,0,t,gen_plan,6085
+109,sonomacountygeneralplan,Sonoma,2012,gp,0,t,provision,6097
+105,napacozoning,Napa,2012,zoning,0,t,zoning,6055
+103,cccountygplanduse,Contra Costa,2012,gp,0,t,gp_lu_des,6013
+108,solcogeneral_plan_unincorporated,Solano,2012,gp,0,t,full_name,6095
+104,marincountygenplan,Marin,2012,gp,0,t,generalpla,6041
+107,sanmateocountyzoning,San Mateo,2012,zoning,0,t,zone_,6081
+16,santarosageneralplan,Santa Rosa,2012,general plan,0,f,gp_landuse,670098
+15,rohnertpark_gp_2010,Rohnert Park,2012,general plan,4010,f,gp_code,662546
+14,petalumagp2025_landuse,Petaluma,2012,general plan,2025,f,label,656784
+26,sanjosegeneralplan2040,San Jose,2012,gp,2040,f,designatio,668000
+25,paloaltogenplan,Palo Alto,2012,general plan,0,f,designat02,655282
+44,milpitasgeneralplan,Milpitas,2012,gp,0,f,gp_landuse,647766
+43,losgatosgeneralplan,Los Gatos,2012,gp,0,f,land_use,644112
+61,millvalleyzoning,Mill Valley,2012,zoning,0,f,zoning,647710
+92,martinezzoning,Martinez,2012,zoning,0,f,zoning,646114
+98,hayward_gp_landuse,Hayward,2012,gp,0,f,lu_abb,633000
+5,fremontgeneralplan,Fremont,2012,general plan,0,f,urbsimlu,626000
+71,vacavillegenplan,Vacaville,2012,gp,0,f,land_use,681554
+31,sanmateocitygpparcels,San Mateo,2012,gp,0,f,gplanduse,668252
+78,richmond_genplan,Richmond,2012,gp,0,f,gp_des_txt,660620
+30,sancarloszoning,San Carlos,2012,zoning,0,f,zoning_db,665070
+38,sanbrunogeneralplan,San Bruno,2012,gp,0,f,gplu,665028
+37,redwoodcityzoningparcels,Redwood City,2012,zoning,0,f,lu_code,660102
+35,pacificageneralplan,Pacifica,2012,gp,0,f,exgp_db,654806
+94,oakland_generalplan_2005,Oakland,2012,gp,2005,f,classifica,653000
+99,livermoregeneralplan,Livermore,2012,gp,0,f,layer,641992
+68,gilroygpparcels,Gilroy,2012,gp,0,f,land_use,629504
+40,cupertinozoning,Cupertino,2012,zoning,0,f,label,617610
+67,tiburongenplan,Tiburon,2012,gp,0,f,generalpla,678666
+66,sausalitogenplan,Sausalito,2012,gp,0,f,generalpla,670364
+65,sanrafaelgeneralplan,San Rafael,2012,gp,0,f,generalpla,668364
+29,sunnyvalegeneralplan,Sunnyvale,2012,gp,0,f,gplanduse,677000
+27,city_santa_clara_gp_lu_02,Santa Clara,2002,general plan,2002,f,gp_designa,669084
+76,orinda_zoning,Orinda,2012,zoning,0,f,dxf_text,654232
+101,sanfranciscozoning,San Francisco,2012,zoning,0,f,landuse,667000
+34,millbraegeneralplan,Millbrae,2012,gp,0,f,landuse,647486
+21,menloparkzoning,Menlo Park,2012,zoning,0,f,zoning,646870
+81,walnutcreekgenplan,Walnut Creek,2012,gp,0,f,text_008,683346
+96,pleasantongeneralplan,Pleasanton,2012,gp,0,f,data,657792
+64,sananselmogenplan,San Anselmo,2012,gp,0,f,generalpla,664434
+63,rossgenplan,Ross,2012,gp,0,f,genplan,662980
+59,fairfax_general_plan,Fairfax,2012,gp,0,f,generalpla,623168
+58,corte_madera_general_plan,Corte Madera,2012,gp,0,f,generalpla,616462
+57,belvedere_general_plan,Belvedere,2012,gp,0,f,generalpla,605164
+97,alamedageneralplan,Alameda,2012,gp,0,f,gplan,600562
+55,napazoning,Napa,2012,zoning,0,f,zone_desg,650258
+79,sanpabloproposed_gplu_112410,San Pablo,2012,gp,2010,f,propgplu,668294
+89,elcerritozoning,El Cerrito,2012,zoning,0,f,new_zoning,621796
+87,concordparcels_gp120607_clip,Concord,2012,gp,2007,f,gp,616000
+85,brentwood_zoning,Brentwood,2012,zoning,0,f,district,608142
+82,antiochgeneralplan,Antioch,2012,gp,0,f,gpcode,602252
+4,emeryvillegpparcels,Emeryville,2012,na,0,f,gp_lufardensht,622594
+3,dublingeneralplan,Dublin,2012,general plan,0,f,lu,620018
+2,berkeleyzoning,Berkeley,2012,zoning,0,f,zondist,606000
+1,albanyzoningdesignations,Albany,2012,zoning,0,f,zoning,600674

@@ -1,6 +1,3 @@
-ALTER TABLE parcel
-    ADD COLUMN zoning_id integer;
-
 ALTER TABLE zoning_staging.shapefile_metadata
     ADD COLUMN geoid10_int integer;
 
@@ -19,3 +16,5 @@ FROM
 WHERE j.county=true 
 AND m.county=true AND
 j.name10=m.common_name;
+
+\COPY zoning_staging.shapefile_metadata to 'data/zoning_source_metadata.csv' DELIMITER ',' CSV HEADER;
