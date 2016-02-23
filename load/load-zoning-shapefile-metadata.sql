@@ -7,7 +7,8 @@ CREATE TABLE zoning_staging.shapefile_metadata (
     regulation_type text, 
     year_in_tablename numeric(4,0),
     county boolean,
-    matchfield text
+    matchfield text,
+    geoid10_int integer
 );
 
 \COPY zoning_staging.shapefile_metadata FROM 'data/zoning_source_metadata.csv' WITH (FORMAT csv, DELIMITER ',', HEADER FALSE);
