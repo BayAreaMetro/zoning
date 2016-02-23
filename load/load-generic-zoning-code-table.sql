@@ -21,7 +21,9 @@ CREATE TABLE zoning_staging.codes_dictionary (
 	RB text, 
 	MR text, 
 	MT text, 
-	ME text 
+	ME text,
+	plandate text
 );
 
 \COPY zoning_staging.codes_dictionary FROM 'data/zoning_lookup.csv' WITH (FORMAT csv, DELIMITER ',', HEADER TRUE);
+

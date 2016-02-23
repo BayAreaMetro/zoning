@@ -24,11 +24,10 @@ fix_string_matching_in_zoning_table: match_fields_tables_zoning_2012_source.csv
 ####Join Parcels/Zoning####
 ###########################
 
-zoning_parcels.csv: zoning_files \
-					county10_ca.shp \
-					city10_ba.shp \
-					zoning_lookup.csv \
-					parcels_sql_dump
+zoning_parcels.csv: 	zoning_files \
+		   	county10_ca.shp \
+			city10_ba.shp \
+			parcels_sql_dump
 #load postgis extensions
 	$(psql) -f functions/zoning_functions.sql
 	$(psql) -f functions/postgis_addons.sql
@@ -97,7 +96,7 @@ zoning_parcels.csv: zoning_files \
 ###ZONING!####
 ##############
 
-legacy_tablenames := $(shell cat zoning_source_metadata.csv | cut -d ',' -f2 | tr '\n' ' ')
+legacy_tablenames := $(shell cat data/zoning_source_metadata.csv | cut -d ',' -f2 | tr '\n' ' ')
 zip_targets = $(addprefix jurisdictional/, $(addsuffix .shp.zip, $(legacy_tablenames)))
 shp_targets = $(addprefix jurisdictional/, $(addsuffix .shp, $(legacy_tablenames)))
 
