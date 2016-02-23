@@ -3,8 +3,8 @@
 create a database
 ```
 sudo -u postgres createdb sf_bayarea_landuse
-sudo -u postgres psql sf_bayarea_landuse sf_bayarea_landuse -c "CREATE EXTENSION postgis;"
-sudo -u postgres psql sf_bayarea_landuse sf_bayarea_landuse -c "CREATE EXTENSION postgis_topology;"
+sudo -u postgres psql sf_bayarea_landuse -c "CREATE EXTENSION postgis;"
+sudo -u postgres psql sf_bayarea_landuse -c "CREATE EXTENSION postgis_topology;"
 ```
 
 (optional) add a user 
