@@ -1,3 +1,5 @@
+this readme presumes that the user is working on the land use ec2 instance
+
 ###PostgreSQL Setup
 
 create a database
