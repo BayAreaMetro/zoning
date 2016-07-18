@@ -8,20 +8,11 @@ var map = L.map('map').setView([37.7, -122.4], 10);
 map.options.maxZoom = 15;map.options.minZoom = 10
 var toner = new L.StamenTileLayer("toner");
 var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
-var bing = new L.BingLayer("Ak9B0icHsz6Z-MEMGpXFxHjFA6liDJYmv2JNiddSzwIK5krb37s03SwekohbbNOs");
 
 map.addLayer(toner);
-map.addLayer(bing);
 
 var maxfar = L.tileLayer('http://s3-us-west-2.amazonaws.com/landuse/zoning/effective_max_far/{z}/{x}/{y}.png',{tms: true, opacity:0.7}).addTo(map);
 var maxdua = L.tileLayer('http://s3-us-west-2.amazonaws.com/landuse/zoning/effective_max_dua/{z}/{x}/{y}.png',{tms: true, opacity:0.4}).addTo(map);
-
-/*document.getElementById('bing').onclick = function () {
-    var enable = this.className !== 'active';
-    bing.setOpacity(enable ? 1 : 0);
-    this.className = enable ? 'active' : '';
-    return false;
-};*/
 
 document.getElementById('toner').onclick = function () {
     var enable = this.className !== 'active';
