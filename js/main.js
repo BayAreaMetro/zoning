@@ -25,6 +25,7 @@ document.getElementById('maxdua_light').onclick = function () {
     var enable = this.className !== 'active';
     maxdua.setOpacity(enable ? 0.3 : 0);
     this.className = enable ? 'active' : '';
+    document.getElementById('maxdua_heavy').className = '';
     return false;
 };
 
@@ -32,6 +33,7 @@ document.getElementById('maxdua_heavy').onclick = function () {
     var enable = this.className !== 'active';
     maxdua.setOpacity(enable ? 0.7 : 0);
     this.className = enable ? 'active' : '';
+    document.getElementById('maxdua_light').className = '';
     return false;
 };
 
@@ -39,6 +41,7 @@ document.getElementById('maxfar_light').onclick = function () {
     var enable = this.className !== 'active';
     maxfar.setOpacity(enable ? 0.3 : 0);
     this.className = enable ? 'active' : '';
+    document.getElementById('maxfar_heavy').className = '';
     return false;
 };
 
@@ -46,6 +49,7 @@ document.getElementById('maxfar_heavy').onclick = function () {
     var enable = this.className !== 'active';
     maxfar.setOpacity(enable ? 0.7 : 0);
     this.className = enable ? 'active' : '';
+    document.getElementById('maxfar_light').className = '';
     return false;
 };
 
