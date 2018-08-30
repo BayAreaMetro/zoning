@@ -96,7 +96,7 @@ zoning_parcels.csv: 	zoning_files \
 ###ZONING!####
 ##############
 
-legacy_tablenames := $(shell cat data/zoning_source_metadata.csv | cut -d ',' -f2 | tr '\n' ' ')
+legacy_tablenames := $(shell sed 1,1d data/zoning_source_metadata.csv | cut -d ',' -f2 | tr '\n' ' ')
 zip_targets = $(addprefix jurisdictional/, $(addsuffix .shp.zip, $(legacy_tablenames)))
 shp_targets = $(addprefix jurisdictional/, $(addsuffix .shp, $(legacy_tablenames)))
 
