@@ -46,9 +46,39 @@ python -m regional_zoning.db   # prints Postgres and PostGIS versions
 
 ## Next steps
 
-- [ ] Run the connection test from a local session.
-- [ ] Confirm the PostGIS version and list the staged Regrid tables.
+- [x] Run the connection test from a local session.
+- [x] Confirm the PostGIS version and list the staged Regrid tables.
 - [ ] Share the report for review and planning.
+
+## Local session results
+
+The connection test passed from a local Claude Code session on an Intel iMac
+(macOS 13): **PostgreSQL 17.9, PostGIS 3.5.1**.
+
+Local Python setup notes:
+
+- Python 3.14 could not install the geospatial dependencies; the project venv
+  now uses Python 3.12 (Homebrew `python@3.12`).
+- pyproj 3.8 only publishes an Intel Mac wheel for macOS 15+, so pip tried to
+  build it from source and failed. `pyproject.toml` now pins `pyproj<3.8`
+  (3.7.2 has a macOS 13 wheel); `pip install --prefer-binary` also works.
+
+Staged Regrid schemas (table names only; contents not yet profiled):
+
+| Schema | Contents |
+|---|---|
+| `regrid_raw_202508`, `regrid_raw_202512`, `regrid_raw_202606` | Raw Regrid extracts: parcels, buildings, building joins, and zoning for all 9 counties, plus region-wide union tables (e.g. `zoning_union`) |
+| `regrid_202407` | Older extract: parcel, zoning, and building source tables |
+| `regrid_dev_v25` | Per-county working tables, `bayarea_zoning_merged`, `bayarea_parcels_unified`, jurisdiction lookup/boundaries |
+| `regrid_basis_202512`, `regrid_dev_202512` | Parcel tables split by topic (zoning, land use, valuation, ownership, etc.), housing element sites, annual progress reports |
+| `regrid_anderson_v25` | Land-use classification pipeline outputs, run logs, and audits |
+| `regrid_themes_v25` | Per-county themed tables and a column dictionary |
+
+Likely starting points for zoning work: `regrid_raw_202606.zoning_union` and
+`regrid_dev_v25.bayarea_zoning_merged`. Ownership and address tables likely
+contain owner PII and should be excluded from analysis outputs.
+
+- [ ] Profile the zoning tables (coverage by jurisdiction, district codes, fields).
 
 References: https://code.claude.com/docs/en/claude-code-on-the-web,
 https://code.claude.com/docs/en/cloud-environments

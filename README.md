@@ -16,7 +16,7 @@ Develop a consistent, region-wide zoning dataset for the nine-county San Francis
 
 ## Setup
 
-Requires Python 3.10+ and access to the project Postgres/PostGIS database, where the source data (starting with Regrid) is staged.
+Requires Python 3.10–3.13 (3.12 recommended; geospatial packages may not have prebuilt wheels for 3.14 yet) and access to the project Postgres/PostGIS database, where the source data (starting with Regrid) is staged.
 
 ```bash
 python -m venv .venv
@@ -26,6 +26,8 @@ pip install -e ".[dev]"
 cp .env.example .env   # then fill in the database connection values
 python -m regional_zoning.db   # verify the connection
 ```
+
+If `pip install` tries to build `pyproj` or another geospatial package from source (common on older macOS versions), rerun it with `--prefer-binary` so pip picks a version with a prebuilt wheel.
 
 ## Repository layout
 
