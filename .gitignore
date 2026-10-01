@@ -1,0 +1,31 @@
+# Raw and intermediate data (not version controlled)
+/data_raw/
+/data_interim/
+/data_output/
+
+# Common GIS data formats
+*.zip
+*.shp
+*.shx
+*.dbf
+*.prj
+*.cpg
+*.sbn
+*.sbx
+*.gpkg
+*.gdb/
+*.parquet
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Secrets
+.env
