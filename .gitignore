@@ -20,6 +20,7 @@
 __pycache__/
 *.pyc
 .venv/
+*.egg-info/
 .ipynb_checkpoints/
 
 # OS / editor

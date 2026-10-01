@@ -14,10 +14,24 @@ Develop a consistent, region-wide zoning dataset for the nine-county San Francis
 3. **Standardize** local zoning districts into a common regional schema (permitted uses, density, intensity, height, etc.).
 4. **Produce** a documented regional zoning dataset with provenance tracked for every feature.
 
+## Setup
+
+Requires Python 3.10+ and access to the project Postgres/PostGIS database, where the source data (starting with Regrid) is staged.
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+
+cp .env.example .env   # then fill in the database connection values
+python -m regional_zoning.db   # verify the connection
+```
+
 ## Repository layout
 
 | Path | Contents |
 |---|---|
+| `src/regional_zoning/` | Python package (`db.py`: database connection from `.env`) |
 | `inventory/` | Inventory of jurisdictional and vendor zoning sources |
 | `docs/` | Methodology, schema definitions, and decision notes |
 

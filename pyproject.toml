@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "regional-zoning"
+version = "0.1.0"
+description = "Bay Area regional zoning dataset built from vendor and local agency sources"
+requires-python = ">=3.10"
+dependencies = [
+    "python-dotenv>=1.0",
+    "sqlalchemy>=2.0",
+    "psycopg[binary]>=3.1",
+    "pandas>=2.0",
+    "geopandas>=0.14",
+    "shapely>=2.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "jupyterlab>=4"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
