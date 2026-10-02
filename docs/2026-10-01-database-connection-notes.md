@@ -78,7 +78,8 @@ Likely starting points for zoning work: `regrid_raw_202606.zoning_union` and
 `regrid_dev_v25.bayarea_zoning_merged`. Ownership and address tables likely
 contain owner PII and should be excluded from analysis outputs.
 
-- [ ] Profile the zoning tables (coverage by jurisdiction, district codes, fields).
+- [x] Profile the zoning tables (coverage by jurisdiction, district codes, fields).
+      See `2026-10-02-zoning-profile.md`.
 
 References: https://code.claude.com/docs/en/claude-code-on-the-web,
 https://code.claude.com/docs/en/cloud-environments
