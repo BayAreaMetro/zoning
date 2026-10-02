@@ -10,14 +10,15 @@ python -m regional_zoning.profile_zoning
 ## Summary
 
 - **Coverage is complete at the jurisdiction level.** All 101 Bay Area cities
-  and all 9 unincorporated county areas are present: 80,687 district polygons,
+  and all 8 unincorporated county areas (San Francisco has none) are present: 80,687 district polygons,
   EPSG:4326, no invalid or empty geometries.
 - **Vintages vary by jurisdiction.** Zoning data dates run from 2023-07-26
   (Suisun City) to 2026-02-13 (Windsor). 37 of 118 jurisdiction/county rows
   changed since the December 2025 extract.
 - **The numeric development standards are sparse.** Every numeric field looks
-  100% populated, but most values are the placeholder codes `-5555` or `-9999`.
-  Only real values (`>= 0`) should be used. For Residential and Mixed districts,
+  100% populated, but most values are the codes `-5555` ("refer to the zoning
+  code") or `-9999` ("not applicable"); only `-5555` is a research gap.
+  For Residential and Mixed districts,
   region-wide coverage of real values is: max height 59%, min lot area 58%,
   max density 20%, max FAR 8%, min side setback 5%.
 - **Coverage differs sharply by county.** For example, max density is real for
@@ -41,11 +42,19 @@ The codes appear in all 12 numeric standards fields:
 | max_coverage_pct | 15,898 | 44,766 | 20,023 |
 | min_side_setback_ft | 56,675 | 19,815 | 4,197 |
 
-The project database does not document what each code means (the
-`regrid_themes_v25.regrid_column_theme_dictionary` table lists only column
-names and types). **To confirm with Regrid:** whether one code means "no such
-standard in this district" and the other "not researched / unknown". The
-distinction matters: "no limit" is real information, "unknown" is a gap.
+Regrid's [Standardized Zoning documentation](https://support.regrid.com/docs/standardized-zoning)
+defines the codes:
+
+- **`-5555` — "Refer to the zoning code for details."** The standard exists but
+  is too complex for a single value (it varies by lot size, use, conditions,
+  etc.). These are the real research gaps.
+- **`-9999` — "Not applicable to this zone."** The ordinance does not regulate
+  that standard. This is information, not missing data, though it is worth
+  spot-checking.
+
+Values are identical across all polygons that share a jurisdiction and zoning
+code, so research can be done per code: 6,709 jurisdiction/code
+combinations, of which 5,200 have at least one `-5555`.
 
 ## Zoning categories
 
@@ -82,10 +91,10 @@ standardized detail and will usually need the local ordinance or plan.
 
 ## Suggested next steps
 
-- [ ] Confirm the meaning of `-5555` and `-9999` with Regrid's documentation.
+- [x] Confirm the meaning of `-5555` and `-9999` (see Placeholder codes above).
 - [ ] Separate overlay districts from base zoning and check for gaps/overlaps
       in base zoning coverage.
-- [ ] Start the jurisdiction inventory (`inventory/`): one row per
+- [x] Start the jurisdiction inventory (`inventory/`): one row per
       jurisdiction with Regrid vintage, local source, and coverage of key
       standards, using the tables from `profile_zoning`.
 - [ ] Pick a few pilot jurisdictions with low coverage (e.g. Alameda County

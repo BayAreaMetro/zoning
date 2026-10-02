@@ -33,8 +33,8 @@ If `pip install` tries to build `pyproj` or another geospatial package from sour
 
 | Path | Contents |
 |---|---|
-| `src/regional_zoning/` | Python package (`db.py`: database connection from `.env`; `profile_zoning.py`: Regrid zoning profile) |
-| `inventory/` | Inventory of jurisdictional and vendor zoning sources |
+| `src/regional_zoning/` | Python package (`db.py`: database connection from `.env`; `profile_zoning.py`: Regrid zoning profile; `inventory.py`: jurisdiction inventory) |
+| `inventory/` | Jurisdiction inventory and research queue for Regrid `-5555` values (see `inventory/README.md`) |
 | `docs/` | Methodology, schema definitions, and decision notes |
 
 Raw and intermediate data are not committed (see `.gitignore`).
