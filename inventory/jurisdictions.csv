@@ -61,7 +61,7 @@ municipality_id,jurisdiction,geoid,in_region,zoning_codes,polygons,sq_mi,zoning_
 1534,Marin County Unincorporated,06041,True,334,2938,508.6,2025-02-21,https://www.zoneomics.com/code/marin-county-unincorporated-CA,True,155,60,85,204,,,not_started,
 1535,Santa Clara County Unincorporated,06085,True,151,1074,942.7,2025-10-13,https://library.municode.com/ca/santa_clara_county/codes/code_of_ordinances?nodeId=TITCCODELAUS_APXIZO,False,0,6,0,69,,,not_started,
 1933,Napa,06055,True,45,1693,16.1,2024-12-06,https://www.zoneomics.com/code/napa-CA,True,3,3,0,2,https://ecode360.com/43396077,,batch2_drafted,"Zoning defers density and FAR to General Plan density ranges for nearly all districts; needs GP 2040 layer. Regrid codes MU-CH, MU-CL, MU-R not found in zoning code (likely GP designations). Napa Pipe master plan districts not checked."
-2653,Lafayette,06013,True,22,398,13.7,2025-10-02,https://library.municode.com/ca/lafayette/codes/code_of_ordinances?nodeId=TIT6PLLAUS,False,8,1,1,0,,,not_started,
+2653,Lafayette,06013,True,22,398,13.7,2025-10-02,https://library.municode.com/ca/lafayette/codes/code_of_ordinances?nodeId=TIT6PLLAUS,False,8,1,1,0,https://library.municode.com/ca/lafayette/codes/code_of_ordinances?nodeId=TIT6PLLAUS,,batch3_drafted,"Multifamily density defers to the General Plan / Housing Element (Ord. 696, 2025) except MRB. Density checks D-1 and MRP not done. No public GIS zoning layer."
 2654,Alameda County Unincorporated,06001,True,508,2447,412.4,2025-10-06,https://library.municode.com/ca/alameda_county/codes/code_of_ordinances?nodeId=TIT17ZO,False,31,90,48,81,,,not_started,
 2657,San Ramon,06013,True,32,360,17.5,2025-10-14,https://online.encodeplus.com/regs/sanramon-ca/doc-viewer.aspx#secid-3764,False,8,30,10,12,,,not_started,
 2659,Pittsburg,06013,True,32,186,17.4,2024-06-07,https://zoneomics.com/code/pittsburg-CA,True,17,15,17,12,,,not_started,
@@ -81,7 +81,7 @@ municipality_id,jurisdiction,geoid,in_region,zoning_codes,polygons,sq_mi,zoning_
 3316,Daly City,06081,True,80,256,7.0,2024-05-30,https://zoneomics.com/code/daly-city-CA,True,44,49,50,63,,,not_started,
 3325,Cupertino,06085,True,105,447,10.9,2024-06-05,https://zoneomics.com/code/cupertino-CA,True,28,38,49,91,,,not_started,
 3361,Orinda,06013,True,15,326,11.8,2024-06-07,https://zoneomics.com/code/orinda-CA,True,2,11,0,3,,,not_started,
-3892,Hillsborough,06081,True,3,12,6.2,2025-09-30,https://library.municode.com/ca/hillsborough/codes/code_of_ordinances?nodeId=TIT17ZO,False,0,3,3,3,,,not_started,
+3892,Hillsborough,06081,True,3,12,6.2,2025-09-30,https://library.municode.com/ca/hillsborough/codes/code_of_ordinances?nodeId=TIT17ZO,False,0,3,3,3,https://library.municode.com/ca/hillsborough/codes/code_of_ordinances?nodeId=TIT17ZO,,batch3_drafted,Districts RD-1/RD-2/RD-3 since Ord. 792 (2024). RD-2 max density -9999 is correct (minimum 20 du/ac only). No public GIS zoning layer.
 3893,San Mateo County Unincorporated,06081,True,125,402,312.5,2025-10-09,https://www.smcgov.org/media/101461/download?inline=,False,25,101,6,86,,,not_started,
 3981,El Cerrito,06013,True,15,68,3.7,2025-10-14,https://library.municode.com/ca/el_cerrito/codes/code_of_ordinances?nodeId=TIT19ZO,False,11,9,5,7,,,not_started,
 3982,Oakley,06013,True,28,617,14.2,2024-06-07,https://zoneomics.com/code/oakley-CA,True,2,16,1,11,https://ecode360.com/49656537,,batch1_drafted,Regrid link (codepublishing) is out of date; code moved to ecode360.

@@ -33,6 +33,10 @@ SPILL_REVIEW_ACRES = 10
 UNZONED_WARN_PCT = 30
 LOCAL_COVERAGE_MIN_PCT = 95
 UNMATCHED_PARCELS_WARN_PCT = 1
+GAP_MIN_ACRES = 0.5  # unzoned pieces smaller than this are boundary noise
+# Street/water networks catch a few right-of-way parcels; real gaps hold many
+GAP_PARCELS_MIN = 25
+GAP_PARCELS_PCT = 1
 
 # Plausible ranges for real (>= 0) values; placeholders are negative
 RANGES = {
@@ -61,6 +65,9 @@ FLAGS = {
     "minus9999_density_multifamily": ("warn", "-9999 density left in multifamily/mixed districts without research"),
     "regrid_likely_stale": ("warn", "local layer edited after Regrid zoning date"),
     "baseline_older_than_code": ("warn", "researched code is newer than baseline districts"),
+    "base_zoning_gaps": ("warn", f"over {GAP_PARCELS_MIN} parcels and {GAP_PARCELS_PCT}% of parcels in unzoned pieces (>= {GAP_MIN_ACRES} ac)"),
+    "overlay_only_zoning": ("warn", "polygons carry an overlay but no base district"),
+    "overlay_needs_curation": ("warn", "combined codes with no base_zoning in overlay_codes.csv"),
     "unmatched_parcels": ("warn", f"over {UNMATCHED_PARCELS_WARN_PCT}% of parcels lack a matching zoning_id (DQ-001)"),
 }
 
@@ -211,6 +218,51 @@ def parcel_checks(conn) -> pd.DataFrame:
         from {BOUNDARIES} b left join matched m using (municipality_id) left join unmatched u using (municipality_id)""")
 
 
+def base_gap_checks(conn) -> pd.DataFrame:
+    """Gaps in base zoning: unzoned pieces that contain parcels, and overlay-only polygons.
+
+    Writes zoning_inventory.base_zoning_gaps (one row per gap piece) for review.
+    Unzoned pieces without parcels are treated as streets or water (left unzoned).
+    """
+    conn.execute(text(f"""
+        create temp table _parcel_pts on commit drop as
+        select st_pointonsurface(geometry) pt from {PARCELS_TABLE}"""))
+    conn.execute(text("create index on _parcel_pts using gist (pt)"))
+    conn.execute(text(f"drop table if exists {DB_SCHEMA}.base_zoning_gaps"))
+    conn.execute(text(f"""
+        create table {DB_SCHEMA}.base_zoning_gaps as
+        with u as (select municipality_id, st_union(geometry) g from {COMPILED}
+                   where layer_role = 'base' and base_zoning is not null group by 1),
+        d as (select b.municipality_id, b.jurisdiction,
+                     (st_dump(st_difference(b.geometry, coalesce(u.g, 'POLYGON EMPTY'::geometry)))).geom g
+              from {BOUNDARIES} b left join u using (municipality_id)),
+        pieces as (select municipality_id, jurisdiction, g,
+                          st_area(st_transform(g, {AREA_SRID})) / {SQ_M_PER_ACRE} acres
+                   from d where st_area(st_transform(g, {AREA_SRID})) >= {GAP_MIN_ACRES * SQ_M_PER_ACRE})
+        select row_number() over (order by p.municipality_id, p.acres desc)::integer as gap_id,
+               p.municipality_id, p.jurisdiction, round(p.acres::numeric, 1) as acres,
+               count(pt.pt)::integer as parcels, st_multi(p.g)::geometry(MultiPolygon, 4326) as geometry
+        from pieces p join _parcel_pts pt on st_intersects(p.g, pt.pt)
+        group by p.municipality_id, p.jurisdiction, p.g, p.acres"""))
+    gaps = _sql(conn, f"""
+        select municipality_id, count(*) gap_pieces, round(sum(acres)::numeric, 1) gap_acres,
+               sum(parcels) parcels_in_gaps
+        from {DB_SCHEMA}.base_zoning_gaps group by 1""")
+    overlay_only = _sql(conn, f"""
+        select municipality_id, count(*) overlay_only_polygons,
+               round((sum(st_area(st_transform(geometry, {AREA_SRID}))) / {SQ_M_PER_ACRE})::numeric, 1) overlay_only_acres
+        from {COMPILED} where base_zoning is null group by 1""")
+    oc = pd.read_csv(INVENTORY_DIR / "overlay_codes.csv", keep_default_na=False)
+    curation = oc[oc.base_zoning == ""].groupby("municipality_id").size().rename("overlay_codes_need_curation").reset_index()
+    links = _sql(conn, f"""
+        select z.municipality_id, count(distinct l.overlay_id) overlay_districts
+        from {DB_SCHEMA}.zoning_overlay_links l join {COMPILED} z using (zoning_id) group by 1""")
+    out = gaps
+    for part in (overlay_only, curation, links):
+        out = out.merge(part, on="municipality_id", how="outer")
+    return out
+
+
 def flags_for(row) -> list[str]:
     f = []
     if row.invalid_geometries > 0: f.append("invalid_geometry")
@@ -231,6 +283,11 @@ def flags_for(row) -> list[str]:
     if row.get("regrid_likely_stale") is True: f.append("regrid_likely_stale")
     if row.baseline_older_than_code: f.append("baseline_older_than_code")
     if row.pct_parcels_unmatched > UNMATCHED_PARCELS_WARN_PCT: f.append("unmatched_parcels")
+    total = row.parcels_matched + row.parcels_unmatched
+    if row.parcels_in_gaps > GAP_PARCELS_MIN and total and 100 * row.parcels_in_gaps / total > GAP_PARCELS_PCT:
+        f.append("base_zoning_gaps")
+    if row.overlay_only_polygons > 0: f.append("overlay_only_zoning")
+    if row.overlay_codes_need_curation > 0: f.append("overlay_needs_curation")
     return f
 
 
@@ -239,13 +296,16 @@ def run() -> pd.DataFrame:
     with engine.begin() as conn:
         names = _sql(conn, f"select municipality_id, jurisdiction, geoid, is_unincorporated from {BOUNDARIES}")
         df = names
-        for check in (geometry_checks, code_checks, value_checks, vintage_checks, parcel_checks):
+        for check in (geometry_checks, code_checks, value_checks, vintage_checks, parcel_checks,
+                      base_gap_checks):
             t0 = time.time()
             df = df.merge(check(conn), on="municipality_id", how="left")
             print(f"  {check.__name__}: {time.time() - t0:.0f}s", flush=True)
         count_cols = ["codes_not_in_list", "open_research_p1", "drafted_values", "approved_values",
                       "retired_code_research", "research_rule_violations", "codes_out_of_range",
-                      "codes_density_lot_inconsistent", "codes_minus9999_density_mf", "codes_with_5555"]
+                      "codes_density_lot_inconsistent", "codes_minus9999_density_mf", "codes_with_5555",
+                      "gap_pieces", "parcels_in_gaps", "overlay_only_polygons", "overlay_codes_need_curation",
+                      "overlay_districts"]
         df[count_cols] = df[count_cols].fillna(0).astype(int)
         df["flags"] = df.apply(lambda r: "; ".join(flags_for(r)), axis=1)
         df["errors"] = df["flags"].map(lambda s: sum(FLAGS[f][0] == "error" for f in s.split("; ") if f))

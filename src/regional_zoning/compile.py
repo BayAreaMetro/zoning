@@ -4,8 +4,13 @@ Builds `zoning_inventory.zoning_compiled` from the baseline Regrid zoning
 layer (`inventory.SOURCE_TABLE`), following docs/project-workplan.md:
 
 - **Schema:** Regrid's zoning columns, same names, types, and order, followed
-  by the project fields (`layer_role`, `code_status`, `standards_source`,
-  `local_source_id`, `clipped`, `compiled_on`, `qa_status`).
+  by the project fields (`layer_role`, `base_zoning`, `code_status`,
+  `standards_source`, `local_source_id`, `clipped`, `compiled_on`, `qa_status`).
+- **Overlays:** combined Regrid codes (e.g. Berkeley `R-1H`) are split using
+  `inventory/overlay_codes.csv`: `base_zoning` holds the base district, and
+  overlay districts go to `zoning_overlays` (one row per `overlay_id`, with
+  geometry) linked to districts in `zoning_overlay_links` (`zoning_id`,
+  `overlay_id`). `base_zoning` is NULL where a polygon carries only an overlay.
 - **Geometry:** Regrid districts, clipped to each jurisdiction's official
   boundary (`zoning_inventory.jurisdiction_boundaries`); slivers under
   0.05 acre are dropped. Streets and water stay unzoned.
@@ -45,6 +50,7 @@ SNAP_M = 0.01
 
 PROJECT_FIELDS = {
     "layer_role": "text",
+    "base_zoning": "text",
     "code_status": "text",
     "standards_source": "text",
     "local_source_id": "integer",
@@ -97,6 +103,12 @@ def _load_inputs(conn, statuses: tuple[str, ...]) -> None:
                         keep_default_na=False)[["municipality_id", "zoning", "layer_role", "code_status"]]
     codes.to_sql("_compile_codes", engine, schema=DB_SCHEMA, if_exists="replace", index=False)
 
+    oc = pd.read_csv(INVENTORY_DIR / "overlay_codes.csv", dtype={"zoning": str, "base_zoning": str},
+                     keep_default_na=False)[["municipality_id", "zoning", "base_zoning", "overlay_codes"]]
+    oc.to_sql("_compile_overlay_codes", engine, schema=DB_SCHEMA, if_exists="replace", index=False)
+    od = pd.read_csv(INVENTORY_DIR / "overlay_definitions.csv", keep_default_na=False)
+    od.to_sql("_compile_overlay_defs", engine, schema=DB_SCHEMA, if_exists="replace", index=False)
+
     src = INVENTORY_DIR / "zoning_sources.csv"
     reg = pd.read_csv(src, keep_default_na=False) if src.exists() else pd.DataFrame(
         columns=["municipality_id", "status"])
@@ -121,6 +133,7 @@ def compile_layer(statuses: tuple[str, ...] = ("drafted", "approved")) -> pd.Dat
         replaced = " or ".join(f"s.r_{f} is not null" for f in PRIORITY_FIELDS)
         project = f"""
             coalesce(k.layer_role, 'base') as layer_role,
+            case when oc.zoning is null then c.zoning else nullif(oc.base_zoning, '') end as base_zoning,
             coalesce(k.code_status, 'current') as code_status,
             case when {replaced} then 'research (' || s.r_status || ')' else 'regrid' end as standards_source,
             src.municipality_id as local_source_id,
@@ -157,11 +170,39 @@ def compile_layer(statuses: tuple[str, ...] = ("drafted", "approved")) -> pd.Dat
             left join {DB_SCHEMA}._compile_standards s using (municipality_id, zoning)
             left join {DB_SCHEMA}._compile_codes k using (municipality_id, zoning)
             left join {DB_SCHEMA}._compile_sources src using (municipality_id)
+            left join {DB_SCHEMA}._compile_overlay_codes oc using (municipality_id, zoning)
             where not st_isempty(c.gc) and st_area(c.gc) >= {SLIVER_ACRES * SQ_M_PER_ACRE}
         """))
         conn.execute(text(f"alter table {COMPILED} add primary key (zoning_id)"))
         conn.execute(text(f"create index zoning_compiled_gix on {COMPILED} using gist (geometry)"))
         conn.execute(text(f"create index zoning_compiled_muni on {COMPILED} (municipality_id, zoning)"))
+
+        # Overlay districts and their links to base districts
+        conn.execute(text(f"drop table if exists {DB_SCHEMA}.zoning_overlay_links"))
+        conn.execute(text(f"""
+            create table {DB_SCHEMA}.zoning_overlay_links as
+            select distinct z.zoning_id, d.overlay_id::integer as overlay_id, 'zone_code'::text as relation
+            from {COMPILED} z
+            join {DB_SCHEMA}._compile_overlay_codes oc using (municipality_id, zoning)
+            cross join lateral unnest(string_to_array(nullif(oc.overlay_codes, ''), ';')) as t(overlay_code)
+            join {DB_SCHEMA}._compile_overlay_defs d
+              on d.municipality_id = z.municipality_id and d.overlay_code = t.overlay_code"""))
+        conn.execute(text(f"alter table {DB_SCHEMA}.zoning_overlay_links add primary key (zoning_id, overlay_id)"))
+        conn.execute(text(f"drop table if exists {DB_SCHEMA}.zoning_overlays"))
+        conn.execute(text(f"""
+            create table {DB_SCHEMA}.zoning_overlays as
+            select d.overlay_id::integer as overlay_id, d.municipality_id::integer as municipality_id,
+                   d.jurisdiction, d.overlay_code, nullif(d.overlay_name, '') as overlay_name,
+                   nullif(d.overlay_type, '') as overlay_type, 'regrid_zone_code'::text as source,
+                   count(z.zoning_id) as districts,
+                   round((sum(st_area(st_transform(z.geometry, {AREA_SRID}))) / {SQ_M_PER_ACRE})::numeric, 1) as acres,
+                   st_multi(st_union(z.geometry))::geometry(MultiPolygon, 4326) as geometry
+            from {DB_SCHEMA}._compile_overlay_defs d
+            join {DB_SCHEMA}.zoning_overlay_links l on l.overlay_id = d.overlay_id::integer
+            join {COMPILED} z on z.zoning_id = l.zoning_id
+            group by 1, 2, 3, 4, 5, 6"""))
+        conn.execute(text(f"alter table {DB_SCHEMA}.zoning_overlays add primary key (overlay_id)"))
+        conn.execute(text(f"create index zoning_overlays_gix on {DB_SCHEMA}.zoning_overlays using gist (geometry)"))
 
         # Clipped-off zoning that lies inside another jurisdiction, for review
         conn.execute(text(f"""
@@ -210,7 +251,8 @@ def compile_layer(statuses: tuple[str, ...] = ("drafted", "approved")) -> pd.Dat
             order by b.jurisdiction
         """), conn)
         log.to_sql("compile_log", conn, schema=DB_SCHEMA, if_exists="replace", index=False)
-        for t in ("_compile_standards", "_compile_codes", "_compile_sources"):
+        for t in ("_compile_standards", "_compile_codes", "_compile_sources",
+                  "_compile_overlay_codes", "_compile_overlay_defs"):
             conn.execute(text(f"drop table {DB_SCHEMA}.{t}"))
     return log
 

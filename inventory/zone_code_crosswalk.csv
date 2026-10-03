@@ -1,3 +1,14 @@
 municipality_id,jurisdiction,regrid_code,local_code,relation,notes,verified_by,verified_date
 148,San Jose,W,WATER,same,Water; label differs only,claude,2026-10-02
 660,Milpitas,TRANSPORTATION,Transportaion,same,Local layer misspells Transportation,claude,2026-10-02
+1527,Tiburon,M,Marine,same,Local layer spells out Marine,claude,2026-10-03
+1527,Tiburon,P-R,P and R,same,Local layer spells out P and R,claude,2026-10-03
+5473,Calistoga,PD-2002-2,PD,same,Local layer generalizes numbered PD districts to PD,claude,2026-10-03
+5473,Calistoga,PD-2003-1,PD,same,Local layer generalizes numbered PD districts to PD,claude,2026-10-03
+5473,Calistoga,PD-2003-2,PD,same,Local layer generalizes numbered PD districts to PD,claude,2026-10-03
+5473,Calistoga,PD-2003-3,PD,same,Local layer generalizes numbered PD districts to PD,claude,2026-10-03
+5473,Calistoga,PD-2006-1,PD,same,Local layer generalizes numbered PD districts to PD,claude,2026-10-03
+5473,Calistoga,PD-2010-1,PD,same,Local layer generalizes numbered PD districts to PD,claude,2026-10-03
+5473,Calistoga,PD-2011-1,PD,same,Local layer generalizes numbered PD districts to PD,claude,2026-10-03
+5473,Calistoga,PD-2011-2,PD,same,Local layer generalizes numbered PD districts to PD,claude,2026-10-03
+5473,Calistoga,PD-2012-1,PD,same,Local layer generalizes numbered PD districts to PD,claude,2026-10-03

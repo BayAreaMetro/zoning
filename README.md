@@ -5,7 +5,9 @@ Develop a consistent, region-wide zoning dataset for the nine-county San Francis
 - **Vendor datasets**: commercially or publicly distributed zoning compilations
 - **Local agency zoning data**: zoning maps and ordinances published by cities and counties, inventoried in this project
 
-> This branch is a fresh start and does not share history with the legacy 2010 parcel-zoning pipeline on `master`.
+The project builds a compiled regional zoning layer from Regrid standardized zoning (development baseline `regrid_raw_202512`), clipped to MTC's official jurisdiction boundaries, with researched development standards (resolving Regrid's `-5555` / `-9999` placeholders), overlay districts kept in separate tables, a curated inventory of each jurisdiction's own published zoning layer for comparison, and automated QA.
+
+> This repository continues the work begun on the `regional-zoning` branch of [BayAreaMetro/zoning](https://github.com/BayAreaMetro/zoning), whose `master` branch (the legacy 2010 parcel-zoning pipeline) is not part of this project. Commit history from that branch is preserved here.
 
 ## Goals
 

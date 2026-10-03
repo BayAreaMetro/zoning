@@ -192,11 +192,40 @@ New fields are added to this table, with a reason, before they are used.
   boundary (median 9.5% of a jurisdiction) is classified as right-of-way,
   water, or true gap; only true gaps fail QA.
 
+### Overlay districts (decided 2026-10-03)
+
+Overlay districts are kept **separate from base zoning**, in their own tables
+related to base districts through `zoning_id`:
+
+| Table / file | Contents |
+|---|---|
+| `zoning_compiled.base_zoning` | The base district of each polygon (the Regrid `zoning` code without overlays); NULL where a polygon carries only an overlay |
+| `zoning_inventory.zoning_overlays` | One row per overlay district, keyed by **`overlay_id`**: jurisdiction, `overlay_code`, name, type, source, district count, acres, geometry (union of the districts that carry it) |
+| `zoning_inventory.zoning_overlay_links` | `zoning_id` <-> `overlay_id` (many-to-many), `relation` (`zone_code` for overlays parsed from Regrid codes; `spatial` reserved for local overlay layers) |
+| `inventory/overlay_codes.csv` (curated) | One row per combined Regrid code: `base_zoning`, `overlay_codes`; `parse_method` `auto` (parser) or `curated` (kept on reseed) |
+| `inventory/overlay_definitions.csv` (curated) | Stable `overlay_id` per jurisdiction + overlay code; names and types to fill in; IDs never reused |
+
+Regrid's zoning layer is planar, so overlays are encoded in the zone code by
+local convention (Berkeley `R-1H`, Marin `RMP-12.45-HOD`, San Mateo `E2-0.5/R`,
+San Jose `A(PD`, Fremont `C-G-HOD/H-I`). `python -m regional_zoning.overlays
+seed` parses them: a code is combined only if Regrid types it Overlay or its
+description names an overlay/combining district; the base is the longest code
+in the same jurisdiction that prefixes it (numeric tokens such as plan numbers
+stay with the base), with a fallback that peels known overlay tokens when the
+base never appears on its own. Baseline result: **359 combined codes in 27
+jurisdictions; 84 overlay districts; 2,715 districts linked (3,248 links); 6
+codes (30 polygons) carry only an overlay** (e.g. Solano `TRA`, Morgan Hill
+`DGF`) and need curation.
+
+Local overlay layers (e.g. Oakland combining zones S-14, Milpitas transit
+tiers) will be added to `zoning_overlays` with `relation = spatial` in a
+second pass.
+
 ### Overlaps
 
 | Kind | Rule |
 |---|---|
-| **Base vs overlay / combining zones** | Separate layers. Overlays (e.g. Oakland S-14, Milpitas transit tiers) go in an overlay table linked many-to-many to base districts. A curated `layer_role` per code (`base` / `combining` / `overlay`) in `zoning_codes.csv` replaces Regrid's `zoning_type = 'Overlay'`, which is unreliable (Berkeley's hillside base districts R-1H etc., 1,599 acres, are typed "Overlay"). |
+| **Base vs overlay / combining zones** | Separate tables (see Overlay districts): `base_zoning` on each district, overlays in `zoning_overlays` linked by `zoning_id` <-> `overlay_id`. Regrid's `zoning_type = 'Overlay'` is unreliable (Berkeley's R-1H hillside districts are typed Overlay but are base R-1 + overlay H). |
 | **Base vs base, same jurisdiction** | Not expected (none found in 5 POC cities). QA flags any; keep the most recently verified polygon or send to review. |
 | **Between jurisdictions** | Removed by clipping each polygon to its own jurisdiction's official boundary (the boundaries themselves do not overlap). City-vs-unincorporated overlaps (Alameda County: Pleasanton 422 ac, Livermore 159 ac) are county zoning on annexed land and drop out. Clipped pieces of 10+ acres inside another jurisdiction go to review. |
 | **Local vs Regrid** | Does not arise: geometry is always Regrid districts, replaced only whole-jurisdiction. |
@@ -220,7 +249,11 @@ figures for comparison):
 
 - **Geometry:** valid geometries; no base-zone self-overlap; no
   cross-jurisdiction overlap after clipping; spill outside boundary under 1%;
-  unzoned area classified; local-source coverage at least 95%.
+  local-source coverage at least 95%.
+- **Base zoning gaps:** unzoned pieces of 0.5+ acre inside the boundary that
+  contain parcels (`zoning_inventory.base_zoning_gaps`; pieces without parcels
+  are treated as streets/water); overlay-only polygons (no base district);
+  combined codes still needing curation.
 - **Codes:** every compiled polygon's code is in the compiled code list; every
   current code has a value or a research row for each priority standard; no
   open research rows on retired codes.
@@ -258,6 +291,7 @@ figures for comparison):
 | Official boundaries | Loaded (`zoning_inventory.jurisdiction_boundaries`, MTC `region_jurisdiction_clp`, 2025-07-01) |
 | Parcel key check | Done: `zoning_id` join valid; baseline 4.2% of parcels unmatched (mostly Contra Costa) |
 | Compile and QA steps | Built and run on the baseline (2026-10-02): 79,089 districts compiled (7,251 clipped; 174,871 ac of water and spill removed; 157 pieces / 7,471 ac inside other jurisdictions for review); research applied to 1,952 polygons. QA: 6 pass, 103 warn, 0 fail; no invalid geometry or overlaps. Compile about 1 min, QA about 30 s |
+| Overlays and gaps (2026-10-03) | 84 overlay districts (`zoning_overlays`) linked to 2,715 districts; `base_zoning` on every compiled polygon; 30 overlay-only polygons. QA base-zoning gaps: 625 unzoned pieces hold 8,795 parcels region-wide; 10 jurisdictions flagged (San Ramon 1,419 parcels; Napa County Uninc. 964; Redwood City 288). QA: 6 pass, 103 warn, 0 fail |
 | Data quality issues | DQ-001 (stale/missing parcel `zoning_id`s; 6 cities 100% unmatched), DQ-002 (Redwood City coverage); see `docs/data-quality-issues.md` |
 
 ## Next steps
