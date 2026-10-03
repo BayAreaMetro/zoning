@@ -18,7 +18,7 @@ Regenerate from the database (hand edits are kept; matched on
 `municipality_id` + `zoning` + `field`):
 
 ```bash
-python -m regional_zoning.inventory build                 # default: regrid_raw_202606.zoning_union
+python -m regional_zoning.inventory build                 # default: regrid_raw_202512.zoning_union (baseline)
 python -m regional_zoning.inventory build regrid_raw_YYYYMM.zoning_union
 python -m regional_zoning.inventory load                  # copy CSVs to Postgres schema zoning_inventory
 ```
@@ -69,3 +69,21 @@ Queue priority (`priority` column): **1** Residential and Mixed districts,
 - `jurisdictions.official_code_url` should be the jurisdiction's own published
   code. For 34 jurisdictions Regrid's link points to a vendor site
   (`regrid_link_is_vendor = True`).
+
+## Local zoning source inventory
+
+`zoning_sources.csv` is the curated registry of each jurisdiction's own
+published zoning map layer (publisher, service URL, zone code field,
+coordinate override, verification). `zone_code_crosswalk.csv` records codes
+that are the same zone under different labels. Compare Regrid with the local
+layers:
+
+```bash
+python -m regional_zoning.sources discover "City Name"   # candidate layers (needs review)
+python -m regional_zoning.sources compare                # all active sources
+python -m regional_zoning.sources compare 189 148        # by municipality_id
+```
+
+Results go to `zoning_source_comparison.csv`. Downloaded layers are cached in
+`data_raw/local_zoning/` (gitignored); only the zone code field and geometry
+are downloaded. See `docs/2026-10-02-local-zoning-source-inventory.md`.

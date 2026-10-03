@@ -21,11 +21,12 @@ import sys
 from datetime import date
 
 import pandas as pd
-from sqlalchemy import text
+from sqlalchemy import Boolean, Date, text
 
 from regional_zoning.db import REPO_ROOT, get_engine
 
-SOURCE_TABLE = "regrid_raw_202606.zoning_union"
+# Baseline vintage: matches the regrid_basis_202512 derived products
+SOURCE_TABLE = "regrid_raw_202512.zoning_union"
 INVENTORY_DIR = REPO_ROOT / "inventory"
 DB_SCHEMA = "zoning_inventory"
 
@@ -66,7 +67,7 @@ RESEARCH_EDIT_COLUMNS = [
     "source_section",
     "researched_by",
     "researched_date",
-    "status",  # todo | drafted | approved | needs_revision
+    "status",  # todo | drafted | approved | needs_revision | superseded
     "reviewer",
     "reviewed_date",
     "notes",
@@ -187,14 +188,38 @@ def build(table: str = SOURCE_TABLE) -> None:
     (INVENTORY_DIR / "SOURCE.txt").write_text(f"Built from {table} on {date.today()}\n")
 
 
+INTEGER_COLUMNS = ["municipality_id", "polygons", "priority", "zoning_codes"]
+NUMERIC_COLUMNS = ["sq_mi", "regrid_value", "value"] + PRIORITY_FIELDS
+DATE_COLUMNS = ["zoning_data_date", "researched_date", "reviewed_date"]
+BOOLEAN_COLUMNS = ["in_region", "regrid_link_is_vendor"]
+
+
+def _typed(df: pd.DataFrame) -> pd.DataFrame:
+    """Convert CSV text columns to proper types; blank cells become NULL."""
+    df = df.replace("", None)
+    for c in df.columns:
+        if c in INTEGER_COLUMNS or c.startswith("codes_"):
+            df[c] = pd.to_numeric(df[c]).astype("Int64")
+        elif c in NUMERIC_COLUMNS:
+            df[c] = pd.to_numeric(df[c])
+        elif c in DATE_COLUMNS:
+            df[c] = pd.to_datetime(df[c]).dt.date
+        elif c in BOOLEAN_COLUMNS:
+            df[c] = df[c].astype(str).map({"True": True, "False": False}).astype("boolean")
+    return df
+
+
 def load() -> None:
     """Replace the zoning_inventory schema's tables with the CSV contents."""
     engine = get_engine()
     with engine.begin() as conn:
         conn.execute(text(f"create schema if not exists {DB_SCHEMA}"))
     for name in ["jurisdictions", "zoning_codes", "standards_research"]:
-        df = _read(f"{name}.csv")
-        df.to_sql(name, engine, schema=DB_SCHEMA, if_exists="replace", index=False)
+        df = _typed(_read(f"{name}.csv"))
+        # Explicit types for columns pandas can't infer when they are all NULL
+        dtype = {c: Date() for c in DATE_COLUMNS if c in df}
+        dtype.update({c: Boolean() for c in BOOLEAN_COLUMNS if c in df})
+        df.to_sql(name, engine, schema=DB_SCHEMA, if_exists="replace", index=False, dtype=dtype)
         print(f"{DB_SCHEMA}.{name}: {len(df):,} rows")
 
 

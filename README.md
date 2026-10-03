@@ -14,6 +14,8 @@ Develop a consistent, region-wide zoning dataset for the nine-county San Francis
 3. **Standardize** local zoning districts into a common regional schema (permitted uses, density, intensity, height, etc.).
 4. **Produce** a documented regional zoning dataset with provenance tracked for every feature.
 
+See **[docs/project-workplan.md](docs/project-workplan.md)** for how the work is organized: two work streams (standards research and the local zoning source inventory), the per-jurisdiction pipeline (verify source → compare → compile → research → QA/QC → publish), and the rules for geometry, jurisdiction boundaries, and overlaps.
+
 ## Setup
 
 Requires Python 3.10–3.13 (3.12 recommended; geospatial packages may not have prebuilt wheels for 3.14 yet) and access to the project Postgres/PostGIS database, where the source data (starting with Regrid) is staged.
@@ -33,7 +35,7 @@ If `pip install` tries to build `pyproj` or another geospatial package from sour
 
 | Path | Contents |
 |---|---|
-| `src/regional_zoning/` | Python package (`db.py`: database connection from `.env`; `profile_zoning.py`: Regrid zoning profile; `inventory.py`: jurisdiction inventory) |
+| `src/regional_zoning/` | Python package (`db.py`: database connection from `.env`; `profile_zoning.py`: Regrid zoning profile; `inventory.py`: jurisdiction inventory and research queue; `sources.py`: local zoning source discovery and comparison) |
 | `inventory/` | Jurisdiction inventory and research queue for Regrid `-5555` values (see `inventory/README.md`) |
 | `docs/` | Methodology, schema definitions, and decision notes |
 

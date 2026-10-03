@@ -17,8 +17,8 @@ import pandas as pd
 
 from regional_zoning.db import get_engine
 
-DEFAULT_TABLE = "regrid_raw_202606.zoning_union"
-DEFAULT_COMPARE = "regrid_raw_202512.zoning_union"
+DEFAULT_TABLE = "regrid_raw_202512.zoning_union"
+DEFAULT_COMPARE = "regrid_raw_202606.zoning_union"
 
 PLACEHOLDER_CODES = (-5555, -9999)
 
