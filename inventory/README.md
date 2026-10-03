@@ -10,7 +10,7 @@ housing-capacity standards.
 | File | Rows | Edited by hand? |
 |---|---|---|
 | `jurisdictions.csv` | One per jurisdiction (109 in region + 2 border slivers) | Partly: `official_code_url`, `local_zoning_gis_url`, `status`, `notes` |
-| `zoning_codes.csv` | One per jurisdiction + zoning code (6,709) | No, fully regenerated |
+| `zoning_codes.csv` | One per jurisdiction + zoning code | Partly: `layer_role` (base / combining / overlay), `code_status` (current / retired / new), `code_notes` |
 | `standards_research.csv` | Research queue: one per code + standard where Regrid has `-5555` | Yes: the research columns below |
 | `SOURCE.txt` | Which Regrid table and date the files were built from | No |
 
@@ -87,3 +87,17 @@ python -m regional_zoning.sources compare 189 148        # by municipality_id
 Results go to `zoning_source_comparison.csv`. Downloaded layers are cached in
 `data_raw/local_zoning/` (gitignored); only the zone code field and geometry
 are downloaded. See `docs/2026-10-02-local-zoning-source-inventory.md`.
+
+## Compile and QA
+
+```bash
+python -m regional_zoning.compile                 # build zoning_inventory.zoning_compiled
+python -m regional_zoning.compile --approved-only # apply only approved research
+python -m regional_zoning.qa                      # automated checks -> qa_report.csv
+```
+
+`compile` clips Regrid baseline districts to the official jurisdiction
+boundaries, keeps Regrid's schema, and writes researched standards into
+Regrid's numeric fields. `qa` writes one row per jurisdiction to
+`qa_report.csv` (and `zoning_inventory.qa_report`) with metrics, flags, and a
+status of `pass` / `warn` / `fail`. See `docs/project-workplan.md`.

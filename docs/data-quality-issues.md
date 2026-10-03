@@ -7,6 +7,7 @@ until it is resolved. Add new issues at the end with the next ID.
 | ID | Title | Source | Severity | Status |
 |---|---|---|---|---|
 | DQ-001 | Parcels reference zoning districts missing from Regrid's zoning layer | Regrid (`parcels_union` / `zoning_union`) | High | Open: report to Regrid ([#22](https://github.com/BayAreaMetro/zoning/issues/22)) |
+| DQ-002 | Redwood City zoning covers about 39% of the city | Regrid (`zoning_union`, Dec 2025) | Medium | Open |
 
 ---
 
@@ -115,6 +116,29 @@ where p.zoning_id is not null
 - This issue is part of the checklist for confirming the June 2026 build
   (`docs/project-workplan.md`, "Adopting the June 2026 build").
 
+### Update 2026-10-02: whole cities have stale parcel links, not missing polygons
+
+The QA step locates each unmatched parcel by position (point on surface within
+the official boundaries). In six jurisdictions **every parcel** is unmatched
+(December 2025 baseline):
+
+| Jurisdiction | Unmatched parcels | Regrid zoning date (Dec) | Zoning polygons present |
+|---|--:|---|--:|
+| Antioch | 35,558 (100%) | 2025-10-13 | 231 (18,480 ac) |
+| San Ramon | 26,455 (100%) | 2025-10-14 | 352 |
+| Danville | 16,875 (100%) | 2025-10-14 | 920 |
+| El Cerrito | 8,883 (100%) | 2025-10-14 | 67 |
+| San Pablo | 7,031 (100%) | 2025-10-09 | 130 |
+| Sebastopol | 2,932 (100%) | 2025-10-13 | 262 |
+
+The zoning polygons exist and cover these cities, but the parcels'
+`zoning_id`s do not appear in the December or June zoning layers. All six
+had their Regrid zoning reissued in October 2025, so the likely cause is
+**parcel links not refreshed after zoning was reissued with new IDs**. For
+these cities the spatial fallback assigns parcels correctly. Six more
+jurisdictions have 1-3% unmatched (Redwood City, Benicia, Albany, Monte
+Sereno, Cloverdale, Cotati).
+
 ### Asks for Regrid
 
 1. Confirm whether Contra Costa (and, for June 2026, Marin) zoning polygons are
@@ -122,10 +146,43 @@ where p.zoning_id is not null
 2. Re-deliver the missing zoning features or corrected parcel `zoning_id`s.
 3. Confirm whether the June 2026 zoning export was truncated (5,000 distinct
    missing IDs).
+4. Confirm whether parcel `zoning_id`s are refreshed when a jurisdiction's
+   zoning is reissued (Antioch, San Ramon, Danville, El Cerrito, San Pablo,
+   Sebastopol: 100% unmatched since October 2025).
 
 ### Next steps
 
 - [ ] Report to Regrid (owner: staff).
-- [ ] Spatial check: does Contra Costa's zoning layer cover the unmatched
-      parcels' locations (missing IDs only) or not (missing polygons)?
+- [x] Spatial check: for the six 100%-unmatched cities, the zoning polygons
+      are present; the parcel links are stale (see update above).
 - [ ] Re-check after Regrid's response and before adopting `regrid_raw_202606`.
+
+---
+
+## DQ-002: Redwood City zoning covers about 39% of the city
+
+- **Found:** 2026-10-02 (QA step, `high_unzoned_share`)
+- **Source:** Regrid `regrid_raw_202512.zoning_union` (Redwood City zoning date 2024-05-31)
+- **Severity:** Medium
+- **Status:** Open
+
+### Summary
+
+After clipping to the official (shoreline-clipped) boundary, **61% of Redwood
+City has no zoning** in the December 2025 baseline: 1,193 districts cover
+5,504 of the city's 14,104 acres. Other cities typically have 5-20% unzoned
+(streets and water). In the June 2026 extract Redwood City's zoning covers far
+more area (about 20,900 acres, much of it bay water outside the shoreline), so
+the December delivery appears incomplete for Redwood City.
+
+### Handling
+
+- Kept as delivered; QA flags it (`high_unzoned_share`).
+- Compare with Redwood City's own zoning map (Stream B) and with the June 2026
+  extract when its build is confirmed.
+
+### Next steps
+
+- [ ] Add Redwood City's local zoning layer to `inventory/zoning_sources.csv` and compare.
+- [ ] Check whether the June 2026 extract fills the gap.
+- [ ] Report to Regrid if the gap is confirmed.

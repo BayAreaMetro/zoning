@@ -7,7 +7,8 @@ union table, and loads them into Postgres:
   regenerated; the hand-edited columns (official ordinance URL, notes, etc.)
   are kept across rebuilds.
 - `zoning_codes.csv`: one row per jurisdiction + zoning code, with Regrid's
-  values for the priority standards. Fully regenerated.
+  values for the priority standards. Regenerated, except the curated
+  `layer_role`, `code_status`, and `code_notes` columns, which are kept.
 - `standards_research.csv`: the research queue. One row per zoning code and
   priority standard where Regrid has -5555 ("refer to the zoning code").
   New rows are added on rebuild; existing rows and their research are kept.
@@ -59,6 +60,14 @@ JURISDICTION_EDIT_COLUMNS = [
     "notes",
 ]
 
+# Curated per-code columns (see docs/project-workplan.md, "Schema")
+CODE_EDIT_COLUMNS = [
+    "layer_role",  # base | combining | overlay
+    "code_status",  # current | retired | new
+    "code_notes",
+]
+CODE_EDIT_DEFAULTS = {"layer_role": "base", "code_status": "current", "code_notes": ""}
+
 RESEARCH_EDIT_COLUMNS = [
     "value",  # base numeric value, in the field's units
     "value_type",  # fixed | conditional | range | not_regulated
@@ -96,10 +105,16 @@ def _codes(table: str) -> pd.DataFrame:
     )
 
 
-def build_zoning_codes(codes: pd.DataFrame) -> pd.DataFrame:
+def build_zoning_codes(codes: pd.DataFrame, existing: pd.DataFrame | None = None) -> pd.DataFrame:
     df = codes.copy()
     df["in_region"] = ~df.jurisdiction.isin(OUT_OF_REGION)
     df["priority"] = df.zoning_type.map(PRIORITY_BY_TYPE).fillna(DEFAULT_PRIORITY).astype(int)
+    # Regrid's zoning layer is planar: 'Overlay'-typed codes are combined base
+    # districts (e.g. Berkeley R-1H), so every code defaults to a base role.
+    for c, default in CODE_EDIT_DEFAULTS.items():
+        df[c] = default
+    if existing is not None and "layer_role" in existing:
+        df = _keep_edits(df, existing, CODE_KEY, CODE_EDIT_COLUMNS)
     return df
 
 
@@ -171,15 +186,11 @@ def _read(name: str) -> pd.DataFrame | None:
 
 
 def build(table: str = SOURCE_TABLE) -> None:
-    codes = _codes(table)
+    codes = build_zoning_codes(_codes(table), _read("zoning_codes.csv"))
     outputs = {
-        "zoning_codes.csv": build_zoning_codes(codes),
-        "jurisdictions.csv": build_jurisdictions(
-            build_zoning_codes(codes), _read("jurisdictions.csv")
-        ),
-        "standards_research.csv": build_research_queue(
-            build_zoning_codes(codes), _read("standards_research.csv")
-        ),
+        "zoning_codes.csv": codes,
+        "jurisdictions.csv": build_jurisdictions(codes, _read("jurisdictions.csv")),
+        "standards_research.csv": build_research_queue(codes, _read("standards_research.csv")),
     }
     INVENTORY_DIR.mkdir(exist_ok=True)
     for name, df in outputs.items():

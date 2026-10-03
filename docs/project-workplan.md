@@ -211,7 +211,7 @@ figures for comparison):
 | **Parcel keys** | `regrid_raw_202512.parcels_union`: 2,328,626 parcels keyed by `ll_uuid`; 5,934 have no `zoning_id`; where the key matches, parcel `zoning` equals the district's (verified on June: 0 conflicts) | Join parcels to districts on `zoning_id` within one extract |
 | **Unmatched parcel `zoning_id`s** ([DQ-001](data-quality-issues.md#dq-001-parcels-reference-zoning-districts-missing-from-regrids-zoning-layer)) | 98,487 parcels (4.2%) reference `zoning_id`s missing from the zoning layer: **Contra Costa 95,257 (24.6% of the county)**, Sonoma 2,912 (1.5%), Santa Clara 253. The per-county zoning tables have the same gap, so it is in Regrid's delivery. (June 2026 is worse: Contra Costa 39%, Marin 8.8%.) | Ask Regrid; spatial fallback until resolved; QA reports unmatched parcels per jurisdiction |
 | **`zoning_id` is not stable across extracts** | Only 55% of June 2026 IDs exist in December 2025 (none reused for a different code) | Research and crosswalks keyed by `municipality_id` + `zoning`, never `zoning_id`; parcel joins always within one extract |
-| **Regrid overlay typing** | `zoning_type = 'Overlay'` includes base districts (Berkeley hillside) | Curated `layer_role` |
+| **Regrid overlay typing** | `zoning_type = 'Overlay'` includes base districts (Berkeley hillside). In the baseline, **none of the 276 Overlay-typed codes overlap other districts**: Regrid's zoning layer is planar, with overlays folded into combined codes | Curated `layer_role`, default `base` for every code; an overlay table is only needed for local overlay layers (second pass) |
 | **Later extracts can lose data** | 8 standards that December has as real values are `-5555` in June (e.g. Monte Sereno minimum lot sizes) | Diff each new extract against the baseline before adopting it |
 
 ## QA/QC step
@@ -257,7 +257,8 @@ figures for comparison):
 | Database | `zoning_inventory` schema loaded with typed columns |
 | Official boundaries | Loaded (`zoning_inventory.jurisdiction_boundaries`, MTC `region_jurisdiction_clp`, 2025-07-01) |
 | Parcel key check | Done: `zoning_id` join valid; baseline 4.2% of parcels unmatched (mostly Contra Costa) |
-| Compile and QA steps | Designed (this document); not built |
+| Compile and QA steps | Built and run on the baseline (2026-10-02): 79,089 districts compiled (7,251 clipped; 174,871 ac of water and spill removed; 157 pieces / 7,471 ac inside other jurisdictions for review); research applied to 1,952 polygons. QA: 6 pass, 103 warn, 0 fail; no invalid geometry or overlaps. Compile about 1 min, QA about 30 s |
+| Data quality issues | DQ-001 (stale/missing parcel `zoning_id`s; 6 cities 100% unmatched), DQ-002 (Redwood City coverage); see `docs/data-quality-issues.md` |
 
 ## Next steps
 
