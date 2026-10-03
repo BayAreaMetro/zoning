@@ -7,7 +7,7 @@ until it is resolved. Add new issues at the end with the next ID.
 | ID | Title | Source | Severity | Status |
 |---|---|---|---|---|
 | DQ-001 | Parcels reference zoning districts missing from Regrid's zoning layer | Regrid (`parcels_union` / `zoning_union`) | High | Open: report to Regrid ([#22](https://github.com/BayAreaMetro/zoning/issues/22)) |
-| DQ-002 | Redwood City zoning covers about 39% of the city | Regrid (`zoning_union`, Dec 2025) | Medium | Open |
+| DQ-002 | Redwood City zoning covers about 39% of the city | Regrid (`zoning_union`, Dec 2025) | Medium | Open ([#23](https://github.com/BayAreaMetro/zoning/issues/23)) |
 
 ---
 
@@ -162,6 +162,7 @@ Sereno, Cloverdale, Cotati).
 ## DQ-002: Redwood City zoning covers about 39% of the city
 
 - **Found:** 2026-10-02 (QA step, `high_unzoned_share`)
+- **GitHub issue:** [BayAreaMetro/zoning#23](https://github.com/BayAreaMetro/zoning/issues/23)
 - **Source:** Regrid `regrid_raw_202512.zoning_union` (Redwood City zoning date 2024-05-31)
 - **Severity:** Medium
 - **Status:** Open
